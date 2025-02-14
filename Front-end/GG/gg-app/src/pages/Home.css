@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Almendra&display=swap');
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;  /* This hides both horizontal and vertical scrollbars */
+}
+
+.circleButton {
+    border-radius: 25%;
+    background-color: rgba(105, 105, 105, 1);
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    width: 7vw;  /* Responsive width */
+    height: 7vw; /* Responsive height */
+    cursor: pointer;
+    transition: transform 0.2s;
+    color: #fff;
+    font-size: 1.2vw; /* Responsive font size */
+}
+
+.bottomButton {
+    border-radius: 50px;  /* Unique border radius for bottom buttons */
+    padding: 20px 25px;
+    background-color: #444;  /* Customize as needed */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.bottomButton:hover {
+    background-color: #222;
+    transform: scale(1.1);
+}
+
+.circleButton:hover {
+    transform: scale(1.1);
+}
+
+.circleButton:focus {
+    outline: 3px solid #82cbed;
+    outline-offset: 2px;
+}
+
+.buttonLabel {
+    margin-top: 10px;
+    text-align: center;
+    color: #fff;
+    font-size: 1.5vw; /* Responsive font size */
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: Inter, sans-serif;
+    font-weight: 500;
+    text-align: center;
+    height:100vh; /* Full screen height */
+    width: 100vw;  /* Full screen width */
+    position: relative;
+}
+
+.backgroundImage {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: fit;
+    object-position: center;
+}
+
+.content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #000;
+    width: 80%;
+    max-width: 1200px; /* Limits on large screens */
+}
+
+.titleContainer {
+    background-color: rgba(9, 10, 25, 0.84);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+    font-family: Almendra, sans-serif;
+    padding: 0px 0px;
+    border: 5px solid #78D4FF;
+    width: 30vw;   /* Responsive width */
+    max-width: 350px; /* Max width limit */
+    margin-top: -300px;
+}
+
+.gameTitle {
+    font-size: 2vw;
+    margin-top: 10px;
+}
+
+.generalsText {
+    font-size: 3.5vw;
+    margin-top: -20px;
+}
+
+.ggText {
+    font-size: 4vw;
+    margin-top: 5px;
+}
+
+.logo {
+    width: 5vw;
+    max-width: 80px;  /* Cap size on large screens */
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.rightMenu1, .leftMenu1, .rightMenu2, .leftMenu2,.centerMenu, .bottomMenu {
+    display: flex;
+    position: absolute;
+    gap: 50px;
+}
+
+.rightMenu1 {
+    position: absolute;
+    top: -25000%;
+    right: 23%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.rightMenu2 {
+    position: absolute;
+    top: -4500%;
+    right: 28%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.leftMenu1 {
+    position: absolute;
+    top: -25000%;
+    left: 23%;
+    display: flex;
+    flex-direction: column;
+}
+
+.leftMenu2 {
+    position: absolute;
+    top: -4500%;
+    left: 28%;
+    display: flex;
+    flex-direction: column;
+}
+
+.centerMenu {
+    position: absolute;
+    top: 1500%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.bottomMenu {
+    position: absolute;
+    bottom: -33000%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 300px;
+    border-radius: 50px;
+}
+
+
+@media (max-width: 991px) {
+
+    .rightMenu1, .rightMenu2, .leftMenu1, .leftMenu2 {
+        position: static;
+        margin: 20px 0;
+    }
+
+    .centerMenu, .bottomMenu {
+        position: static;
+        margin: 20px auto;
+    }
+
+    .circleButton {
+        width: 12vw;
+        height: 12vw;
+        font-size: 1.5vw;
+    }
+
+    .titleContainer {
+        width: 30vw;
+    }
+
+    .generalsText {
+        font-size: 6vw;
+    }
+
+    .ggText {
+        font-size: 5vw;
+    }
+
+    .logo {
+        width: 12vw;
+    }
+}
+
+@media (max-width: 640px) {
+    .container {
+        padding: 10px;
+    }
+
+    .circleButton {
+        width: 15vw;
+        height: 15vw;
+        font-size: 2vw;
+    }
+
+    .titleContainer {
+        width: 70vw;
+    }
+}

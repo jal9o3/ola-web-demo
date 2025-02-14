@@ -1,0 +1,126 @@
+.pieces {
+    position: absolute;
+    left: calc(4.051* var(--tile-size));
+    right: calc(1.1* var(--tile-size));
+    top: calc(0.55* var(--tile-size));
+    bottom: calc(1.3* var(--tile-size));
+}
+
+.piece {
+    width: 7.68%;
+    height: 14.1%;
+    position: absolute;
+    background-size: 100%;
+}
+
+.piece.Captain {background-image: url('../../../assets/Captain.png');}
+.piece.Captainb {background-image: url('../../../assets/Captainb.png');}
+.piece.Colonel {background-image: url('../../../assets/Colonel.png');}
+.piece.Colonelb {background-image: url('../../../assets/Colonelb.png');}
+.piece.Flag {background-image: url('../../../assets/Flag.png');}
+.piece.Flagb {background-image: url('../../../assets/Flagb.png');}
+.piece.Gen1 {background-image: url('../../../assets/Gen1.png');}
+.piece.Gen1b {background-image: url('../../../assets/Gen1b.png');}
+.piece.Gen2 {background-image: url('../../../assets/Gen2.png');}
+.piece.Gen2b {background-image: url('../../../assets/Gen2b.png');}
+.piece.Gen3 {background-image: url('../../../assets/Gen3.png');}
+.piece.Gen3b {background-image: url('../../../assets/Gen3b.png');}
+.piece.Gen4 {background-image: url('../../../assets/Gen4.png');}
+.piece.Gen4b {background-image: url('../../../assets/Gen4b.png');}
+.piece.Gen5 {background-image: url('../../../assets/Gen5.png');}
+.piece.Gen5b {background-image: url('../../../assets/Gen5b.png');}
+.piece.Lieu1st {background-image: url('../../../assets/Lieu1st.png');}
+.piece.Lieu1stb {background-image: url('../../../assets/Lieu1stb.png');}
+.piece.Lieu2nd {background-image: url('../../../assets/Lieu2nd.png');}
+.piece.Lieu2ndb {background-image: url('../../../assets/Lieu2ndb.png');}
+.piece.Lieucol {background-image: url('../../../assets/Lieucol.png');}
+.piece.Lieucolb {background-image: url('../../../assets/Lieucolb.png');}
+.piece.Major {background-image: url('../../../assets/Major.png');}
+.piece.Majorb {background-image: url('../../../assets/Majorb.png');}
+.piece.Private {background-image: url('../../../assets/Private.png');}
+.piece.Privateb {background-image: url('../../../assets/Privateb.png');}
+.piece.Sergeant {background-image: url('../../../assets/Sergeant.png');}
+.piece.Sergeantb {background-image: url('../../../assets/Sergeantb.png');}
+.piece.Spy {background-image: url('../../../assets/Spy.png');}
+.piece.Spyb {background-image: url('../../../assets/Spyb.png');}
+
+.piece.p-08 {transform: translate(833%, 698%);}
+.piece.p-18 {transform: translate(833%, 594.2%);}
+.piece.p-28 {transform: translate(833%, 491.5%);}
+.piece.p-38 {transform: translate(833%, 389%);}
+.piece.p-48 {transform: translate(833%, 286.5%);}
+.piece.p-58 {transform: translate(833%, 184%);}
+.piece.p-68 {transform: translate(833%, 81.5%);}
+.piece.p-78 {transform: translate(833%, -21%);}
+
+.piece.p-07 {transform: translate(729.1%, 698%);}
+.piece.p-17 {transform: translate(729%, 594.2%);}
+.piece.p-27 {transform: translate(729%, 491.5%);}
+.piece.p-37 {transform: translate(729%, 389%);}
+.piece.p-47 {transform: translate(729%, 286.5%);}
+.piece.p-57 {transform: translate(729%, 184%);}
+.piece.p-67 {transform: translate(729%, 81.5%);}
+.piece.p-77 {transform: translate(729%, -21%);}
+
+.piece.p-06 {transform: translate(626.5%, 698%);}
+.piece.p-16 {transform: translate(626%, 594.2%);}
+.piece.p-26 {transform: translate(626%, 491.5%);}
+.piece.p-36 {transform: translate(626%, 389%);}
+.piece.p-46 {transform: translate(626.3%, 286.5%);}
+.piece.p-56 {transform: translate(626%, 184%);}
+.piece.p-66 {transform: translate(626%, 81.5%);}
+.piece.p-76 {transform: translate(626%, -21%);}
+
+.piece.p-05 {transform: translate(523.5%, 698%);}
+.piece.p-15 {transform: translate(523.5%, 594.2%);}
+.piece.p-25 {transform: translate(523.3%, 491.5%);}
+.piece.p-35 {transform: translate(523.5%, 389%);}
+.piece.p-45 {transform: translate(523.5%, 286.5%);}
+.piece.p-55 {transform: translate(523.5%, 184%);}
+.piece.p-65 {transform: translate(523.5%, 81.5%);}
+.piece.p-75 {transform: translate(523.5%, -21%);}
+
+.piece.p-04 {transform: translate(420.5%, 698%);}
+.piece.p-14 {transform: translate(420.5%, 594.2%);}
+.piece.p-24 {transform: translate(420.8%, 491.5%);}
+.piece.p-34 {transform: translate(420.5%, 389%);}
+.piece.p-44 {transform: translate(420.5%, 286.5%);}
+.piece.p-54 {transform: translate(420.5%, 184%);}
+.piece.p-64 {transform: translate(420.5%, 81.5%);}
+.piece.p-74 {transform: translate(420.5%, -21%);}
+
+.piece.p-03 {transform: translate(318%, 698%);}
+.piece.p-13 {transform: translate(317.8%, 594.2%);}
+.piece.p-23 {transform: translate(317.8%, 491.5%);}
+.piece.p-33 {transform: translate(318%, 389%);}
+.piece.p-43 {transform: translate(318%, 286.5%);}
+.piece.p-53 {transform: translate(318%, 184%);}
+.piece.p-63 {transform: translate(318%, 81.5%);}
+.piece.p-73 {transform: translate(318%, -21%);}
+
+.piece.p-02 {transform: translate(215%, 698%);}
+.piece.p-12 {transform: translate(112%, 594.2%);}
+.piece.p-22 {transform: translate(215%, 491.5%);}
+.piece.p-32 {transform: translate(215%, 389%);}
+.piece.p-42 {transform: translate(215%, 286.5%);}
+.piece.p-52 {transform: translate(215%, 184%);}
+.piece.p-62 {transform: translate(215%, 81.5%);}
+.piece.p-72 {transform: translate(215%, -21%);}
+
+.piece.p-01 {transform: translate(112%, 698%);}
+.piece.p-11 {transform: translate(112.2%, 594.2%);}
+.piece.p-21 {transform: translate(112%, 491.5%);}
+.piece.p-31 {transform: translate(112%, 389%);}
+.piece.p-41 {transform: translate(112%, 286.5%);}
+.piece.p-51 {transform: translate(112%, 184%);}
+.piece.p-61 {transform: translate(112%, 81.5%);}
+.piece.p-71 {transform: translate(112%, -21%);}
+
+.piece.p-00 {transform: translate(9%, 698%);}
+.piece.p-10 {transform: translate(9%, 594.2%);}
+.piece.p-20 {transform: translate(9%, 491.5%);}
+.piece.p-30 {transform: translate(9%, 389%);}
+.piece.p-40 {transform: translate(9%, 286.5%);}
+.piece.p-50 {transform: translate(9%, 184%);}
+.piece.p-60 {transform: translate(9%, 81.5%);}
+.piece.p-70 {transform: translate(9%, -21%);}

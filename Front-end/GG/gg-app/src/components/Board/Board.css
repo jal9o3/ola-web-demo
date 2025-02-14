@@ -1,0 +1,24 @@
+.board {
+    display: grid;
+    grid-template-columns: calc(.15*var(--tile-size)) calc(7.23*var(--tile-size));
+}
+
+.tiles {
+    display: grid;
+    grid-template-columns: repeat(9, minmax(5vw, 80px)); 
+    grid-template-rows: repeat(8, minmax(5vw, 80px));
+    width: fit-content; 
+    gap: 0;
+}
+
+.tile {
+    width: 80px;
+    height: 80px;
+    background-color: white; 
+    border: 2px solid #000000;  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    position: relative;
+}

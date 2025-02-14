@@ -1,0 +1,115 @@
+.game-mode-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    overflow: hidden;
+}
+
+.backgroundImage {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.95;
+}
+
+.game-mode-title {
+    font-size: 5rem;
+    color: #fff;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    text-align: center;
+    z-index: 1;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.carousel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    width: 50%;
+    height: 300px;
+}
+
+.mode-card {
+    position: absolute;
+    width: 70%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-size: 2rem;
+    color: #000;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    cursor: pointer;
+}
+
+.mode-card.center {
+    transform: translateX(0) scale(1);
+    opacity: 100;
+    z-index: 3;
+}
+
+.mode-card.left {
+    transform: translateX(-100%) scale(0.8);
+    opacity: 50;
+    z-index: 2;
+}
+
+.mode-card.right {
+    transform: translateX(100%) scale(0.8);
+    opacity: 50;
+    z-index: 2;
+}
+
+.mode-card.hidden-left, .mode-card.hidden-right {
+    display: hidden;
+}
+
+.nav-buttons {
+    position: absolute;
+    width:100%;
+    top: 55%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+}
+
+.nav-button {
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    padding: 10px 10px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.nav-button:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.nav-button.left {
+    border-radius: 0 15px 15px 0;
+}
+
+.nav-button.right {
+    border-radius: 15px 0 0 15px;
+}

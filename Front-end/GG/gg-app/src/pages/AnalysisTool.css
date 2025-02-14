@@ -1,0 +1,113 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #e6eef2;
+    background: url('https://cdn.builder.io/api/v1/image/assets/TEMP/22f1b63660476b3583838e2006560d0eb1c4da0fa34c43f42de47994a2ea3c4a?placeholderIfAbsent=true&apiKey=495cfffe0c9a47b6b0144a560efce18c') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.analysis-tool-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+}
+
+.title {
+    font-size: 48px;
+    color: #fff;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(9, 50px);
+    grid-template-rows: repeat(8, 50px);
+    gap: 2px;
+    background-color: #333;
+    border: 5px solid #468494;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.cell {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    position: relative;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.cell:hover {
+    background-color: #f0f0f0;
+}
+
+.cell.red {
+    background-color: #f28b82;
+    color: white;
+}
+
+.cell.blue {
+    background-color: #8ab4f8;
+    color: white;
+}
+
+.probability {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 12px;
+    color: #333;
+}
+
+.buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.button {
+    background-color: #4a7a8c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #365d6b;
+}
+
+@media (max-width: 768px) {
+    .board {
+        grid-template-columns: repeat(9, 30px);
+        grid-template-rows: repeat(8, 30px);
+    }
+
+    .cell {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    .title {
+        font-size: 36px;
+    }
+
+    .button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+}

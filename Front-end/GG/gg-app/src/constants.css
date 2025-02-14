@@ -1,0 +1,11 @@
+:root {
+    --tile-size : 100px;
+    --tile-color: #ffffff;
+    --bg-color: #202020;
+
+    @media all and (max-width: 450px){
+        :root {
+            --tile-size : 50px;
+        }
+    }
+}
