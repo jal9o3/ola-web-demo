@@ -1,8 +1,12 @@
 .board {
-    margin-top: 50px;
     display: grid;
-    grid-template-columns: calc(.15*var(--tile-size)) calc(7.23*var(--tile-size));
+    grid-template-columns: repeat(8, 1fr); /* 8 columns */
+    grid-template-rows: repeat(9, 1fr); /* 9 rows */
+    gap: 2px; /* Optional: Adds spacing between squares */
+    width: 500px; /* Adjust size */
+    height: 600px;
 }
+
 
 .tiles {
     display: grid;
