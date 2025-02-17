@@ -31,7 +31,7 @@ body {
     display: grid;
     grid-template-columns: repeat(9, 60px);
     grid-template-rows: repeat(8, 60px);
-    gap: 2px;
+    gap: 1px;
     background-color: #333;
     border: 5px solid #468494;
     border-radius: 10px;
@@ -39,8 +39,8 @@ body {
 }
 
 .cell {
-    width: 60px;
-    height: 60px;
+    width: 65px;
+    height: 61px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -54,7 +54,7 @@ body {
 }
 
 .cell:hover {
-    background: #b2bec3;  /* Darker hover effect */
+    background: #b2bec3; 
 }
 
 .cell.red {
