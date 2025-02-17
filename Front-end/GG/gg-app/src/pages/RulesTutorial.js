@@ -16,7 +16,7 @@ const RulesTutorial = () => {
         if (currentIndex < steps.length - 1) {
             setCurrentIndex(currentIndex + 1);
         } else {
-            navigate('/game');
+            navigate('/'); // Redirect to Home after clicking FINISH
         }
     };
 
@@ -37,7 +37,9 @@ const RulesTutorial = () => {
             </div>
             <div className="nav-buttons">
                 <button className="back-button" onClick={handleBack} disabled={currentIndex === 0}>BACK</button>
-                <button className="next-button" onClick={handleNext}>{currentIndex < steps.length - 1 ? 'NEXT' : 'FINISH'}</button>
+                <button className="next-button" onClick={handleNext}>
+                    {currentIndex < steps.length - 1 ? 'NEXT' : 'FINISH'}
+                </button>
             </div>
         </div>
     );

@@ -1,4 +1,5 @@
 .board {
+    margin-top: 50px;
     display: grid;
     grid-template-columns: calc(.15*var(--tile-size)) calc(7.23*var(--tile-size));
 }
@@ -9,6 +10,15 @@
     grid-template-rows: repeat(8, minmax(5vw, 80px));
     width: fit-content; 
     gap: 0;
+}
+
+.backgroundImage {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
 }
 
 .tile {

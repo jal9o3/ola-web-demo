@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './GameMode.css';
+import './GameModes.css';
 
 const GameMode = () => {
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ const GameMode = () => {
     ];
 
     const handleModeClick = (mode) => {
-        navigate(`/game/${mode}`);
+        navigate(`/board/${mode}`); // Redirects to /board/{mode}
     };
 
     const handleNext = () => {
@@ -31,7 +31,14 @@ const GameMode = () => {
             <div className="carousel-container">
                 <div className="carousel">
                     {modes.map((mode, index) => {
-                        const position = index === currentIndex ? 'center' : index === (currentIndex + 1) % modes.length ? 'right' : index === (currentIndex - 1 + modes.length) % modes.length ? 'left' : 'hidden';
+                        const position = index === currentIndex 
+                            ? 'center' 
+                            : index === (currentIndex + 1) % modes.length 
+                                ? 'right' 
+                                : index === (currentIndex - 1 + modes.length) % modes.length 
+                                    ? 'left' 
+                                    : 'hidden';
+
                         return (
                             <div
                                 key={mode.key}

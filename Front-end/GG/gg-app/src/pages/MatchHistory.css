@@ -1,39 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap');
 
 body {
     background-color: #1e1e2f;
     font-family: 'Arial', sans-serif;
-  }
-  
-  h1 {
+}
+
+h1 {
     color: #ffffff;
     text-align: center;
     margin-bottom: 20px;
     font-size: 2rem;
-  }
-  
-  .match-container {
+    font-family: 'UnifrakturCook', cursive;
+    font-weight: 700;
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.7);
+}
+
+.match-container {
     display: flex;
     overflow-x: auto;
     gap: 16px;
     padding: 10px 20px;
     scrollbar-width: thin;
     scrollbar-color: #4f46e5 #374151;
-  }
-  
-  .match-container::-webkit-scrollbar {
+}
+
+.match-container::-webkit-scrollbar {
     height: 8px;
-  }
-  
-  .match-container::-webkit-scrollbar-thumb {
+}
+
+.match-container::-webkit-scrollbar-thumb {
     background-color: #4f46e5;
     border-radius: 10px;
-  }
-  
-  .match-container::-webkit-scrollbar-track {
+}
+
+.match-container::-webkit-scrollbar-track {
     background-color: #374151;
-  }
-  
-  .match-card {
+}
+
+.match-card {
     background-color: #3b82f6;
     color: #ffffff;
     padding: 20px;
@@ -44,10 +48,9 @@ body {
     font-weight: bold;
     transition: transform 0.3s ease-in-out;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  }
-  
-  .match-card:hover {
+}
+
+.match-card:hover {
     transform: scale(1.1);
     background-color: #2563eb;
-  }
-  
+}
