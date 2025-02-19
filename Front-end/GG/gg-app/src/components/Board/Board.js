@@ -64,7 +64,7 @@ const Board = () => {
         const pieceId = e.dataTransfer.getData("pieceId");
         if (!pieceId) return;
 
-        if (row < 3) {
+        if (row > 4) {
             setPieces(prevPieces =>
                 prevPieces.map(piece =>
                     piece.id.toString() === pieceId ? { ...piece, position: { row, col } } : piece
