@@ -33,6 +33,7 @@ import Sergeantb from '../../assets/Sergeantb.png';
 import Lieucol from '../../assets/Lieucol.png';
 import Lieucolb from '../../assets/Lieucolb.png';
 
+// Initial Pieces with 6 Privates and 2 Spy
 const initialPieces = [
     { id: 1, name: "5-star General", src: Gen5b, position: null },
     { id: 2, name: "4-star General", src: Gen4b, position: null },
@@ -45,15 +46,22 @@ const initialPieces = [
     { id: 9, name: "1st Lieutenant", src: Lieu1stb, position: null },
     { id: 10, name: "2nd Lieutenant", src: Lieu2ndb, position: null },
     { id: 11, name: "Spy", src: Spyb, position: null },
-    { id: 12, name: "Major", src: Majorb, position: null },
-    { id: 13, name: "Private", src: Privateb, position: null },
-    { id: 14, name: "Sergeant", src: Sergeantb, position: null },
-    { id: 15, name: "Lieucol", src: Lieucolb, position: null },
+    { id: 12, name: "Spy", src: Spyb, position: null },
+    { id: 13, name: "Major", src: Majorb, position: null },
+    { id: 14, name: "Private", src: Privateb, position: null },
+    { id: 15, name: "Private", src: Privateb, position: null },
+    { id: 16, name: "Private", src: Privateb, position: null },
+    { id: 17, name: "Private", src: Privateb, position: null },
+    { id: 18, name: "Private", src: Privateb, position: null },
+    { id: 19, name: "Private", src: Privateb, position: null },
+    { id: 20, name: "Sergeant", src: Sergeantb, position: null },
+    { id: 21, name: "Lieutenant Colonel", src: Lieucolb, position: null },
 ];
 
 const Board = () => {
     const [pieces, setPieces] = useState(initialPieces);
     const [gameStarted, setGameStarted] = useState(false);
+    const [playClicked, setPlayClicked] = useState(false);
     const [selectedPiece, setSelectedPiece] = useState(null);
 
     const handleTileClick = (row, col) => {
@@ -75,7 +83,7 @@ const Board = () => {
                     )
                 );
             }
-            setSelectedPiece(null); // Deselect piece after move
+            setSelectedPiece(null);
         } else {
             const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
             if (piece) setSelectedPiece(piece);
@@ -84,20 +92,21 @@ const Board = () => {
 
     const handleDrop = (e, row, col) => {
         e.preventDefault();
-        if (gameStarted) return; // Disable drag-and-drop after game starts
+        if (gameStarted) return;
 
         const pieceId = e.dataTransfer.getData("pieceId");
         if (!pieceId) return;
 
+        // Ensure placement is within rows 5, 6, and 7
         if (!gameStarted && (row < 5 || row > 7)) {
             alert("You can only place pieces in rows 5, 6, and 7 before the game starts!");
             return;
         }
 
-        const existingPiece = pieces.find(p => p.position?.row === row && p.position?.col === col);
-        if (existingPiece) {
+        // Prevent placing pieces on top of each other
+        if (pieces.some(p => p.position?.row === row && p.position?.col === col)) {
             alert("This tile is already occupied! Choose another spot.");
-            return; // Prevent overlapping
+            return;
         }
 
         setPieces(prevPieces =>
@@ -105,6 +114,14 @@ const Board = () => {
                 piece.id.toString() === pieceId ? { ...piece, position: { row, col } } : piece
             )
         );
+    };
+
+    const handlePlayClick = () => {
+        setGameStarted(true);
+        setPlayClicked(true);
+
+        // Remove highlight after 1 second for better UI feedback
+        setTimeout(() => setPlayClicked(false), 10000);
     };
 
     const handleDragStart = (e, pieceId) => {
@@ -118,8 +135,8 @@ const Board = () => {
     return (
         <div className='board-container'>
             <button 
-                onClick={() => setGameStarted(true)} 
-                className={`play-button ${allPiecesPlaced ? '' : 'disabled'}`}
+                onClick={handlePlayClick} 
+                className={`play-button ${allPiecesPlaced ? '' : 'disabled'} ${playClicked ? 'clicked' : ''}`}
                 disabled={!allPiecesPlaced}
             >
                 Play
@@ -151,6 +168,7 @@ const Board = () => {
                     })
                 )}
             </div>
+
             <div className='piece-selection'>
                 <h3>Available Pieces</h3>
                 <div className='pieces-list'>

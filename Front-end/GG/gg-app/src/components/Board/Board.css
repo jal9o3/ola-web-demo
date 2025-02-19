@@ -37,9 +37,9 @@
 
 .pieces-list {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 columns */
-    gap: 5px; /* Adjust spacing between pieces */
-    max-width: 270px;
+    grid-template-columns: repeat(4, 1fr); /* 3 columns */
+    gap: 6px; /* Adjust spacing between pieces */
+    max-width: 350px;
     justify-items: center; /* Centers items within the grid cells */
 }
 
@@ -66,8 +66,9 @@
 .play-button {
     background-color: #28a745;
     color: white;
+    margin-top: 25%;
     font-size: 18px;
-    padding: 10px 20px;
+    padding: 25px 50px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -77,4 +78,10 @@
 .play-button.disabled {
     background-color: #6c757d;
     cursor: not-allowed;
+}
+
+.play-button.clicked {
+    background-color: #218838; /* Darker green for clicked state */
+    box-shadow: 0px 0px 15px rgba(40, 167, 69, 0.8);
+    transform: scale(1.05);
 }
