@@ -8,7 +8,7 @@ import AnalysisTool from './pages/AnalysisTool';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
 import QuitGame from './pages/QuitGame';
-import Board from './components/Board/Board'; // Cleaned import path
+import Board from './components/Board/Board';
 
 function App() {
   return (

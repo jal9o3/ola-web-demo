@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Board.css';
 
-// Import images from assets
+// Import images
 import Gen5 from '../../assets/Gen5.png';
 import Gen5b from '../../assets/Gen5b.png';
 import Gen4 from '../../assets/Gen4.png';
@@ -16,8 +16,8 @@ import Flag from '../../assets/Flag.png';
 import Flagb from '../../assets/Flagb.png';
 import Colonel from '../../assets/Colonel.png';
 import Colonelb from '../../assets/Colonelb.png';
-import Captain from '../../assets/Captainb.png';
-import Captainb from '../../assets/Captainb.png'
+import Captain from '../../assets/Captain.png';
+import Captainb from '../../assets/Captainb.png';
 import Lieu1st from '../../assets/Lieu1st.png';
 import Lieu1stb from '../../assets/Lieu1stb.png';
 import Lieu2nd from '../../assets/Lieu2nd.png';
@@ -31,57 +31,93 @@ import Privateb from '../../assets/Privateb.png';
 import Sergeant from '../../assets/Sergeant.png';
 import Sergeantb from '../../assets/Sergeantb.png';
 import Lieucol from '../../assets/Lieucol.png';
-import Lieucolb from '../../assets/Lieucolb.png'
+import Lieucolb from '../../assets/Lieucolb.png';
 
 const initialPieces = [
-    { id: 1, name: "Gen5", src: Gen5, position: { row: 0, col: 0 } },
-    { id: 2, name: "Gen5b", src: Gen5b, position: { row: 0, col: 1 } },
-    { id: 3, name: "Gen4", src: Gen4, position: { row: 0, col: 2 } },
-    { id: 4, name: "Gen4b", src: Gen4b, position: { row: 0, col: 3 } },
-    { id: 5, name: "Gen3", src: Gen3, position: { row: 0, col: 4 } },
-    { id: 6, name: "Gen3b", src: Gen3b, position: { row: 0, col: 5 } },
-    { id: 7, name: "Gen2", src: Gen2, position: { row: 0, col: 6 } },
-    { id: 8, name: "Gen2b", src: Gen2b, position: { row: 0, col: 7 } },
-    { id: 9, name: "Gen1", src: Gen1, position: { row: 0, col: 8 } },
-    { id: 10, name: "Gen1b", src: Gen1b, position: { row: 1, col: 0 } },
-    { id: 11, name: "Flag", src: Flag, position: { row: 1, col: 1 } },
-    { id: 12, name: "Flagb", src: Flagb, position: { row: 1, col: 2 } },
-    { id: 13, name: "Colonel", src: Colonel, position: { row: 1, col: 3 } },
-    { id: 14, name: "Colonelb", src: Colonelb, position: { row: 1, col: 4 } },
-    { id: 15, name: "Captain", src: Captain, position: { row: 1, col: 5 } },
-    { id: 16, name: "Captainb", src: Captainb, position: { row: 1, col: 6 } },
-    { id: 17, name: "Lieu1st", src: Lieu1st, position: { row: 1, col: 7 } },
-    { id: 18, name: "Lieu1stb", src: Lieu1stb, position: { row: 1, col: 8 } },
-    { id: 19, name: "Lieu2nd", src: Lieu2nd, position: { row: 2, col: 0 } },
-    { id: 20, name: "Lieu2ndb", src: Lieu2ndb, position: { row: 2, col: 1 } },
-    { id: 21, name: "Spy", src: Spy, position: { row: 2, col: 2 } },
-    { id: 22, name: "Spyb", src: Spyb, position: { row: 2, col: 3 } },
-    { id: 23, name: "Major", src: Major, position: { row: 2, col: 4 } },
-    { id: 24, name: "Majorb", src: Majorb, position: { row: 2, col: 5 } },
-    { id: 25, name: "Private", src: Private, position: { row: 2, col: 6 } },
-    { id: 26, name: "Privateb", src: Privateb, position: { row: 2, col: 7 } },
-    { id: 27, name: "Sergeant", src: Sergeant, position: { row: 2, col: 8 } },
-    { id: 28, name: "Sergeantb", src: Sergeantb, position: { row: 3, col: 6 } },
-    { id: 29, name: "Lieucol", src: Lieucol, position: { row: 3, col: 7 } },
-    { id: 30, name: "Lieucolb", src: Lieucolb, position: { row: 3, col: 8 } },
+    { id: 1, name: "Gen5b", src: Gen5b, position: null },
+    { id: 2, name: "Gen4b", src: Gen4b, position: null },
+    { id: 3, name: "Gen3b", src: Gen3b, position: null },
+    { id: 4, name: "Gen2b", src: Gen2b, position: null },
+    { id: 5, name: "Gen1b", src: Gen1b, position: null },
+    { id: 6, name: "Flagb", src: Flagb, position: null },
+    { id: 7, name: "Colonelb", src: Colonelb, position: null },
+    { id: 8, name: "Captainb", src: Captainb, position: null },
+    { id: 9, name: "Lieu1stb", src: Lieu1stb, position: null },
+    { id: 10, name: "Lieu2ndb", src: Lieu2ndb, position: null },
+    { id: 11, name: "Spyb", src: Spyb, position: null },
+    { id: 12, name: "Majorb", src: Majorb, position: null },
+    { id: 13, name: "Privateb", src: Privateb, position: null },
+    { id: 14, name: "Sergeantb", src: Sergeantb, position: null },
+    { id: 15, name: "Lieucolb", src: Lieucolb, position: null },
 ];
 
 const Board = () => {
-    const [pieces] = useState(initialPieces);
+    const [pieces, setPieces] = useState(initialPieces);
+
+    const handleDragStart = (e, pieceId) => {
+        e.dataTransfer.setData("pieceId", pieceId);
+    };
+
+    const handleDrop = (e, row, col) => {
+        e.preventDefault();
+        const pieceId = e.dataTransfer.getData("pieceId");
+        if (!pieceId) return;
+
+        if (row < 3) {
+            setPieces(prevPieces =>
+                prevPieces.map(piece =>
+                    piece.id.toString() === pieceId ? { ...piece, position: { row, col } } : piece
+                )
+            );
+        }
+    };
+
+    const allowDrop = (e) => e.preventDefault();
 
     return (
-        <div className='board'>
-            <div className='tiles'>
+        <div className='board-container'>
+            <div className='game-board'>
                 {Array.from({ length: 8 }).map((_, row) =>
                     Array.from({ length: 9 }).map((_, col) => {
-                        const piece = pieces.find(p => p.position.row === row && p.position.col === col);
+                        const piece = pieces.find(p => p.position && p.position.row === row && p.position.col === col);
                         return (
-                            <div key={`${row}-${col}`} className='tile'>
-                                {piece && <img src={piece.src} alt={piece.name} className='piece-image' />}
+                            <div
+                                key={`${row}-${col}`}
+                                className='tile'
+                                onDrop={(e) => handleDrop(e, row, col)}
+                                onDragOver={allowDrop}
+                            >
+                                {piece && (
+                                    <img
+                                        src={piece.src}
+                                        alt={piece.name}
+                                        className='piece-image'
+                                        draggable="true"
+                                        onDragStart={(e) => handleDragStart(e, piece.id)}
+                                    />
+                                )}
                             </div>
                         );
                     })
                 )}
+            </div>
+            <div className='piece-selection'>
+                <h3>Available Pieces</h3>
+                <div className='pieces-list'>
+                    {pieces
+                        .filter(piece => piece.position === null)
+                        .map(piece => (
+                            <img
+                                key={piece.id}
+                                src={piece.src}
+                                alt={piece.name}
+                                className='piece-image'
+                                draggable="true"
+                                onDragStart={(e) => handleDragStart(e, piece.id)}
+                            />
+                        ))}
+                </div>
+                
             </div>
         </div>
     );
