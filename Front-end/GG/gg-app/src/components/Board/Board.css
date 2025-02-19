@@ -3,8 +3,10 @@
     grid-template-columns: repeat(9, 1fr);
     grid-template-rows: repeat(8, 1fr); 
     gap: 0px; /* Optional: Adds spacing between squares */
-    width: 600px; /* Adjust size */
+    margin-top: -9%;
+    width: 100%; /* Adjust size */
     height: 500px;
+    
 }
 
 
