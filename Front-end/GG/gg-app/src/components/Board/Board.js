@@ -53,38 +53,87 @@ const initialPieces = [
 
 const Board = () => {
     const [pieces, setPieces] = useState(initialPieces);
-    const [hoveredPiece, setHoveredPiece] = useState(null);
+    const [gameStarted, setGameStarted] = useState(false);
+    const [selectedPiece, setSelectedPiece] = useState(null);
+
+    const handleTileClick = (row, col) => {
+        if (!gameStarted) return;
+
+        if (selectedPiece) {
+            const { position } = selectedPiece;
+
+            // Allow moves only Up, Left, or Right (one tile)
+            const isValidMove =
+                (row === position.row - 1 && col === position.col) ||  // Up
+                (row === position.row && col === position.col - 1) ||  // Left
+                (row === position.row && col === position.col + 1);    // Right
+
+            if (isValidMove) {
+                setPieces(prevPieces =>
+                    prevPieces.map(p =>
+                        p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+                    )
+                );
+            }
+            setSelectedPiece(null); // Deselect piece after move
+        } else {
+            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
+            if (piece) setSelectedPiece(piece);
+        }
+    };
+
+    const handleDrop = (e, row, col) => {
+        e.preventDefault();
+        if (gameStarted) return; // Disable drag-and-drop after game starts
+
+        const pieceId = e.dataTransfer.getData("pieceId");
+        if (!pieceId) return;
+
+        if (!gameStarted && (row < 5 || row > 7)) {
+            alert("You can only place pieces in rows 5, 6, and 7 before the game starts!");
+            return;
+        }
+
+        const existingPiece = pieces.find(p => p.position?.row === row && p.position?.col === col);
+        if (existingPiece) {
+            alert("This tile is already occupied! Choose another spot.");
+            return; // Prevent overlapping
+        }
+
+        setPieces(prevPieces =>
+            prevPieces.map(piece =>
+                piece.id.toString() === pieceId ? { ...piece, position: { row, col } } : piece
+            )
+        );
+    };
 
     const handleDragStart = (e, pieceId) => {
         e.dataTransfer.setData("pieceId", pieceId);
     };
 
-    const handleDrop = (e, row, col) => {
-        e.preventDefault();
-        const pieceId = e.dataTransfer.getData("pieceId");
-        if (!pieceId) return;
-
-        if (row > 4) {
-            setPieces(prevPieces =>
-                prevPieces.map(piece =>
-                    piece.id.toString() === pieceId ? { ...piece, position: { row, col } } : piece
-                )
-            );
-        }
-    };
-
     const allowDrop = (e) => e.preventDefault();
+
+    const allPiecesPlaced = pieces.every(piece => piece.position !== null);
 
     return (
         <div className='board-container'>
+            <button 
+                onClick={() => setGameStarted(true)} 
+                className={`play-button ${allPiecesPlaced ? '' : 'disabled'}`}
+                disabled={!allPiecesPlaced}
+            >
+                Play
+            </button>
+
             <div className='game-board'>
                 {Array.from({ length: 8 }).map((_, row) =>
                     Array.from({ length: 9 }).map((_, col) => {
-                        const piece = pieces.find(p => p.position && p.position.row === row && p.position.col === col);
+                        const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
                         return (
                             <div
                                 key={`${row}-${col}`}
-                                className='tile'
+                                className={`tile ${selectedPiece?.position?.row === row && selectedPiece?.position?.col === col ? 'selected' : ''}`}
+                                onClick={() => handleTileClick(row, col)}
                                 onDrop={(e) => handleDrop(e, row, col)}
                                 onDragOver={allowDrop}
                             >
@@ -93,10 +142,8 @@ const Board = () => {
                                         src={piece.src}
                                         alt={piece.name}
                                         className='piece-image'
-                                        draggable="true"
+                                        draggable={!gameStarted}
                                         onDragStart={(e) => handleDragStart(e, piece.id)}
-                                        onMouseEnter={() => setHoveredPiece(piece.name)}
-                                        onMouseLeave={() => setHoveredPiece(null)}
                                     />
                                 )}
                             </div>
@@ -115,20 +162,12 @@ const Board = () => {
                                 src={piece.src}
                                 alt={piece.name}
                                 className='piece-image'
-                                draggable="true"
+                                draggable={!gameStarted}
                                 onDragStart={(e) => handleDragStart(e, piece.id)}
-                                onMouseEnter={() => setHoveredPiece(piece.name)}
-                                onMouseLeave={() => setHoveredPiece(null)}
                             />
                         ))}
                 </div>
             </div>
-            {/* Display hovered piece name */}
-            {hoveredPiece && (
-                <div className="piece-tooltip">
-                    {hoveredPiece}
-                </div>
-            )}
         </div>
     );
 };
