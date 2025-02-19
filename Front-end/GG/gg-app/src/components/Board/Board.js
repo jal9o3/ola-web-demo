@@ -34,25 +34,26 @@ import Lieucol from '../../assets/Lieucol.png';
 import Lieucolb from '../../assets/Lieucolb.png';
 
 const initialPieces = [
-    { id: 1, name: "Gen5b", src: Gen5b, position: null },
-    { id: 2, name: "Gen4b", src: Gen4b, position: null },
-    { id: 3, name: "Gen3b", src: Gen3b, position: null },
-    { id: 4, name: "Gen2b", src: Gen2b, position: null },
-    { id: 5, name: "Gen1b", src: Gen1b, position: null },
-    { id: 6, name: "Flagb", src: Flagb, position: null },
-    { id: 7, name: "Colonelb", src: Colonelb, position: null },
-    { id: 8, name: "Captainb", src: Captainb, position: null },
-    { id: 9, name: "Lieu1stb", src: Lieu1stb, position: null },
-    { id: 10, name: "Lieu2ndb", src: Lieu2ndb, position: null },
-    { id: 11, name: "Spyb", src: Spyb, position: null },
-    { id: 12, name: "Majorb", src: Majorb, position: null },
-    { id: 13, name: "Privateb", src: Privateb, position: null },
-    { id: 14, name: "Sergeantb", src: Sergeantb, position: null },
-    { id: 15, name: "Lieucolb", src: Lieucolb, position: null },
+    { id: 1, name: "5-star General", src: Gen5b, position: null },
+    { id: 2, name: "4-star General", src: Gen4b, position: null },
+    { id: 3, name: "3-star General", src: Gen3b, position: null },
+    { id: 4, name: "2-star General", src: Gen2b, position: null },
+    { id: 5, name: "1-star General", src: Gen1b, position: null },
+    { id: 6, name: "Flag", src: Flagb, position: null },
+    { id: 7, name: "Colonel", src: Colonelb, position: null },
+    { id: 8, name: "Captain", src: Captainb, position: null },
+    { id: 9, name: "1st Lieutenant", src: Lieu1stb, position: null },
+    { id: 10, name: "2nd Lieutenant", src: Lieu2ndb, position: null },
+    { id: 11, name: "Spy", src: Spyb, position: null },
+    { id: 12, name: "Major", src: Majorb, position: null },
+    { id: 13, name: "Private", src: Privateb, position: null },
+    { id: 14, name: "Sergeant", src: Sergeantb, position: null },
+    { id: 15, name: "Lieucol", src: Lieucolb, position: null },
 ];
 
 const Board = () => {
     const [pieces, setPieces] = useState(initialPieces);
+    const [hoveredPiece, setHoveredPiece] = useState(null);
 
     const handleDragStart = (e, pieceId) => {
         e.dataTransfer.setData("pieceId", pieceId);
@@ -94,6 +95,8 @@ const Board = () => {
                                         className='piece-image'
                                         draggable="true"
                                         onDragStart={(e) => handleDragStart(e, piece.id)}
+                                        onMouseEnter={() => setHoveredPiece(piece.name)}
+                                        onMouseLeave={() => setHoveredPiece(null)}
                                     />
                                 )}
                             </div>
@@ -114,11 +117,18 @@ const Board = () => {
                                 className='piece-image'
                                 draggable="true"
                                 onDragStart={(e) => handleDragStart(e, piece.id)}
+                                onMouseEnter={() => setHoveredPiece(piece.name)}
+                                onMouseLeave={() => setHoveredPiece(null)}
                             />
                         ))}
                 </div>
-                
             </div>
+            {/* Display hovered piece name */}
+            {hoveredPiece && (
+                <div className="piece-tooltip">
+                    {hoveredPiece}
+                </div>
+            )}
         </div>
     );
 };

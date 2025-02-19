@@ -44,3 +44,17 @@
     height: auto;
     cursor: grab;
 }
+
+.piece-tooltip {
+    position: absolute;
+    top: 10px; /* Adjust the position based on cursor */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    pointer-events: none; /* Prevents tooltip from interfering with hover */
+    z-index: 1000;
+}
