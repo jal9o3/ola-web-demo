@@ -1,1 +1,48 @@
-b
+.leaderboard-container {
+    background-color: #1e1e2f;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.leaderboard-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-family: 'UnifrakturCook', cursive;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #3b82f6;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.leaderboard-item:hover {
+    background-color: #2563eb;
+}
+
+.rank {
+    width: 30px;
+    font-weight: bold;
+}
+
+.username {
+    flex: 1;
+    text-align: center;
+}
+
+.score {
+    width: 50px;
+    text-align: right;
+}
