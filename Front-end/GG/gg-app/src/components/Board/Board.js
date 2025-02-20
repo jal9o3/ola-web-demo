@@ -85,14 +85,13 @@ const Board = () => {
     const [playClicked, setPlayClicked] = useState(false);
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [opponentVisible, setOpponentVisible] = useState(false);
-    const [defeatedPieces, setDefeatedPieces] = useState([]);
     const [tooltip, setTooltip] = useState({ visible: false, text: '', position: { x: 0, y: 0 } });
 
     const handleTileClick = (row, col) => {
         if (!gameStarted) return;
     
         if (selectedPiece) {
-            const { position, team } = selectedPiece;
+            const { position, team, name } = selectedPiece;
     
             // Allow moves only Up, Left, or Right (one tile)
             const isValidMove =
@@ -104,34 +103,37 @@ const Board = () => {
             const opponentPiece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team !== team);
     
             if (isValidMove) {
-                setPieces(prevPieces => {
-                    // If there's an opponent's piece, remove it and add to defeated pieces
-                    const newPieces = opponentPiece 
-                        ? prevPieces.filter(p => p.id !== opponentPiece.id) 
-                        : prevPieces;
+                if (opponentPiece) {
+                    const opponentRank = rankHierarchy[opponentPiece.name];
+                    const selectedRank = rankHierarchy[name];
     
-                    // Move the selected piece
-                    const updatedPieces = newPieces.map(p =>
-                        p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
-                    );
-    
-                    // If an opponent's piece was captured, add it to defeated pieces if not already present
-                    if (opponentPiece) {
-                        setDefeatedPieces(prevDefeated => {
-                            // Check if the piece is already in the defeated pieces
-                            if (!prevDefeated.some(p => p.id === opponentPiece.id)) {
-                                return [...prevDefeated, opponentPiece];
-                            }
-                            return prevDefeated; // Return the existing array if already present
-                        });
+                    // Determine the outcome based on ranks
+                    if (selectedRank > opponentRank) {
+                        // Player's piece wins
+                        setPieces(prevPieces => prevPieces.filter(p => p.id !== opponentPiece.id)); // Remove opponent piece
+                    } else if (selectedRank < opponentRank) {
+                        // Opponent's piece wins
+                        setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id)); // Remove player's piece
+                    } else {
+                        // Both pieces are eliminated
+                        setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id && p.id !== opponentPiece.id));
                     }
-    
-                    return updatedPieces;
-                });
+                } else {
+                    // Move the selected piece if no opponent piece is present
+                    setPieces(prevPieces => 
+                        prevPieces.map(p =>
+                            p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+                        )
+                    );
+                }
+                setSelectedPiece(null); // Deselect the piece after the move
+            } else {
+                // If the move is invalid, do not change the selected piece
+                const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
+                if (piece) setSelectedPiece(piece); // Allow selecting a new piece
             }
-            setSelectedPiece(null);
         } else {
-            // Only allow selection of player's own pieces
+            // Allow selecting a piece if none is currently selected
             const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
             if (piece) setSelectedPiece(piece);
         }
@@ -185,6 +187,24 @@ const Board = () => {
         e.dataTransfer.setData("pieceId", pieceId);
     };
 
+    const rankHierarchy = {
+        "5-star General": 10,
+        "4-star General": 9,
+        "3-star General": 8,
+        "2-star General": 7,
+        "1-star General": 6,
+        "Lieutenant Colonel": 5,
+        "Colonel": 4,
+        "Major": 3,
+        "Captain": 2,
+        "1st Lieutenant": 1,
+        "2nd Lieutenant": 1,
+        "Sergeant": 1,
+        "Private": 0,
+        "Spy": 11, // Spy can eliminate all officers
+        "Flag": -1 // Flag can be eliminated by any piece
+    };
+
     const allowDrop = (e) => e.preventDefault();
 
     const allPiecesPlaced = pieces.every(piece => piece.position !== null);
@@ -236,19 +256,10 @@ const Board = () => {
             </div>
 
             <div className='piece-selection'>
-    <h3>{allPiecesPlaced ? "Defeated Opponent Pieces" : "Available Pieces"}</h3>
+    {!allPiecesPlaced && <h3>Available Pieces</h3>}
     <div className='pieces-list'>
-        {allPiecesPlaced
-            ? defeatedPieces.map(piece => (
-                <div key={piece.id} className="piece-container">
-                    <img
-                        src={piece.src}
-                        alt={piece.name}
-                        className='piece-image'
-                    />
-                </div>
-            ))
-            : pieces
+        {!allPiecesPlaced ? (
+            pieces
                 .filter(piece => piece.position === null)
                 .map(piece => (
                     <div key={piece.id} className="piece-container">
@@ -264,13 +275,11 @@ const Board = () => {
                             onMouseLeave={() => setTooltip({ visible: false, text: '', position: { x: 0, y: 0 } })}
                         />
                     </div>
-                ))}
+                ))
+        ) : (
+            <p></p> // Optional message when all pieces are placed
+        )}
     </div>
-    {tooltip.visible && (
-        <div className="tooltip" style={{ left: tooltip.position.x, top: tooltip.position.y }}>
-            {tooltip.text}
-        </div>
-    )}
 </div>
         </div>
     );
