@@ -86,6 +86,7 @@ const Board = () => {
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [opponentVisible, setOpponentVisible] = useState(false);
     const [defeatedPieces, setDefeatedPieces] = useState([]);
+    const [tooltip, setTooltip] = useState({ visible: false, text: '', position: { x: 0, y: 0 } });
 
     const handleTileClick = (row, col) => {
         if (!gameStarted) return;
@@ -134,6 +135,14 @@ const Board = () => {
             const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
             if (piece) setSelectedPiece(piece);
         }
+    };
+
+    const Tooltip = ({ text, position }) => {
+        return (
+            <div className="piece-tooltip" style={{ top: position.y, left: position.x }}>
+                {text}
+            </div>
+        );
     };
 
     const handleDrop = (e, row, col) => {
@@ -191,61 +200,77 @@ const Board = () => {
             </button>
 
             <div className='game-board'>
-    {Array.from({ length: 8 }).map((_, row) =>
-        Array.from({ length: 9 }).map((_, col) => {
-            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
-            return (
-                <div
-                    key={`${row}-${col}`}
-                    className={`tile ${selectedPiece?.position?.row === row && selectedPiece?.position?.col === col ? 'selected' : ''}`}
-                    onClick={() => handleTileClick(row, col)}
-                    onDrop={(e) => handleDrop(e, row, col)}
-                    onDragOver={allowDrop}
-                >
-                    {piece ? (
-                        piece.team === "player" ? (
-                            <img
-                                src={piece.src}
-                                alt={piece.name}
-                                className='piece-image'
-                                draggable={!gameStarted}
-                                onDragStart={(e) => handleDragStart(e, piece.id)}
-                            />
-                        ) : (
-                            <div className="opponent-placeholder"></div> // Placeholder for opponent's pieces
-                        )
-                    ) : null}
-                </div>
-            );
-        })
-    )}
-</div>
+                {Array.from({ length: 8 }).map((_, row) =>
+                    Array.from({ length: 9 }).map((_, col) => {
+                        const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
+                        return (
+                            <div
+                                key={`${row}-${col}`}
+                                className={`tile ${selectedPiece?.position?.row === row && selectedPiece?.position?.col === col ? 'selected' : ''}`}
+                                onClick={() => handleTileClick(row, col)}
+                                onDrop={(e) => handleDrop(e, row, col)}
+                                onDragOver={allowDrop}
+                            >
+                                {piece ? (
+                                    piece.team === "player" ? (
+                                        <img
+                                            src={piece.src}
+                                            alt={piece.name}
+                                            className='piece-image'
+                                            draggable={!gameStarted}
+                                            onDragStart={(e) => handleDragStart(e, piece.id)}
+                                            onMouseEnter={(e) => {
+                                                setTooltip({ visible: true, text: piece.name, position: { x: e.clientX, y: e.clientY } });
+                                            }}
+                                            onMouseLeave={() => setTooltip({ visible: false, text: '', position: { x: 0, y: 0 } })}
+                                        />
+                                    ) : (
+                                        <div className="opponent-placeholder"></div> // Placeholder for opponent's pieces
+                                    )
+                                ) : null}
+                            </div>
+                        );
+                    })
+                )}
+                {tooltip.visible && <Tooltip text={tooltip.text} position={tooltip.position} />}
+            </div>
 
             <div className='piece-selection'>
     <h3>{allPiecesPlaced ? "Defeated Opponent Pieces" : "Available Pieces"}</h3>
     <div className='pieces-list'>
         {allPiecesPlaced
             ? defeatedPieces.map(piece => (
-                <img
-                    key={piece.id}
-                    src={piece.src}
-                    alt={piece.name}
-                    className='piece-image'
-                />
+                <div key={piece.id} className="piece-container">
+                    <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className='piece-image'
+                    />
+                </div>
             ))
             : pieces
                 .filter(piece => piece.position === null)
                 .map(piece => (
-                    <img
-                        key={piece.id}
-                        src={piece.src}
-                        alt={piece.name}
-                        className='piece-image'
-                        draggable={!gameStarted}
-                        onDragStart={(e) => handleDragStart(e, piece.id)}
-                    />
+                    <div key={piece.id} className="piece-container">
+                        <img
+                            src={piece.src}
+                            alt={piece.name}
+                            className='piece-image'
+                            draggable={!gameStarted}
+                            onDragStart={(e) => handleDragStart(e, piece.id)}
+                            onMouseEnter={(e) => {
+                                setTooltip({ visible: true, text: piece.name, position: { x: e.clientX, y: e.clientY } });
+                            }}
+                            onMouseLeave={() => setTooltip({ visible: false, text: '', position: { x: 0, y: 0 } })}
+                        />
+                    </div>
                 ))}
     </div>
+    {tooltip.visible && (
+        <div className="tooltip" style={{ left: tooltip.position.x, top: tooltip.position.y }}>
+            {tooltip.text}
+        </div>
+    )}
 </div>
         </div>
     );
