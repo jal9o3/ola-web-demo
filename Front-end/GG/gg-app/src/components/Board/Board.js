@@ -85,6 +85,7 @@ const Board = () => {
     const [playClicked, setPlayClicked] = useState(false);
     const [selectedPiece, setSelectedPiece] = useState(null);
     const [opponentVisible, setOpponentVisible] = useState(false);
+    const [defeatedPieces, setDefeatedPieces] = useState([]);
 
     const handleTileClick = (row, col) => {
         if (!gameStarted) return;
@@ -103,24 +104,38 @@ const Board = () => {
     
             if (isValidMove) {
                 setPieces(prevPieces => {
-                    // If there's an opponent's piece, remove it
+                    // If there's an opponent's piece, remove it and add to defeated pieces
                     const newPieces = opponentPiece 
                         ? prevPieces.filter(p => p.id !== opponentPiece.id) 
                         : prevPieces;
     
                     // Move the selected piece
-                    return newPieces.map(p =>
+                    const updatedPieces = newPieces.map(p =>
                         p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
                     );
+    
+                    // If an opponent's piece was captured, add it to defeated pieces if not already present
+                    if (opponentPiece) {
+                        setDefeatedPieces(prevDefeated => {
+                            // Check if the piece is already in the defeated pieces
+                            if (!prevDefeated.some(p => p.id === opponentPiece.id)) {
+                                return [...prevDefeated, opponentPiece];
+                            }
+                            return prevDefeated; // Return the existing array if already present
+                        });
+                    }
+    
+                    return updatedPieces;
                 });
             }
             setSelectedPiece(null);
         } else {
-            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
+            // Only allow selection of player's own pieces
+            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
             if (piece) setSelectedPiece(piece);
         }
     };
-    
+
     const handleDrop = (e, row, col) => {
         e.preventDefault();
         if (gameStarted) return;
@@ -176,50 +191,59 @@ const Board = () => {
             </button>
 
             <div className='game-board'>
-                {Array.from({ length: 8 }).map((_, row) =>
-                    Array.from({ length: 9 }).map((_, col) => {
-                        const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
-                        return (
-                            <div
-                                key={`${row}-${col}`}
-                                className={`tile ${selectedPiece?.position?.row === row && selectedPiece?.position?.col === col ? 'selected' : ''}`}
-                                onClick={() => handleTileClick(row, col)}
-                                onDrop={(e) => handleDrop(e, row, col)}
-                                onDragOver={allowDrop}
-                            >
-                                {piece && (
-                                    <img
-                                        src={piece.src}
-                                        alt={piece.name}
-                                        className='piece-image'
-                                        draggable={!gameStarted}
-                                        onDragStart={(e) => handleDragStart(e, piece.id)}
-                                        style={{ display: (piece.team === "opponent" && !opponentVisible) ? 'none' : 'block' }}
-                                    />
-                                )}
-                            </div>
-                        );
-                    })
-                )}
-            </div>
+    {Array.from({ length: 8 }).map((_, row) =>
+        Array.from({ length: 9 }).map((_, col) => {
+            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
+            return (
+                <div
+                    key={`${row}-${col}`}
+                    className={`tile ${selectedPiece?.position?.row === row && selectedPiece?.position?.col === col ? 'selected' : ''}`}
+                    onClick={() => handleTileClick(row, col)}
+                    onDrop={(e) => handleDrop(e, row, col)}
+                    onDragOver={allowDrop}
+                >
+                    {piece && (
+                        <img
+                            src={piece.src}
+                            alt={piece.name}
+                            className='piece-image'
+                            draggable={piece.team === "player" && !gameStarted} // Only allow dragging of player's pieces
+                            onDragStart={(e) => piece.team === "player" && handleDragStart(e, piece.id)}
+                            style={{ display: (piece.team === "opponent" && !opponentVisible) ? 'none' : 'block' }} // Hide opponent's pieces if not visible
+                        />
+                    )}
+                </div>
+            );
+        })
+    )}
+</div>
 
             <div className='piece-selection'>
-                <h3>Available Pieces</h3>
-                <div className='pieces-list'>
-                    {pieces
-                        .filter(piece => piece.position === null)
-                        .map(piece => (
-                            <img
-                                key={piece.id}
-                                src={piece.src}
-                                alt={piece.name}
-                                className='piece-image'
-                                draggable={!gameStarted}
-                                onDragStart={(e) => handleDragStart(e, piece.id)}
-                            />
-                        ))}
-                </div>
-            </div>
+    <h3>{allPiecesPlaced ? "Defeated Opponent Pieces" : "Available Pieces"}</h3>
+    <div className='pieces-list'>
+        {allPiecesPlaced
+            ? defeatedPieces.map(piece => (
+                <img
+                    key={piece.id}
+                    src={piece.src}
+                    alt={piece.name}
+                    className='piece-image'
+                />
+            ))
+            : pieces
+                .filter(piece => piece.position === null)
+                .map(piece => (
+                    <img
+                        key={piece.id}
+                        src={piece.src}
+                        alt={piece.name}
+                        className='piece-image'
+                        draggable={!gameStarted}
+                        onDragStart={(e) => handleDragStart(e, piece.id)}
+                    />
+                ))}
+    </div>
+</div>
         </div>
     );
 };
