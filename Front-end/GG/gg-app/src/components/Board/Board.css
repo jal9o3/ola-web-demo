@@ -80,3 +80,9 @@
     cursor: not-allowed;
 }
 
+.opponent-placeholder {
+    width: 40px; /* Adjust size as needed */
+    height: 40px; /* Adjust size as needed */
+    background-color: gray; /* Color for the placeholder */
+    border-radius: 5px; /* Optional: rounded corners */
+}

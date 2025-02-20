@@ -202,16 +202,19 @@ const Board = () => {
                     onDrop={(e) => handleDrop(e, row, col)}
                     onDragOver={allowDrop}
                 >
-                    {piece && (
-                        <img
-                            src={piece.src}
-                            alt={piece.name}
-                            className='piece-image'
-                            draggable={piece.team === "player" && !gameStarted} // Only allow dragging of player's pieces
-                            onDragStart={(e) => piece.team === "player" && handleDragStart(e, piece.id)}
-                            style={{ display: (piece.team === "opponent" && !opponentVisible) ? 'none' : 'block' }} // Hide opponent's pieces if not visible
-                        />
-                    )}
+                    {piece ? (
+                        piece.team === "player" ? (
+                            <img
+                                src={piece.src}
+                                alt={piece.name}
+                                className='piece-image'
+                                draggable={!gameStarted}
+                                onDragStart={(e) => handleDragStart(e, piece.id)}
+                            />
+                        ) : (
+                            <div className="opponent-placeholder"></div> // Placeholder for opponent's pieces
+                        )
+                    ) : null}
                 </div>
             );
         })
