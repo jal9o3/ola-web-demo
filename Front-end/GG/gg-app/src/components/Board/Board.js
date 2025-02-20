@@ -88,22 +88,31 @@ const Board = () => {
 
     const handleTileClick = (row, col) => {
         if (!gameStarted) return;
-
+    
         if (selectedPiece) {
-            const { position } = selectedPiece;
-
+            const { position, team } = selectedPiece;
+    
             // Allow moves only Up, Left, or Right (one tile)
             const isValidMove =
                 (row === position.row - 1 && col === position.col) ||  // Up
                 (row === position.row && col === position.col - 1) ||  // Left
                 (row === position.row && col === position.col + 1);    // Right
-
+    
+            // Check for opponent's pieces
+            const opponentPiece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team !== team);
+    
             if (isValidMove) {
-                setPieces(prevPieces =>
-                    prevPieces.map(p =>
+                setPieces(prevPieces => {
+                    // If there's an opponent's piece, remove it
+                    const newPieces = opponentPiece 
+                        ? prevPieces.filter(p => p.id !== opponentPiece.id) 
+                        : prevPieces;
+    
+                    // Move the selected piece
+                    return newPieces.map(p =>
                         p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
-                    )
-                );
+                    );
+                });
             }
             setSelectedPiece(null);
         } else {
@@ -111,26 +120,27 @@ const Board = () => {
             if (piece) setSelectedPiece(piece);
         }
     };
-
+    
     const handleDrop = (e, row, col) => {
         e.preventDefault();
         if (gameStarted) return;
-
+    
         const pieceId = e.dataTransfer.getData("pieceId");
         if (!pieceId) return;
-
+    
         // Ensure placement is within rows 5, 6, and 7
         if (!gameStarted && (row < 5 || row > 7)) {
             alert("You can only place pieces in rows 5, 6, and 7 before the game starts!");
             return;
         }
-
+    
         // Prevent placing pieces on top of each other
-        if (pieces.some(p => p.position?.row === row && p.position?.col === col)) {
+        const isOccupied = pieces.some(p => p.position?.row === row && p.position?.col === col);
+        if (isOccupied) {
             alert("This tile is already occupied! Choose another spot.");
             return;
         }
-
+    
         setPieces(prevPieces =>
             prevPieces.map(piece =>
                 piece.id.toString() === pieceId ? { ...piece, position: { row, col } } : piece
