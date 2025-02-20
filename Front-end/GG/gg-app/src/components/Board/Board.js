@@ -33,29 +33,50 @@ import Sergeantb from '../../assets/Sergeantb.png';
 import Lieucol from '../../assets/Lieucol.png';
 import Lieucolb from '../../assets/Lieucolb.png';
 
-// Initial Pieces with 6 Privates and 2 Spy
+// Initial Pieces with 6 Privates and 2 Spies
 const initialPieces = [
-    { id: 1, name: "5-star General", src: Gen5b, position: null },
-    { id: 2, name: "4-star General", src: Gen4b, position: null },
-    { id: 3, name: "3-star General", src: Gen3b, position: null },
-    { id: 4, name: "2-star General", src: Gen2b, position: null },
-    { id: 5, name: "1-star General", src: Gen1b, position: null },
-    { id: 6, name: "Flag", src: Flagb, position: null },
-    { id: 7, name: "Colonel", src: Colonelb, position: null },
-    { id: 8, name: "Captain", src: Captainb, position: null },
-    { id: 9, name: "1st Lieutenant", src: Lieu1stb, position: null },
-    { id: 10, name: "2nd Lieutenant", src: Lieu2ndb, position: null },
-    { id: 11, name: "Spy", src: Spyb, position: null },
-    { id: 12, name: "Spy", src: Spyb, position: null },
-    { id: 13, name: "Major", src: Majorb, position: null },
-    { id: 14, name: "Private", src: Privateb, position: null },
-    { id: 15, name: "Private", src: Privateb, position: null },
-    { id: 16, name: "Private", src: Privateb, position: null },
-    { id: 17, name: "Private", src: Privateb, position: null },
-    { id: 18, name: "Private", src: Privateb, position: null },
-    { id: 19, name: "Private", src: Privateb, position: null },
-    { id: 20, name: "Sergeant", src: Sergeantb, position: null },
-    { id: 21, name: "Lieutenant Colonel", src: Lieucolb, position: null },
+    { id: 1, name: "5-star General", src: Gen5b, position: null, team: "player" },
+    { id: 2, name: "4-star General", src: Gen4b, position: null, team: "player" },
+    { id: 3, name: "3-star General", src: Gen3b, position: null, team: "player" },
+    { id: 4, name: "2-star General", src: Gen2b, position: null, team: "player" },
+    { id: 5, name: "1-star General", src: Gen1b, position: null, team: "player" },
+    { id: 6, name: "Flag", src: Flagb, position: null, team: "player" },
+    { id: 7, name: "Colonel", src: Colonelb, position: null, team: "player" },
+    { id: 8, name: "Captain", src: Captainb, position: null, team: "player" },
+    { id: 9, name: "1st Lieutenant", src: Lieu1stb, position: null, team: "player" },
+    { id: 10, name: "2nd Lieutenant", src: Lieu2ndb, position: null, team: "player" },
+    { id: 11, name: "Spy", src: Spyb, position: null, team: "player" },
+    { id: 12, name: "Spy", src: Spyb, position: null, team: "player" },
+    { id: 13, name: "Major", src: Majorb, position: null, team: "player" },
+    { id: 14, name: "Private", src: Privateb, position: null, team: "player" },
+    { id: 15, name: "Private", src: Privateb, position: null, team: "player" },
+    { id: 16, name: "Private", src: Privateb, position: null, team: "player" },
+    { id: 17, name: "Private", src: Privateb, position: null, team: "player" },
+    { id: 18, name: "Private", src: Privateb, position: null, team: "player" },
+    { id: 19, name: "Private", src: Privateb, position: null, team: "player" },
+    { id: 20, name: "Sergeant", src: Sergeantb, position: null, team: "player" },
+    { id: 21, name: "Lieutenant Colonel", src: Lieucolb, position: null, team: "player" },
+    { id: 22, name: "5-star General", src: Gen5, position: {row: 0, col: 0}, team: "opponent" },
+    { id: 23, name: "4-star General", src: Gen4, position: {row: 0, col: 1}, team: "opponent" },
+    { id: 24, name: "3-star General", src: Gen3, position: {row: 0, col: 2}, team: "opponent" },
+    { id: 25, name: "2-star General", src: Gen2, position: {row: 0, col: 3}, team: "opponent" },
+    { id: 26, name: "1-star General", src: Gen1, position: {row: 0, col: 4}, team: "opponent" },
+    { id: 27, name: "Flag", src: Flag, position: {row: 0, col: 5}, team: "opponent" },
+    { id: 28, name: "Colonel", src: Colonel, position: {row: 0, col: 6}, team: "opponent" },
+    { id: 29, name: "Captain", src: Captain, position: {row: 0, col: 7}, team: "opponent" },
+    { id: 30, name: "1st Lieutenant", src: Lieu1st, position: {row: 0, col: 8}, team: "opponent" },
+    { id: 31, name: "2nd Lieutenant", src: Lieu2nd, position: {row: 1, col: 0}, team: "opponent" },
+    { id: 32, name: "Spy", src: Spy, position: {row: 1, col: 1}, team: "opponent" },
+    { id: 33, name: "Spy", src: Spy, position: {row: 1, col: 2}, team: "opponent" },
+    { id: 34, name: "Major", src: Major, position: {row: 1, col: 3}, team: "opponent" },
+    { id: 35, name: "Private", src: Private, position: {row: 1, col: 4}, team: "opponent" },
+    { id: 36, name: "Private", src: Private, position: {row: 1, col: 5}, team: "opponent" },
+    { id: 37, name: "Private", src: Private, position: {row: 1, col: 6}, team: "opponent" },
+    { id: 38, name: "Private", src: Private, position: {row: 1, col: 7}, team: "opponent" },
+    { id: 39, name: "Private", src: Private, position: {row: 1, col: 8}, team: "opponent" },
+    { id: 40, name: "Private", src: Private, position: {row: 2, col: 0}, team: "opponent" },
+    { id: 41, name: "Sergeant", src: Sergeant, position: {row: 2, col: 1}, team: "opponent" },
+    { id: 42, name: "Lieutenant Colonel", src: Lieucol, position: {row: 2, col: 2}, team: "opponent" },
 ];
 
 const Board = () => {
@@ -63,6 +84,7 @@ const Board = () => {
     const [gameStarted, setGameStarted] = useState(false);
     const [playClicked, setPlayClicked] = useState(false);
     const [selectedPiece, setSelectedPiece] = useState(null);
+    const [opponentVisible, setOpponentVisible] = useState(false);
 
     const handleTileClick = (row, col) => {
         if (!gameStarted) return;
@@ -119,6 +141,7 @@ const Board = () => {
     const handlePlayClick = () => {
         setGameStarted(true);
         setPlayClicked(true);
+        setOpponentVisible(true);
 
         // Remove highlight after 1 second for better UI feedback
         setTimeout(() => setPlayClicked(false), 10000);
@@ -161,6 +184,7 @@ const Board = () => {
                                         className='piece-image'
                                         draggable={!gameStarted}
                                         onDragStart={(e) => handleDragStart(e, piece.id)}
+                                        style={{ display: (piece.team === "opponent" && !opponentVisible) ? 'none' : 'block' }}
                                     />
                                 )}
                             </div>
