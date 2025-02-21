@@ -7,9 +7,8 @@ const menuItems = [
     { label: 'RULES & TUTORIAL', position: 'left1' },
     { label: 'GAME MODES', position: 'left2' },
     { label: 'ANALYSIS TOOL', position: 'right2' },
-    { label: 'LEADERBOARD', position: 'center' },
-    { label: 'SETTINGS', position: 'bottom' },
-    { label: 'QUIT GAME', position: 'bottom' }
+    { label: 'LEADER-BOARD', position: 'center' },
+    { label: 'SETTINGS', position: 'top' }
 ];
 
 export const CircleButton = ({ label, onClick, className }) => {
@@ -27,11 +26,11 @@ export const CircleButton = ({ label, onClick, className }) => {
     );
 };
 
-export const BottomButton = ({ label, onClick, className }) => {
+export const TopButton = ({ label, onClick, className }) => {
     return (
         <div className={className}>
             <button 
-                className="bottomButton"  // Unique class for styling bottom buttons
+                className="TopButton"
                 onClick={onClick}
                 aria-label={label}
                 tabIndex={0}
@@ -84,9 +83,8 @@ function Home() {
             <div className="content">
                 <header className="titleContainer">
                     <h1 className="gameTitle">
-                        GAME<br />OF THE
-                    </h1>
-                    <div className="generalsText">GENERALS</div>
+                        GAME OF THE
+                    <div className="generalsText">GENERALS</div></h1>
                     <div className="ggText">GG</div>
                     <img
                         loading="lazy"
@@ -136,11 +134,11 @@ function Home() {
     ))}
 </nav>
 
-<nav className="bottomMenu">
+<nav className="TopMenu">
   {menuItems
-    .filter(item => item.position === 'bottom')
+    .filter(item => item.position === 'top')
     .map(item => (
-      <BottomButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
+      <TopButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
     ))}
 </nav>
 

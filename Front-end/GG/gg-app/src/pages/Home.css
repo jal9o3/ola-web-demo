@@ -1,46 +1,64 @@
 @import url('https://fonts.googleapis.com/css2?family=Almendra&display=swap');
 
 html, body {
+    height: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;  /* This hides both horizontal and vertical scrollbars */
 }
 
 .circleButton {
-    border-radius: 25%;
-    background-color: rgba(105, 105, 105, 1);
+    position: relative;
+    width: 7vw;
+    height: 12vw;
+    background-color: rgb(41, 118, 133);
     display: grid;
     justify-content: center;
     align-items: center;
-    width: 7vw;
-    height: 7vw;
     cursor: pointer;
     transition: transform 0.2s;
     color: #fff;
     font-size: 1.2vw;
+    text-align: center;
+    clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 80% 100%, 50% 80%, 20% 100%, 0% 80%);
 }
 
-.bottomButton {
-    border-radius: 50px;
-    padding: 20px 25px;
-    background-color: #444;
+.circleButton::before {
+    content: "";
+    position: absolute;
+    top: -1vw; /* Adjust to move the pole above the button */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 7vw; /* Thickness of the pole */
+    height: 2.5vw; /* Length of the pole */
+    background-color: #092a2f; /* Color of the pole */
+    border-radius: 100px; /* Slight rounding for a smoother look */
+}
+
+.circleButton:hover {
+    transform: scale(1.1);
+    background-color: rgba(80, 80, 80, 1);
+}
+
+
+.TopButton {
+    border-radius: 100%;
+    padding: 10px 30px;
+    background-color: #19635f;
     color: #fff;
     border: none;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.bottomButton:hover {
+.TopButton:hover {
     background-color: #222;
     transform: scale(1.1);
 }
 
-.circleButton:hover {
-    transform: scale(1.1);
-}
-
 .circleButton:focus {
-    outline: 3px solid #82cbed;
+    outline: 10px solid #82cbed;
     outline-offset: 2px;
 }
 
@@ -53,6 +71,10 @@ html, body {
 
 .container {
     display: flex;
+    right: 0%;
+    left: 0%;
+    top: 0%;
+    top: 0%;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -60,17 +82,17 @@ html, body {
     font-family: Inter, sans-serif;
     font-weight: 500;
     text-align: center;
-    height: 100vh;
-    width: 100vw;
-    position: relative;
+    height: 100%;
+    width: 100%;
+    position:fixed;
 }
 
 .backgroundImage {
     position: absolute;
-    inset: 0;
+    inset: 0%;
     height: 100%;
     width: 100%;
-    object-fit: cover;
+    object-fit:cover;
     object-position: center;
 }
 
@@ -80,7 +102,7 @@ html, body {
     flex-direction: column;
     align-items: center;
     color: #000;
-    width: 80%;
+    width: 70%;
     max-width: 1200px;
 }
 
@@ -92,80 +114,86 @@ html, body {
     align-items: center;
     color: #fff;
     font-family: Almendra, sans-serif;
-    padding: 20px;
+    padding: 5%;
     border: 5px solid #78D4FF;
-    width: 30vw;
-    max-width: 350px;
-    margin-top: -35vh;
+    height: 100%;
+    width: 50%;
+    max-width: 350%;
+    margin-top: -15%;
 }
 
 .gameTitle {
-    font-size: 2vw;
-    margin-top: 10px;
+    font-size: 250%;
+    margin-top: 0%;
 }
 
 .generalsText {
-    font-size: 3.5vw;
-    margin-top: -20px;
+    font-size: 200%;
+    margin-top: 0%;
 }
 
 .ggText {
-    font-size: 4vw;
-    margin-top: 5px;
+    font-size: 600%;
+    margin-top: -5%;
 }
 
 .logo {
-    width: 5vw;
-    max-width: 80px;
-    margin-top: 0px;
-    margin-bottom: 5px;
+    width: 20%;
+    max-width: 50%;
+    margin-top: 0%;
+    margin-bottom: 0%;
 }
 
-.rightMenu1, .leftMenu1, .rightMenu2, .leftMenu2, .centerMenu, .bottomMenu {
+.rightMenu1, .leftMenu1, .rightMenu2, .leftMenu2, .centerMenu, .TopMenu {
     display: flex;
     position: absolute;
-    gap: 50px;
+    gap: 10%;
 }
 
 .rightMenu1 {
-    top: -15vh;
-    right: 18vw;
+    margin-bottom: 10%;
+    top: 40%;
+    right: 3%;
     flex-direction: column;
 }
 
 .rightMenu2 {
-    top: 5vh;
-    right: 23vw;
+    margin-bottom: 10%;
+    top: 75%;
+    right: 23%;
     flex-direction: column;
 }
 
 .leftMenu1 {
-    top: -15vh;
-    left: 18vw;
+    margin-bottom: 10%;
+    top: 40%;
+    left: 3%;
     flex-direction: column;
 }
 
-.leftMenu2 {
-    top: 5vh;
-    left: 23vw;
+.leftMenu2 {    
+    margin-bottom: 10%;
+    top: 75%;
+    left: 23%;
     flex-direction: column;
 }
 
 .centerMenu {
-    top: 13vh;
+    margin-bottom: 10%;
+    top: 95%;
     left: 50%;
     transform: translateX(-50%);
     flex-direction: column;
     gap: 20px;
 }
 
-.bottomMenu {
-    bottom: -35vh;
-    left: 50%;
+.TopMenu {
+    bottom: 160%;
+    left: 113%;
     transform: translateX(-50%);
     display: flex;
     gap: 1200px;
-    border-radius: 50px;
+    border-radius: 100%;
 }
 
 @media (max-width: 991px) {
@@ -173,7 +201,7 @@ html, body {
         position: static;
         margin: 20px 0;
     }
-    .centerMenu, .bottomMenu {
+    .centerMenu, .TopMenu {
         position: static;
         margin: 20px auto;
     }
