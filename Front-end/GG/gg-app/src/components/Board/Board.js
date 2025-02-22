@@ -97,7 +97,8 @@ const Board = () => {
             const isValidMove =
                 (row === position.row - 1 && col === position.col) ||  // Up
                 (row === position.row && col === position.col - 1) ||  // Left
-                (row === position.row && col === position.col + 1);    // Right
+                (row === position.row && col === position.col + 1) ||  // Right
+                (row === position.row + 1 && col === position.col);    // Down
     
             // Check for opponent's pieces
             const opponentPiece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team !== team);
