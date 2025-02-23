@@ -210,6 +210,29 @@ const Board = () => {
 
     const allPiecesPlaced = pieces.every(piece => piece.position !== null);
 
+    const handleHelpClick = () => { 
+        const hierarchy = `
+            Rank Hierarchy:
+
+            5-star General: 10
+            4-star General: 9
+            3-star General: 8
+            2-star General: 7
+            1-star General: 6
+            Lieutenant Colonel: 5
+            Colonel: 4
+            Major: 3
+            Captain: 2
+            1st Lieutenant: 1
+            2nd Lieutenant: 1
+            Sergeant: 1
+            Private: 0
+            Spy: 11 (Spy can eliminate all officers)
+            Flag: -1 (Flag can be eliminated by any piece)
+        `;
+        alert(hierarchy);
+    };
+
     return (
         <div className='board-container'>
             <button 
@@ -257,31 +280,37 @@ const Board = () => {
             </div>
 
             <div className='piece-selection'>
-    {!allPiecesPlaced && <h3>Available Pieces</h3>}
-    <div className='pieces-list'>
-        {!allPiecesPlaced ? (
-            pieces
-                .filter(piece => piece.position === null)
-                .map(piece => (
-                    <div key={piece.id} className="piece-container">
-                        <img
-                            src={piece.src}
-                            alt={piece.name}
-                            className='piece-image'
-                            draggable={!gameStarted}
-                            onDragStart={(e) => handleDragStart(e, piece.id)}
-                            onMouseEnter={(e) => {
-                                setTooltip({ visible: true, text: piece.name, position: { x: e.clientX, y: e.clientY } });
-                            }}
-                            onMouseLeave={() => setTooltip({ visible: false, text: '', position: { x: 0, y: 0 } })}
-                        />
-                    </div>
-                ))
-        ) : (
-            <p></p> // Optional message when all pieces are placed
-        )}
-    </div>
-</div>
+                <div className='above-content'>
+                    {!allPiecesPlaced && <h3>Available Pieces</h3>}
+                    <button 
+                        onClick={handleHelpClick}
+                        className="help-button">?</button>
+                </div>
+                <div className='pieces-list'>
+                    {!allPiecesPlaced ? (
+                        pieces
+                            .filter(piece => piece.position === null)
+                            .map(piece => (
+                                <div key={piece.id} className="piece-container">
+                                    <img
+                                        src={piece.src}
+                                        alt={piece.name}
+                                        className='piece-image'
+                                        draggable={!gameStarted}
+                                        onDragStart={(e) => handleDragStart(e, piece.id)}
+                                        onMouseEnter={(e) => {
+                                            setTooltip({ visible: true, text: piece.name, position: { x: e.clientX, y: e.clientY } });
+                                        }}
+                                        onMouseLeave={() => setTooltip({ visible: false, text: '', position: { x: 0, y: 0 } })}
+                                    />
+                                </div>
+                            ))
+                    ) : (
+                        <p></p> // Optional message when all pieces are placed
+                    )}
+                </div>
+                
+            </div>
         </div>
     );
 };
