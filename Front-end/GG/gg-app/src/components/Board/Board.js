@@ -87,6 +87,24 @@ const Board = () => {
     const [opponentVisible, setOpponentVisible] = useState(false);
     const [tooltip, setTooltip] = useState({ visible: false, text: '', position: { x: 0, y: 0 } });
 
+    const rankHierarchy = {
+        "5-star General": 10,
+        "4-star General": 9,
+        "3-star General": 8,
+        "2-star General": 7,
+        "1-star General": 6,
+        "Lieutenant Colonel": 5,
+        "Colonel": 4,
+        "Major": 3,
+        "Captain": 2,
+        "1st Lieutenant": 1,
+        "2nd Lieutenant": 1,
+        "Sergeant": 1,
+        "Private": 0,
+        "Spy": 11, // Spy can eliminate all officers
+        "Flag": -1 // Flag can be eliminated by any piece
+    };
+
     const handleTileClick = (row, col) => {
         if (!gameStarted) return;
     
@@ -112,6 +130,11 @@ const Board = () => {
                     if (selectedRank > opponentRank) {
                         // Player's piece wins
                         setPieces(prevPieces => prevPieces.filter(p => p.id !== opponentPiece.id)); // Remove opponent piece
+                        setPieces(prevPieces => 
+                            prevPieces.map(p =>
+                                p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+                            )
+                        );
                     } else if (selectedRank < opponentRank) {
                         // Opponent's piece wins
                         setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id)); // Remove player's piece
@@ -138,14 +161,6 @@ const Board = () => {
             const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
             if (piece) setSelectedPiece(piece);
         }
-    };
-
-    const Tooltip = ({ text, position }) => {
-        return (
-            <div className="piece-tooltip" style={{ top: position.y, left: position.x }}>
-                {text}
-            </div>
-        );
     };
 
     const handleDrop = (e, row, col) => {
@@ -184,31 +199,13 @@ const Board = () => {
         setTimeout(() => setPlayClicked(false), 10000);
     };
 
-    const handleDragStart = (e, pieceId) => {
-        e.dataTransfer.setData("pieceId", pieceId);
+    const Tooltip = ({ text, position }) => {
+        return (
+            <div className="piece-tooltip" style={{ top: position.y, left: position.x }}>
+                {text}
+            </div>
+        );
     };
-
-    const rankHierarchy = {
-        "5-star General": 10,
-        "4-star General": 9,
-        "3-star General": 8,
-        "2-star General": 7,
-        "1-star General": 6,
-        "Lieutenant Colonel": 5,
-        "Colonel": 4,
-        "Major": 3,
-        "Captain": 2,
-        "1st Lieutenant": 1,
-        "2nd Lieutenant": 1,
-        "Sergeant": 1,
-        "Private": 0,
-        "Spy": 11, // Spy can eliminate all officers
-        "Flag": -1 // Flag can be eliminated by any piece
-    };
-
-    const allowDrop = (e) => e.preventDefault();
-
-    const allPiecesPlaced = pieces.every(piece => piece.position !== null);
 
     const handleHelpClick = () => { 
         const hierarchy = `
@@ -232,6 +229,16 @@ const Board = () => {
         `;
         alert(hierarchy);
     };
+
+    const handleDragStart = (e, pieceId) => {
+        e.dataTransfer.setData("pieceId", pieceId);
+    };
+
+    const allowDrop = (e) => e.preventDefault();
+
+    const allPiecesPlaced = pieces.every(piece => piece.position !== null);
+
+    
 
     return (
         <div className='board-container'>
@@ -286,6 +293,7 @@ const Board = () => {
                         onClick={handleHelpClick}
                         className="help-button">?</button>
                 </div>
+
                 <div className='pieces-list'>
                     {!allPiecesPlaced ? (
                         pieces
