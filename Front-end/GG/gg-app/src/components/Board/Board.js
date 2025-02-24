@@ -118,8 +118,9 @@ const Board = () => {
                 (row === position.row && col === position.col + 1) ||  // Right
                 (row === position.row + 1 && col === position.col);    // Down
     
-            // Check for opponent's pieces
+            // Check for opponent and allied pieces 
             const opponentPiece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team !== team);
+            const alliedPiece = pieces.some(p => p.position?.row === row && p.position?.col === col && p.team == team);
     
             if (isValidMove) {
                 if (opponentPiece) {
@@ -142,6 +143,9 @@ const Board = () => {
                         // Both pieces are eliminated
                         setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id && p.id !== opponentPiece.id));
                     }
+                } else if (alliedPiece){
+                        //alert("Allies cannot be challenged! Choose another spot.");
+                        return;
                 } else {
                     // Move the selected piece if no opponent piece is present
                     setPieces(prevPieces => 
@@ -151,6 +155,7 @@ const Board = () => {
                     );
                 }
                 setSelectedPiece(null); // Deselect the piece after the move
+
             } else {
                 // If the move is invalid, do not change the selected piece
                 const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
@@ -179,7 +184,7 @@ const Board = () => {
         // Prevent placing pieces on top of each other
         const isOccupied = pieces.some(p => p.position?.row === row && p.position?.col === col);
         if (isOccupied) {
-            alert("This tile is already occupied! Choose another spot.");
+            //alert("This tile is already occupied! Choose another spot.");
             return;
         }
     
