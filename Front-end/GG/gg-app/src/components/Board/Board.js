@@ -120,7 +120,7 @@ const Board = () => {
     
             // Check for opponent and allied pieces 
             const opponentPiece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team !== team);
-            const alliedPiece = pieces.some(p => p.position?.row === row && p.position?.col === col && p.team == team);
+            const alliedPiece = pieces.some(p => p.position?.row === row && p.position?.col === col && p.team === team);
     
             if (isValidMove) {
                 if (opponentPiece) {
