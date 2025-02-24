@@ -87,6 +87,24 @@ const Board = () => {
     const [opponentVisible, setOpponentVisible] = useState(false);
     const [tooltip, setTooltip] = useState({ visible: false, text: '', position: { x: 0, y: 0 } });
 
+    const rankHierarchy = {
+        "5-star General": 10,
+        "4-star General": 9,
+        "3-star General": 8,
+        "2-star General": 7,
+        "1-star General": 6,
+        "Lieutenant Colonel": 5,
+        "Colonel": 4,
+        "Major": 3,
+        "Captain": 2,
+        "1st Lieutenant": 1,
+        "2nd Lieutenant": 1,
+        "Sergeant": 1,
+        "Private": 0,
+        "Spy": 11, // Spy can eliminate all officers
+        "Flag": -1 // Flag can be eliminated by any piece
+    };
+
     const handleTileClick = (row, col) => {
         if (!gameStarted) return;
     
@@ -97,10 +115,12 @@ const Board = () => {
             const isValidMove =
                 (row === position.row - 1 && col === position.col) ||  // Up
                 (row === position.row && col === position.col - 1) ||  // Left
-                (row === position.row && col === position.col + 1);    // Right
+                (row === position.row && col === position.col + 1) ||  // Right
+                (row === position.row + 1 && col === position.col);    // Down
     
-            // Check for opponent's pieces
+            // Check for opponent and allied pieces 
             const opponentPiece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team !== team);
+            const alliedPiece = pieces.some(p => p.position?.row === row && p.position?.col === col && p.team == team);
     
             if (isValidMove) {
                 if (opponentPiece) {
@@ -111,6 +131,11 @@ const Board = () => {
                     if (selectedRank > opponentRank) {
                         // Player's piece wins
                         setPieces(prevPieces => prevPieces.filter(p => p.id !== opponentPiece.id)); // Remove opponent piece
+                        setPieces(prevPieces => 
+                            prevPieces.map(p =>
+                                p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+                            )
+                        );
                     } else if (selectedRank < opponentRank) {
                         // Opponent's piece wins
                         setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id)); // Remove player's piece
@@ -118,6 +143,9 @@ const Board = () => {
                         // Both pieces are eliminated
                         setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id && p.id !== opponentPiece.id));
                     }
+                } else if (alliedPiece){
+                        //alert("Allies cannot be challenged! Choose another spot.");
+                        return;
                 } else {
                     // Move the selected piece if no opponent piece is present
                     setPieces(prevPieces => 
@@ -127,6 +155,7 @@ const Board = () => {
                     );
                 }
                 setSelectedPiece(null); // Deselect the piece after the move
+
             } else {
                 // If the move is invalid, do not change the selected piece
                 const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
@@ -137,14 +166,6 @@ const Board = () => {
             const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
             if (piece) setSelectedPiece(piece);
         }
-    };
-
-    const Tooltip = ({ text, position }) => {
-        return (
-            <div className="piece-tooltip" style={{ top: position.y, left: position.x }}>
-                {text}
-            </div>
-        );
     };
 
     const handleDrop = (e, row, col) => {
@@ -163,7 +184,7 @@ const Board = () => {
         // Prevent placing pieces on top of each other
         const isOccupied = pieces.some(p => p.position?.row === row && p.position?.col === col);
         if (isOccupied) {
-            alert("This tile is already occupied! Choose another spot.");
+            //alert("This tile is already occupied! Choose another spot.");
             return;
         }
     
@@ -183,31 +204,46 @@ const Board = () => {
         setTimeout(() => setPlayClicked(false), 10000);
     };
 
-    const handleDragStart = (e, pieceId) => {
-        e.dataTransfer.setData("pieceId", pieceId);
+    const Tooltip = ({ text, position }) => {
+        return (
+            <div className="piece-tooltip" style={{ top: position.y, left: position.x }}>
+                {text}
+            </div>
+        );
     };
 
-    const rankHierarchy = {
-        "5-star General": 10,
-        "4-star General": 9,
-        "3-star General": 8,
-        "2-star General": 7,
-        "1-star General": 6,
-        "Lieutenant Colonel": 5,
-        "Colonel": 4,
-        "Major": 3,
-        "Captain": 2,
-        "1st Lieutenant": 1,
-        "2nd Lieutenant": 1,
-        "Sergeant": 1,
-        "Private": 0,
-        "Spy": 11, // Spy can eliminate all officers
-        "Flag": -1 // Flag can be eliminated by any piece
+    const handleHelpClick = () => { 
+        const hierarchy = `
+            Rank Hierarchy:
+
+            5-star General: 10
+            4-star General: 9
+            3-star General: 8
+            2-star General: 7
+            1-star General: 6
+            Lieutenant Colonel: 5
+            Colonel: 4
+            Major: 3
+            Captain: 2
+            1st Lieutenant: 1
+            2nd Lieutenant: 1
+            Sergeant: 1
+            Private: 0
+            Spy: 11 (Spy can eliminate all officers)
+            Flag: -1 (Flag can be eliminated by any piece)
+        `;
+        alert(hierarchy);
+    };
+
+    const handleDragStart = (e, pieceId) => {
+        e.dataTransfer.setData("pieceId", pieceId);
     };
 
     const allowDrop = (e) => e.preventDefault();
 
     const allPiecesPlaced = pieces.every(piece => piece.position !== null);
+
+    
 
     return (
         <div className='board-container'>
@@ -256,31 +292,38 @@ const Board = () => {
             </div>
 
             <div className='piece-selection'>
-    {!allPiecesPlaced && <h3>Available Pieces</h3>}
-    <div className='pieces-list'>
-        {!allPiecesPlaced ? (
-            pieces
-                .filter(piece => piece.position === null)
-                .map(piece => (
-                    <div key={piece.id} className="piece-container">
-                        <img
-                            src={piece.src}
-                            alt={piece.name}
-                            className='piece-image'
-                            draggable={!gameStarted}
-                            onDragStart={(e) => handleDragStart(e, piece.id)}
-                            onMouseEnter={(e) => {
-                                setTooltip({ visible: true, text: piece.name, position: { x: e.clientX, y: e.clientY } });
-                            }}
-                            onMouseLeave={() => setTooltip({ visible: false, text: '', position: { x: 0, y: 0 } })}
-                        />
-                    </div>
-                ))
-        ) : (
-            <p></p> // Optional message when all pieces are placed
-        )}
-    </div>
-</div>
+                <div className='above-content'>
+                    {!allPiecesPlaced && <h3>Available Pieces</h3>}
+                    <button 
+                        onClick={handleHelpClick}
+                        className="help-button">?</button>
+                </div>
+
+                <div className='pieces-list'>
+                    {!allPiecesPlaced ? (
+                        pieces
+                            .filter(piece => piece.position === null)
+                            .map(piece => (
+                                <div key={piece.id} className="piece-container">
+                                    <img
+                                        src={piece.src}
+                                        alt={piece.name}
+                                        className='piece-image'
+                                        draggable={!gameStarted}
+                                        onDragStart={(e) => handleDragStart(e, piece.id)}
+                                        onMouseEnter={(e) => {
+                                            setTooltip({ visible: true, text: piece.name, position: { x: e.clientX, y: e.clientY } });
+                                        }}
+                                        onMouseLeave={() => setTooltip({ visible: false, text: '', position: { x: 0, y: 0 } })}
+                                    />
+                                </div>
+                            ))
+                    ) : (
+                        <p></p> // Optional message when all pieces are placed
+                    )}
+                </div>
+                
+            </div>
         </div>
     );
 };
