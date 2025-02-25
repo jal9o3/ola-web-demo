@@ -142,7 +142,7 @@ const Board = () => {
         if (selectedPiece) {
             const { position, team, name } = selectedPiece;
     
-            // Allow moves only Up, Left, or Right (one tile)
+            // Allow moves in all directions (one tile)
             const isValidMove =
                 (row === position.row - 1 && col === position.col) ||  // Up
                 (row === position.row && col === position.col - 1) ||  // Left
@@ -155,28 +155,63 @@ const Board = () => {
     
             if (isValidMove) {
                 if (opponentPiece) {
-                    const opponentRank = rankHierarchy[opponentPiece.name];
-                    const selectedRank = rankHierarchy[name];
-    
-                    // Determine the outcome based on ranks
-                    if (selectedRank > opponentRank) {
-                        // Player's piece wins
-                        setPieces(prevPieces => prevPieces.filter(p => p.id !== opponentPiece.id)); // Remove opponent piece
+                    // Handle special case for Spy first
+                    if (name === "Spy" && opponentPiece.name === "Private") {
+                        // Spy loses to Private
+                        console.log(`${opponentPiece.name} defeats ${name}`);
+                        setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id));
+                    } else if (name === "Spy" && opponentPiece.name !== "Flag") {
+                        // Spy wins against all officers
+                        console.log(`${name} defeats ${opponentPiece.name}`);
                         setPieces(prevPieces => 
-                            prevPieces.map(p =>
+                            prevPieces.map(p => 
                                 p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
-                            )
+                            ).filter(p => p.id !== opponentPiece.id)
                         );
-                    } else if (selectedRank < opponentRank) {
-                        // Opponent's piece wins
-                        setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id)); // Remove player's piece
+                    } else if (opponentPiece.name === "Spy" && name === "Private") {
+                        // Private defeats Spy
+                        console.log(`${name} defeats ${opponentPiece.name}`);
+                        setPieces(prevPieces => 
+                            prevPieces.map(p => 
+                                p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+                            ).filter(p => p.id !== opponentPiece.id)
+                        );
+                    } else if (opponentPiece.name === "Spy" && name !== "Flag") {
+                        // Spy defeats all officers
+                        console.log(`${opponentPiece.name} defeats ${name}`);
+                        setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id));
                     } else {
-                        // Both pieces are eliminated
-                        setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id && p.id !== opponentPiece.id));
+                        // Regular combat resolution based on rank
+                        const selectedRank = rankHierarchy[name];
+                        const opponentRank = rankHierarchy[opponentPiece.name];
+    
+                        if (selectedRank > opponentRank) {
+                            // Player's piece wins
+                            console.log(`${name} defeats ${opponentPiece.name}`);
+                            setPieces(prevPieces => 
+                                prevPieces.map(p => 
+                                    p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+                                ).filter(p => p.id !== opponentPiece.id)
+                            );
+                        } else if (selectedRank < opponentRank) {
+                            // Opponent's piece wins
+                            console.log(`${opponentPiece.name} defeats ${name}`);
+                            setPieces(prevPieces => 
+                                prevPieces.map(p => 
+                                    p.id === opponentPiece.id ? { ...p, position: { row, col } } : p
+                                ).filter(p => p.id !== selectedPiece.id)
+                            );
+                        } else {
+                            // Both pieces are eliminated
+                            console.log(`${name} and ${opponentPiece.name} are both eliminated`);
+                            setPieces(prevPieces => 
+                                prevPieces.filter(p => p.id !== selectedPiece.id && p.id !== opponentPiece.id)
+                            );
+                        }
                     }
-                } else if (alliedPiece){
-                        //alert("Allies cannot be challenged! Choose another spot.");
-                        return;
+                } else if (alliedPiece) {
+                    // Alert if trying to move to an allied piece
+                    alert("Allies cannot be challenged! Choose another spot.");
                 } else {
                     // Move the selected piece if no opponent piece is present
                     setPieces(prevPieces => 
@@ -186,15 +221,14 @@ const Board = () => {
                     );
                 }
                 setSelectedPiece(null); // Deselect the piece after the move
-
             } else {
-                // If the move is invalid, do not change the selected piece
-                const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
-                if (piece) setSelectedPiece(piece); // Allow selecting a new piece
+                // If the move is invalid, allow selecting a new piece
+                const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
+                if (piece) setSelectedPiece(piece);
             }
         } else {
             // Allow selecting a piece if none is currently selected
-            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
+            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
             if (piece) setSelectedPiece(piece);
         }
     };
