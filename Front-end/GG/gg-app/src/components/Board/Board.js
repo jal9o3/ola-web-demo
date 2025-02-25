@@ -105,6 +105,37 @@ const Board = () => {
         "Flag": -1 // Flag can be eliminated by any piece
     };
 
+    const randomizePieces = () => {
+        const availablePositions = [];
+        for (let row = 5; row <= 7; row++) {
+            for (let col = 0; col < 9; col++) {
+                availablePositions.push({ row, col });
+            }
+        }
+
+        // Shuffle the available positions
+        for (let i = availablePositions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [availablePositions[i], availablePositions[j]] = [availablePositions[j], availablePositions[i]];
+        }
+
+        // Get the pieces that belong to the player
+        const playerPieces = pieces.filter(piece => piece.team === "player" && piece.position === null);
+
+        // Assign random positions to the player pieces
+        const newPieces = playerPieces.map((piece, index) => {
+            const position = availablePositions[index];
+            return { ...piece, position };
+        });
+
+        // Update the pieces state
+        setPieces(prevPieces => 
+            prevPieces.map(piece => 
+                piece.team === "player" ? newPieces.find(p => p.id === piece.id) || piece : piece
+            )
+        );
+    };
+
     const handleTileClick = (row, col) => {
         if (!gameStarted) return;
     
@@ -242,18 +273,27 @@ const Board = () => {
     const allowDrop = (e) => e.preventDefault();
 
     const allPiecesPlaced = pieces.every(piece => piece.position !== null);
-
     
 
     return (
         <div className='board-container'>
-            <button 
-                onClick={handlePlayClick} 
-                className={`play-button ${allPiecesPlaced ? '' : 'disabled'} ${playClicked ? 'clicked' : ''}`}
-                disabled={!allPiecesPlaced}
-            >
-                Play
-            </button>
+            <div className='button-container'>
+                <button 
+                    onClick={handlePlayClick} 
+                    className={`play-button ${allPiecesPlaced ? '' : 'disabled'} ${playClicked ? 'clicked' : ''}`}
+                    disabled={!allPiecesPlaced}
+                >
+                    Play
+                </button>
+
+                <button 
+                    onClick={randomizePieces} 
+                    className="randomize-button"
+                    disabled={gameStarted} // Disable if the game has started
+                >
+                    Randomize
+                </button>
+            </div>
 
             <div className='game-board'>
                 {Array.from({ length: 8 }).map((_, row) =>
