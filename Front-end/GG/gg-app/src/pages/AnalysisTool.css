@@ -12,6 +12,7 @@
     grid-template-rows: repeat(8, 80px);
     gap: 2px;
     background-color: black;
+    place-content: fixed;
 }
 
 .tile {
@@ -49,15 +50,21 @@
 }
 
 .analysis-container {
-    margin-left: 20px;
-    padding: 20px;
+    text-align: center;
+    margin-left: 5%;
+    width: 400px;
     background-color: #f8f9fa;
     border: 1px solid #ced4da;
     border-radius: 5px;
+    height: 400px; /* Set a fixed height */
+    overflow-y: auto; /* Allow scrolling if content exceeds height */
 }
 
 .suggested-moves {
-    margin-top: 10px;
+    text-align: left;
+    margin-left: 5%;
+    margin-top: 10%;
+    width: 280px;
     font-size: 14px;
 }
 
@@ -68,8 +75,9 @@
     font-size: 18px;
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 5px; /* You can adjust the border-radius if needed */
     cursor: pointer;
+    margin-left:0%; /* This pushes the button to the right */
 }
 
 .play-button:disabled {
@@ -79,5 +87,5 @@
 
 .tile.suggested-win {
     border: 2px solid #2ecc71;
-    background-color: rgba(0, 0, 0,0)
+    background-color: rgba(0, 0, 0, 0);
 }
