@@ -34,4 +34,7 @@ class GameSerializer(serializers.ModelSerializer):
 class GameSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameSession
-        fields = ['player1', 'player2', 'game', 'is_active', 'access_key', 'name']
+        fields = ['name']
+        extra_kwargs = {
+            'name': {'required': True}
+        }
