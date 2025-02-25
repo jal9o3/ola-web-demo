@@ -8,16 +8,17 @@ from .views import (
     GameRetrieveUpdateDestroyView,
     MoveListCreateView,
     MoveRetrieveUpdateDestroyView,
+    GameSessionListCreateView,
+    GameSessionRetrieveUpdateDestroyView
 )
 
 urlpatterns = [
     path('players/', PlayerListCreateView.as_view(), name='player-list-create'),
-    path('players/<int:pk>/', PlayerRetrieveUpdateDestroyView.as_view(),
-         name='player-detail'),
+    path('players/<int:pk>/', PlayerRetrieveUpdateDestroyView.as_view(), name='player-retrieve-update-destroy'),
     path('games/', GameListCreateView.as_view(), name='game-list-create'),
-    path('games/<int:pk>/', GameRetrieveUpdateDestroyView.as_view(),
-         name='game-detail'),
+    path('games/<int:pk>/', GameRetrieveUpdateDestroyView.as_view(), name='game-retrieve-update-destroy'),
     path('moves/', MoveListCreateView.as_view(), name='move-list-create'),
-    path('moves/<int:pk>/', MoveRetrieveUpdateDestroyView.as_view(),
-         name='move-detail'),
+    path('moves/<int:pk>/', MoveRetrieveUpdateDestroyView.as_view(), name='move-retrieve-update-destroy'),
+    path('sessions/', GameSessionListCreateView.as_view(), name='session-list-create'),
+    path('sessions/<int:pk>/', GameSessionRetrieveUpdateDestroyView.as_view(), name='session-retrieve-update-destroy'),
 ]

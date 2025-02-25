@@ -39,3 +39,15 @@ class Move(models.Model):
 
     def __str__(self):
         return f"Move {self.move_number} by {self.player} in Game {self.game.id}"
+
+
+class GameSession(models.Model):
+    player1 = models.ForeignKey(Player, related_name='player1_sessions', on_delete=models.CASCADE)
+    player2 = models.ForeignKey(Player, related_name='player2_sessions', on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Session between {self.player1} and {self.player2} for game {self.game}"

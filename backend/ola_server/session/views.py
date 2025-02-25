@@ -3,8 +3,8 @@ from django.shortcuts import render
 # session/views.py
 
 from rest_framework import generics
-from .models import Player, Game, Move
-from .serializers import PlayerSerializer, GameSerializer, MoveSerializer
+from .models import Player, Game, Move, GameSession
+from .serializers import PlayerSerializer, GameSerializer, MoveSerializer, GameSessionSerializer
 
 
 class PlayerListCreateView(generics.ListCreateAPIView):
@@ -35,3 +35,13 @@ class MoveListCreateView(generics.ListCreateAPIView):
 class MoveRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Move.objects.all()
     serializer_class = MoveSerializer
+
+
+class GameSessionListCreateView(generics.ListCreateAPIView):
+    queryset = GameSession.objects.all()
+    serializer_class = GameSessionSerializer
+
+
+class GameSessionRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = GameSession.objects.all()
+    serializer_class = GameSessionSerializer

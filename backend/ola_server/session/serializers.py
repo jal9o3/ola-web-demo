@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Player
 from .models import Move
 from .models import Game
+from .models import GameSession
 
 
 class PlayerSerializer(serializers.ModelSerializer):
@@ -28,3 +29,9 @@ class GameSerializer(serializers.ModelSerializer):
         model = Game
         fields = ['id', 'player1', 'player2', 'player1_initial_formation',
                   'player2_initial_formation', 'start_time', 'end_time', 'moves']
+
+
+class GameSessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GameSession
+        fields = '__all__'
