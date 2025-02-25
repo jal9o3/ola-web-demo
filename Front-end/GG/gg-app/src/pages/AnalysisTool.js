@@ -1,3 +1,4 @@
+// AnalysisTool.js
 import React, { useState, useEffect } from 'react';
 import './AnalysisTool.css'; // Ensure you create this CSS file
 
@@ -110,63 +111,53 @@ const AnalysisTool = () => {
         if (selectedPiece && gameStarted) {
             const { position, team } = selectedPiece;
             const moves = [];
-            
-            // Check all four directions (up, down, left, right)
+    
+            // Define possible movement directions
             const directions = [
                 { row: position.row - 1, col: position.col }, // Up
                 { row: position.row + 1, col: position.col }, // Down
                 { row: position.row, col: position.col - 1 }, // Left
                 { row: position.row, col: position.col + 1 }  // Right
             ];
-            
+    
+            // Evaluate each direction for valid moves
             directions.forEach(dir => {
-                // Check if direction is within board boundaries
                 if (dir.row >= 0 && dir.row < 8 && dir.col >= 0 && dir.col < 9) {
-                    // Check if there's an allied piece at this position
-                    const alliedPiece = pieces.some(p => 
+                    const isAlliedPiece = pieces.some(p => 
                         p.position?.row === dir.row && 
                         p.position?.col === dir.col && 
                         p.team === team
                     );
-                    
-                    if (!alliedPiece) {
-                        // Get opponent piece at this position, if any
+    
+                    if (!isAlliedPiece) {
                         const opponentPiece = pieces.find(p => 
                             p.position?.row === dir.row && 
                             p.position?.col === dir.col && 
                             p.team !== team
                         );
-                        
-                        let moveType = "move";
+    
+                        let moveType = opponentPiece ? "attack" : "move";
                         let probability = 100;
                         let outcomeDescription = "Safe move";
-                        
+    
+                        // Determine combat outcomes
                         if (opponentPiece) {
-                            moveType = "attack";
-                            
-                            // Calculate combat outcome probability based on ranks
                             const { name } = selectedPiece;
-                            
-                            // Special case for Spy
+                            const selectedRank = rankHierarchy[name];
+                            const opponentRank = rankHierarchy[opponentPiece.name];
+    
                             if (name === "Spy" && opponentPiece.name === "Private") {
                                 probability = 0;
                                 outcomeDescription = "Defeat: Spy loses to Private";
-                            } else if (name === "Spy" && opponentPiece.name !== "Flag") {
-                                probability = 100;
+                            } else if (name === "Spy") {
                                 outcomeDescription = "Victory: Spy defeats officer";
                             } else if (opponentPiece.name === "Spy" && name === "Private") {
-                                probability = 100;
                                 outcomeDescription = "Victory: Private defeats Spy";
-                            } else if (opponentPiece.name === "Spy" && name !== "Flag") {
+                            } else if (opponentPiece.name === "Spy") {
                                 probability = 0;
                                 outcomeDescription = "Defeat: Spy defeats officer";
                             } else {
-                                // Regular combat resolution
-                                const selectedRank = rankHierarchy[name];
-                                const opponentRank = rankHierarchy[opponentPiece.name];
-                                
                                 if (selectedRank > opponentRank) {
-                                    probability = 100;
                                     outcomeDescription = `Victory: ${name} defeats ${opponentPiece.name}`;
                                 } else if (selectedRank < opponentRank) {
                                     probability = 0;
@@ -177,7 +168,7 @@ const AnalysisTool = () => {
                                 }
                             }
                         }
-                        
+    
                         moves.push({
                             position: { row: dir.row, col: dir.col },
                             type: moveType,
@@ -188,122 +179,161 @@ const AnalysisTool = () => {
                     }
                 }
             });
-            
+    
             setValidMoves(moves);
-            
-            // Generate suggested moves based on valid moves, prioritizing:
-            // 1. Wins (100% probability)
-            // 2. Safe moves (no opponent)
-            // 3. Avoid losses (0% probability)
+    
+            // Generate suggested moves based on valid moves
             const winningMoves = moves.filter(move => move.type === "attack" && move.probability === 100);
             const safeMoves = moves.filter(move => move.type === "move");
-            
+    
             const sortedMoves = [
-                ...winningMoves.sort((a, b) => {
-                    const rankA = a.opponentPiece ? rankHierarchy[a.opponentPiece.name] : -999;
-                    const rankB = b.opponentPiece ? rankHierarchy[b.opponentPiece.name] : -999;
-                    return rankB - rankA; // Higher rank opponents first
-                }),
+                ...winningMoves,
                 ...safeMoves
             ];
-            
+    
             // Add probability/confidence values
             const suggestedWithConfidence = sortedMoves.map((move, index) => {
                 const baseConfidence = index === 0 ? 90 : 90 - (index * 15);
                 const confidence = Math.max(baseConfidence, 50);
-                return {
-                    ...move,
-                    confidence
-                };
+                return { ...move, confidence };
             });
-            
+    
             setSuggestedMoves(suggestedWithConfidence.slice(0, 3)); // Top 3 suggestions
         } else {
             setValidMoves([]);
             setSuggestedMoves([]);
         }
     }, [selectedPiece, pieces, gameStarted]);
+    
 
     const handleTileClick = (row, col) => {
         if (!gameStarted) return;
     
-        const clickedPiece = pieces.find(p => p.position?.row === row && p.position?.col === col);
-    
         if (selectedPiece) {
-            const isValidMove = validMoves.some(m => m.position.row === row && m.position.col === col);
-            
+            const { position, team, name } = selectedPiece;
+    
+            // Allow moves in all directions (one tile)
+            const isValidMove =
+                (row === position.row - 1 && col === position.col) ||  // Up
+                (row === position.row && col === position.col - 1) ||  // Left
+                (row === position.row && col === position.col + 1) ||  // Right
+                (row === position.row + 1 && col === position.col);    // Down
+    
+            // Check for opponent and allied pieces 
+            const opponentPiece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team !== team);
+            const alliedPiece = pieces.some(p => p.position?.row === row && p.position?.col === col && p.team === team);
+    
             if (isValidMove) {
-                const moveDetails = validMoves.find(m => m.position.row === row && m.position.col === col);
-                const { opponentPiece } = moveDetails;
-    
                 if (opponentPiece) {
-                    // Combat resolution logic
-                    const playerRank = rankHierarchy[selectedPiece.name];
-                    const enemyRank = rankHierarchy[opponentPiece.name];
-    
-                    if (playerRank > enemyRank) {
-                        // Player wins
-                        setPieces(prevPieces => prevPieces.filter(p => p.id !== opponentPiece.id)
-                            .map(p => p.id === selectedPiece.id ? { ...p, position: { row, col } } : p));
-                    } else if (playerRank < enemyRank) {
-                        // Enemy wins
+                    // Handle special case for Spy first
+                    if (name === "Spy" && opponentPiece.name === "Private") {
+                        // Spy loses to Private
+                        console.log(`${opponentPiece.name} defeats ${name}`);
+                        setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id));
+                    } else if (name === "Spy" && opponentPiece.name !== "Flag") {
+                        // Spy wins against all officers
+                        console.log(`${name} defeats ${opponentPiece.name}`);
+                        setPieces(prevPieces => 
+                            prevPieces.map(p => 
+                                p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+                            ).filter(p => p.id !== opponentPiece.id)
+                        );
+                    } else if (opponentPiece.name === "Spy" && name === "Private") {
+                        // Private defeats Spy
+                        console.log(`${name} defeats ${opponentPiece.name}`);
+                        setPieces(prevPieces => 
+                            prevPieces.map(p => 
+                                p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+                            ).filter(p => p.id !== opponentPiece.id)
+                        );
+                    } else if (opponentPiece.name === "Spy" && name !== "Flag") {
+                        // Spy defeats all officers
+                        console.log(`${opponentPiece.name} defeats ${name}`);
                         setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id));
                     } else {
-                        // Both pieces are eliminated
-                        setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id && p.id !== opponentPiece.id));
+                        // Regular combat resolution based on rank
+                        const selectedRank = rankHierarchy[name];
+                        const opponentRank = rankHierarchy[opponentPiece.name];
+    
+                        if (selectedRank > opponentRank) {
+                            // Player's piece wins
+                            console.log(`${name} defeats ${opponentPiece.name}`);
+                            setPieces(prevPieces => 
+                                prevPieces.map(p => 
+                                    p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+                                ).filter(p => p.id !== opponentPiece.id)
+                            );
+                        } else if (selectedRank < opponentRank) {
+                            // Opponent's piece wins
+                            console.log(`${opponentPiece.name} defeats ${name}`);
+                            setPieces(prevPieces => 
+                                prevPieces.map(p => 
+                                    p.id === opponentPiece.id ? { ...p, position: { row, col } } : p
+                                ).filter(p => p.id !== selectedPiece.id)
+                            );
+                        } else {
+                            // Both pieces are eliminated
+                            console.log(`${name} and ${opponentPiece.name} are both eliminated`);
+                            setPieces(prevPieces => 
+                                prevPieces.filter(p => p.id !== selectedPiece.id && p.id !== opponentPiece.id)
+                            );
+                        }
                     }
+                } else if (alliedPiece) {
+                    // Alert if trying to move to an allied piece
+                    alert("Allies cannot be challenged! Choose another spot.");
                 } else {
-                    // No combat, just move
-                    setPieces(prevPieces =>
+                    // Move the selected piece if no opponent piece is present
+                    setPieces(prevPieces => 
                         prevPieces.map(p =>
                             p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
                         )
                     );
                 }
+                setSelectedPiece(null); // Deselect the piece after the move
+            } else {
+                // If the move is invalid, allow selecting a new piece
+                const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
+                if (piece) setSelectedPiece(piece);
             }
-    
-            setSelectedPiece(null); // Deselect after moving
-            return;
-        }
-    
-        // Selecting a piece
-        if (clickedPiece?.team === "player") {
-            setSelectedPiece(clickedPiece);
+        } else {
+            // Allow selecting a piece if none is currently selected
+            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
+            if (piece) setSelectedPiece(piece);
         }
     };
-    
 
     const allowDrop = (e) => e.preventDefault();
-
+    
     const handleDrop = (e, row, col) => {
         e.preventDefault();
         const pieceId = e.dataTransfer.getData("pieceId");
         if (!pieceId) return;
-        
+    
         const draggedPiece = pieces.find(p => p.id.toString() === pieceId);
         if (!draggedPiece) return;
-        
+    
         if (gameStarted) {
             // Game has started - restrict movement to adjacent tiles
             const { position, team } = draggedPiece;
-            
+    
             // Check if the target position is adjacent to the current position
             const isValidMove =
                 (row === position.row - 1 && col === position.col) ||  // Up
                 (row === position.row && col === position.col - 1) ||  // Left
                 (row === position.row && col === position.col + 1) ||  // Right
                 (row === position.row + 1 && col === position.col);    // Down
-                
+    
             if (!isValidMove) {
                 return; // Prevent dropping on non-adjacent tiles
             }
-            
+    
             // Check for opponent piece in target position
             const opponentPiece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team !== team);
             if (opponentPiece) {
                 // Handle combat using the same logic as in handleTileClick
                 const name = draggedPiece.name;
-                
+    
                 // Handle special case for Spy first
                 if (name === "Spy" && opponentPiece.name === "Private") {
                     // Spy loses to Private
@@ -312,13 +342,19 @@ const AnalysisTool = () => {
                 } else if (name === "Spy" && opponentPiece.name !== "Flag") {
                     // Spy wins against all officers
                     console.log(`${name} defeats ${opponentPiece.name}`);
-                    setPieces(prevPieces => prevPieces.filter(p => p.id !== opponentPiece.id && p.id.toString() !== pieceId)
-                        .concat([{...draggedPiece, position: { row, col }}]));
+                    setPieces(prevPieces => 
+                        prevPieces.map(p => 
+                            p.id === draggedPiece.id ? { ...p, position: { row, col } } : p
+                        ).filter(p => p.id !== opponentPiece.id)
+                    );
                 } else if (opponentPiece.name === "Spy" && name === "Private") {
                     // Private defeats Spy
                     console.log(`${name} defeats ${opponentPiece.name}`);
-                    setPieces(prevPieces => prevPieces.filter(p => p.id !== opponentPiece.id && p.id.toString() !== pieceId)
-                        .concat([{...draggedPiece, position: { row, col }}]));
+                    setPieces(prevPieces => 
+                        prevPieces.map(p => 
+                            p.id === draggedPiece.id ? { ...p, position: { row, col } } : p
+                        ).filter(p => p.id !== opponentPiece.id)
+                    );
                 } else if (opponentPiece.name === "Spy" && name !== "Flag") {
                     // Spy defeats all officers
                     console.log(`${opponentPiece.name} defeats ${name}`);
@@ -331,21 +367,30 @@ const AnalysisTool = () => {
                     if (selectedRank > opponentRank) {
                         // Player's piece wins
                         console.log(`${name} defeats ${opponentPiece.name}`);
-                        setPieces(prevPieces => prevPieces.filter(p => p.id !== opponentPiece.id && p.id.toString() !== pieceId)
-                            .concat([{...draggedPiece, position: { row, col }}]));
+                        setPieces(prevPieces => 
+                            prevPieces.map(p => 
+                                p.id === draggedPiece.id ? { ...p, position: { row, col } } : p
+                            ).filter(p => p.id !== opponentPiece.id)
+                        );
                     } else if (selectedRank < opponentRank) {
                         // Opponent's piece wins
                         console.log(`${opponentPiece.name} defeats ${name}`);
-                        setPieces(prevPieces => prevPieces.filter(p => p.id !== draggedPiece.id));
+                        setPieces(prevPieces => 
+                            prevPieces.map(p => 
+                                p.id === opponentPiece.id ? { ...p, position: { row, col } } : p
+                            ).filter(p => p.id !== draggedPiece.id)
+                        );
                     } else {
                         // Both pieces are eliminated
                         console.log(`${name} and ${opponentPiece.name} are both eliminated`);
-                        setPieces(prevPieces => prevPieces.filter(p => p.id !== draggedPiece.id && p.id !== opponentPiece.id));
+                        setPieces(prevPieces => 
+                            prevPieces.filter(p => p.id !== draggedPiece.id && p.id !== opponentPiece.id)
+                        );
                     }
                 }
                 return;
             }
-            
+    
             // Check for allied piece in target position
             const alliedPiece = pieces.some(p => p.position?.row === row && p.position?.col === col && p.team === team);
             if (alliedPiece) {
@@ -354,11 +399,11 @@ const AnalysisTool = () => {
             }
         } else {
             // During setup phase - enforce team-specific placement restrictions
-            
+    
             // Check if the position is already occupied
             const isOccupied = pieces.some(p => p.position?.row === row && p.position?.col === col);
             if (isOccupied) return;
-            
+    
             // Enforce placement zones based on team
             if (draggedPiece.team === "opponent") {
                 // Opponent pieces can only be placed in top 3 rows (0-2)
@@ -374,7 +419,7 @@ const AnalysisTool = () => {
                 }
             }
         }
-        
+    
         // Update the position of the dragged piece
         setPieces(prevPieces =>
             prevPieces.map(piece =>
@@ -395,22 +440,6 @@ const AnalysisTool = () => {
         );
     };
 
-    // Function to get tile class based on valid moves
-    const getTileClass = (row, col) => {
-        if (selectedPiece?.position?.row === row && selectedPiece?.position?.col === col) {
-            return 'selected';
-        }
-        
-        const move = validMoves.find(m => m.position.row === row && m.position.col === col);
-        if (!move) return '';
-        
-        if (move.type === 'attack') {
-            return move.probability === 100 ? 'suggested-win' : 'suggested-lose';
-        }
-        
-        return 'suggested-move';
-    };
-
     return (
         <div className='analysis-tool-container'>
             <button 
@@ -425,12 +454,10 @@ const AnalysisTool = () => {
                 {Array.from({ length: 8 }).map((_, row) =>
                     Array.from({ length: 9 }).map((_, col) => {
                         const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
-                        const tileClass = getTileClass(row, col);
-                        
                         return (
                             <div
                                 key={`${row}-${col}`}
-                                className={`tile ${tileClass}`}
+                                className={`tile ${selectedPiece?.position?.row === row && selectedPiece?.position?.col === col ? 'selected' : ''}`}
                                 onClick={() => handleTileClick(row, col)}
                                 onDrop={(e) => handleDrop(e, row, col)}
                                 onDragOver={allowDrop}
@@ -448,12 +475,6 @@ const AnalysisTool = () => {
                                             setTooltip({ visible: true, text: piece.name, position: { x: e.clientX, y: e.clientY } });
                                         }}
                                         onMouseLeave={() => setTooltip({ visible: false, text: '', position: { x: 0, y: 0 } })}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            if (piece.team === "player") {
-                                                setSelectedPiece(piece);
-                                            }
-                                        }}
                                     />
                                 ) : null}
                             </div>
@@ -464,7 +485,7 @@ const AnalysisTool = () => {
             </div>
 
             <div className='analysis-container'>
-                <h3>Suggested Moves for {selectedPiece ? selectedPiece.name : 'Selected Piece'}</h3>
+            <h3>Suggested Moves for {selectedPiece ? selectedPiece.name : 'Selected Piece'}</h3>
                 <div className='suggested-moves'>
                     {selectedPiece ? (
                         suggestedMoves.length > 0 ? (
@@ -483,7 +504,7 @@ const AnalysisTool = () => {
                     ) : (
                         <p>Select a piece to see suggested moves.</p>
                     )}
-                </div>
+                    </div>
             </div>
         </div>
     );
