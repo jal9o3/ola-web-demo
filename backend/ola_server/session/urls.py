@@ -9,7 +9,8 @@ from .views import (
     MoveListCreateView,
     MoveRetrieveUpdateDestroyView,
     GameSessionListCreateView,
-    GameSessionRetrieveUpdateDestroyView
+    GameSessionRetrieveUpdateDestroyView,
+    GameSessionCreateView
 )
 
 urlpatterns = [
@@ -21,4 +22,5 @@ urlpatterns = [
     path('moves/<int:pk>/', MoveRetrieveUpdateDestroyView.as_view(), name='move-retrieve-update-destroy'),
     path('sessions/', GameSessionListCreateView.as_view(), name='session-list-create'),
     path('sessions/<int:pk>/', GameSessionRetrieveUpdateDestroyView.as_view(), name='session-retrieve-update-destroy'),
+    path('create-session/', GameSessionCreateView.as_view(), name='create-session'),
 ]

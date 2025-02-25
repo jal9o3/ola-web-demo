@@ -45,3 +45,8 @@ class GameSessionListCreateView(generics.ListCreateAPIView):
 class GameSessionRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = GameSession.objects.all()
     serializer_class = GameSessionSerializer
+
+
+class GameSessionCreateView(generics.CreateAPIView):
+    queryset = GameSession.objects.all()
+    serializer_class = GameSessionSerializer

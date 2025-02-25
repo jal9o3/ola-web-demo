@@ -34,4 +34,4 @@ class GameSerializer(serializers.ModelSerializer):
 class GameSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameSession
-        fields = '__all__'
+        fields = ['player1', 'player2', 'game', 'is_active', 'access_key', 'name']

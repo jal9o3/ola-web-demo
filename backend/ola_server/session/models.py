@@ -1,5 +1,11 @@
+import secrets
 from django.db import models
 
+def generate_unique_access_key():
+    while True:
+        key = secrets.token_urlsafe(32)
+        if not GameSession.objects.filter(access_key=key).exists():
+            return key
 
 class Player(models.Model):
     name = models.CharField(max_length=100)
@@ -48,6 +54,8 @@ class GameSession(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    access_key = models.CharField(max_length=64, default=generate_unique_access_key)
+    name = models.CharField(max_length=255, default='Session of Juan Tamad')
 
     def __str__(self):
-        return f"Session between {self.player1} and {self.player2} for game {self.game}"
+        return f"Session '{self.name}' between {self.player1} and {self.player2} for game {self.game}"
