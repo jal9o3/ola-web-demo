@@ -5,6 +5,8 @@ import './GameModes.css';
 const GameMode = () => {
     const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [sessionName, setSessionName] = useState('');
+    const [accessKey, setAccessKey] = useState('');
 
     const modes = [
         { label: 'Hard Mode', key: 'hard' },
@@ -34,13 +36,14 @@ const GameMode = () => {
             .then(data => {
                 // Handle the parsed data
                 console.log(data);
+                setSessionName(data.name); // Save session name
+                setAccessKey(data.access_key); // Save access key
+                navigate(`/board/${mode}?sessionName=${data.name}&accessKey=${data.access_key}`); // Redirect with query parameters
             })
             .catch(error => {
                 // Handle errors
                 console.error('There was a problem with the fetch operation:', error);
             });
-
-        navigate(`/board/${mode}`); // Redirects to /board/{mode}
     };
 
     const handleNext = () => {
