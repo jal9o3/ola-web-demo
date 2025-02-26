@@ -33,6 +33,15 @@ import Sergeantb from '../../assets/Sergeantb.png';
 import Lieucol from '../../assets/Lieucol.png';
 import Lieucolb from '../../assets/Lieucolb.png';
 
+const urlParams = new URLSearchParams(window.location.search);
+const accessKey = urlParams.get('accessKey');
+const sessionName = urlParams.get('sessionName');
+
+fetch(`http://127.0.0.1:8000/api/sessions/game-data/?session_name=${sessionName}&access_key=${accessKey}`)
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error fetching game data:', error));
+
 // Initial Pieces with 6 Privates and 2 Spies
 const initialPieces = [
     { id: 1, name: "5-star General", src: Gen5b, position: null, team: "blue" },
