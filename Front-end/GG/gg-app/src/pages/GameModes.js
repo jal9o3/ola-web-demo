@@ -14,6 +14,32 @@ const GameMode = () => {
     ];
 
     const handleModeClick = (mode) => {
+        fetch('http://127.0.0.1:8000/api/sessions/', {
+            method: 'POST', // Specify the HTTP method
+            headers: {
+                'Content-Type': 'application/json', // Set the content type to JSON
+                // Include other headers as needed
+            },
+            body: JSON.stringify({
+                // Add more key-value pairs as needed
+            }), // Convert the data to a JSON string
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle HTTP errors
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Parse the JSON response
+            })
+            .then(data => {
+                // Handle the parsed data
+                console.log(data);
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+
         navigate(`/board/${mode}`); // Redirects to /board/{mode}
     };
 
@@ -31,12 +57,12 @@ const GameMode = () => {
             <div className="carousel-container">
                 <div className="carousel">
                     {modes.map((mode, index) => {
-                        const position = index === currentIndex 
-                            ? 'center' 
-                            : index === (currentIndex + 1) % modes.length 
-                                ? 'right' 
-                                : index === (currentIndex - 1 + modes.length) % modes.length 
-                                    ? 'left' 
+                        const position = index === currentIndex
+                            ? 'center'
+                            : index === (currentIndex + 1) % modes.length
+                                ? 'right'
+                                : index === (currentIndex - 1 + modes.length) % modes.length
+                                    ? 'left'
                                     : 'hidden';
 
                         return (
