@@ -226,20 +226,31 @@ const Board = () => {
         // Remove highlight after 1 second for better UI feedback
         setTimeout(() => setPlayClicked(false), 10000);
 
-        const lastThreeRows = pieces
-            .filter(piece => piece.position && piece.position.row >= 5)
-            .sort((a, b) => {
-                if (a.position.row === b.position.row) {
-                    return a.position.col - b.position.col;
-                }
-                return a.position.row - b.position.row;
-            });
+        const lastThreeRows = [];
 
-        // Example usage: logging the pieces in the last three rows
-        lastThreeRows.forEach(piece => {
-            console.log(`Piece: ${piece.name}, Position: (${piece.position.row}, ${piece.position.col})`);
+        for (let row = 5; row < 8; row++) {
+            for (let col = 0; col < 9; col++) {
+                const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
+                lastThreeRows.push({ row, col, piece });
+            }
+        }
+
+        // Sort the array from left to right, top to bottom
+        lastThreeRows.sort((a, b) => {
+            if (a.row === b.row) {
+                return a.col - b.col;
+            }
+            return a.row - b.row;
         });
-        console.log(lastThreeRows)
+
+        // Example usage: logging the pieces and empty tiles in the last three rows
+        lastThreeRows.forEach(tile => {
+            if (tile.piece) {
+                console.log(`Piece: ${tile.piece.name}, Position: (${tile.row}, ${tile.col})`);
+            } else {
+                console.log(`Empty tile at Position: (${tile.row}, ${tile.col})`);
+            }
+        });
     };
 
     const Tooltip = ({ text, position }) => {
