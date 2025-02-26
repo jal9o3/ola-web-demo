@@ -108,3 +108,44 @@ class VersusAISessionView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GameDataView(VersusAISessionView):
+    """
+    GameDataView handles the HTTP GET requests to retrieve the game's data for a specific session.
+    Methods:
+    - get(self, request, *args, **kwargs): Retrieves the game's data for the session if the access 
+    key is correct.
+    """
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests to retrieve the game's data for a specific session.
+        Args:
+            request: The HTTP request object.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+        Returns:
+            Response: A Response object containing the game's data if the access key is correct, 
+            otherwise an error message.
+        """
+        access_key = request.query_params.get('access_key')
+        session_name = request.query_params.get('session_name')
+
+        if not access_key or not session_name:
+            return Response({'error': 'Access key and session name are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            session = VersusAISession.objects.get(access_key=access_key, name=session_name)
+        except VersusAISession.DoesNotExist:
+            return Response({'error': 'Invalid access key or session name'}, status=status.HTTP_404_NOT_FOUND)
+
+        game = session.game
+        game_data = {
+            'human_color': game.human_color,
+            'ai_color': game.ai_color,
+            'human_initial_formation': game.human_initial_formation,
+            'ai_initial_formation': game.ai_initial_formation,
+            'move_list': game.move_list,
+        }
+        return Response(game_data, status=status.HTTP_200_OK)

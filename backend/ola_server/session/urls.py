@@ -12,8 +12,9 @@ Imports:
 """
 from django.urls import path
 
-from .views import VersusAISessionView
+from .views import VersusAISessionView, GameDataView
 
 urlpatterns = [
-    path('session/', VersusAISessionView.as_view(), name='versus_ai_session'),
+    path('sessions/', VersusAISessionView.as_view(), name='versus_ai_sessions'),
+    path('sessions/game-data/', GameDataView.as_view(), name='game_data'),
 ]
