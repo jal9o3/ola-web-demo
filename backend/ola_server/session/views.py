@@ -15,11 +15,12 @@ Class VersusAISessionView:
         and returns the created object as a JSON response.
 """
 import secrets
+import random
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import VersusAISession
+from .models import VersusAISession, VersusAIGame
 from .serializers import VersusAISessionSerializer
 
 
@@ -75,6 +76,25 @@ class VersusAISessionView(APIView):
             Response: A Response object containing the serialized data or errors and the appropriate 
             HTTP status code.
         """
+
+        request.data['access_key'] = generate_access_key()
+
+        # Randomly assign colors
+        colors = ['B', 'R']
+        human_color = random.choice(colors)
+        ai_color = 'R' if human_color == 'B' else 'B'
+
+        # Create a new VersusAIGame object
+        game = VersusAIGame.objects.create(
+            human_color=human_color,
+            ai_color=ai_color,
+            human_initial_formation={},
+            ai_initial_formation={},
+            move_list=[]
+        )
+
+        # Assign the created game to the session
+        request.data['game'] = game.id
 
         serializer = VersusAISessionSerializer(data=request.data)
         if serializer.is_valid():
