@@ -38,6 +38,17 @@ def generate_access_key():
 
     return secrets.token_urlsafe(32)
 
+def generate_random_string(length=10):
+    """
+    Generate a random string of specified length.
+    This function generates a random string using the `secrets` module.
+    Args:
+        length (int): The length of the random string to generate. Default is 10.
+    Returns:
+        str: A random string of the specified length.
+    """
+    alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    return ''.join(secrets.choice(alphabet) for _ in range(length))
 
 class VersusAISessionView(APIView):
     """
@@ -82,6 +93,10 @@ class VersusAISessionView(APIView):
         """
 
         request.data['access_key'] = generate_access_key()
+
+        # Generate a random name if not provided
+        if not request.data.get('name'):
+            request.data['name'] = generate_random_string()
 
         # Randomly assign colors
         colors = ['B', 'R']
