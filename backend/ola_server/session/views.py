@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import VersusAISession, VersusAIGame
-from .serializers import VersusAISessionSerializer
+from .serializers import VersusAISessionSerializer, VersusAISessionListSerializer
 
 
 def generate_access_key():
@@ -58,7 +58,7 @@ class VersusAISessionView(APIView):
         """
 
         sessions = VersusAISession.objects.all()
-        serializer = VersusAISessionSerializer(sessions, many=True)
+        serializer = VersusAISessionListSerializer(sessions, many=True)
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):

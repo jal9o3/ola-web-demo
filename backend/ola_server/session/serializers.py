@@ -4,6 +4,7 @@ This module contains serializers for the VersusAIGame and VersusAISession models
 Classes:
     VersusAIGameSerializer: A serializer for the VersusAIGame model.
     VersusAISessionSerializer: A serializer for the VersusAISession model.
+    VersusAISessionListSerializer: A serializer for listing VersusAISession model instances.
 """
 
 from rest_framework import serializers
@@ -59,3 +60,25 @@ class VersusAISessionSerializer(serializers.ModelSerializer):
 
         model = VersusAISession
         fields = '__all__'
+
+
+class VersusAISessionListSerializer(serializers.ModelSerializer):
+    """
+    Serializer for listing VersusAISession model instances.
+    This serializer excludes the 'access_key' field from the VersusAISession model.
+    Attributes:
+        Meta (class): Meta options for the serializer.
+            model (VersusAISession): The model that is being serialized.
+            exclude (list): Specifies the fields to be excluded from the serialization.
+    """
+
+    class Meta:
+        """
+        Meta class for VersusAISessionList serializer.
+        Attributes:
+            model (type): The model that is being serialized.
+            exclude (list): Specifies the fields to be excluded from the serialization.
+        """
+
+        model = VersusAISession
+        exclude = ['access_key']
