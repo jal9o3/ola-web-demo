@@ -226,7 +226,8 @@ class GameDataView(VersusAISessionView):
         arbiter_board = Board(arbiter_matrix, player_to_move=Player.BLUE, blue_anticipating=False,
                               red_anticipating=False)
         relevant_color = Player.BLUE if game.human_color == 'B' else Player.RED
-        starting_infostate = Infostate.at_start(owner=relevant_color, board=arbiter_board)
+        starting_infostate = Infostate.at_start(
+            owner=relevant_color, board=arbiter_board)
 
         game.current_state = arbiter_board.matrix
         game.current_infostate = starting_infostate.matrix
