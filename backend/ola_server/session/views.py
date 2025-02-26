@@ -20,6 +20,10 @@ import random
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
+from OLA.core import Player
+from OLA.constants import Ranking
+
 from .models import VersusAISession, VersusAIGame
 from .serializers import VersusAISessionSerializer, VersusAISessionListSerializer
 
@@ -84,12 +88,15 @@ class VersusAISessionView(APIView):
         human_color = random.choice(colors)
         ai_color = 'R' if human_color == 'B' else 'B'
 
+        # Generate AI initial formation
+        ai_initial_formation = Player.get_random_formation(Ranking.SORTED_FORMATION)
+
         # Create a new VersusAIGame object
         game = VersusAIGame.objects.create(
             human_color=human_color,
             ai_color=ai_color,
             human_initial_formation={},
-            ai_initial_formation={},
+            ai_initial_formation=ai_initial_formation,
             move_list=[]
         )
 
