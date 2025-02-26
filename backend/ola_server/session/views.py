@@ -160,7 +160,6 @@ class GameDataView(VersusAISessionView):
             'human_color': game.human_color,
             'ai_color': game.ai_color,
             'human_initial_formation': game.human_initial_formation,
-            'ai_initial_formation': game.ai_initial_formation,
             'move_list': game.move_list,
         }
         return Response(game_data, status=status.HTTP_200_OK)
