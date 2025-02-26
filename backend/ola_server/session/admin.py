@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import VersusAIGame, VersusAISession
 
-# Register your models here.
+admin.site.register(VersusAIGame)
+admin.site.register(VersusAISession)
