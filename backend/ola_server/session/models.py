@@ -1,54 +1,65 @@
+"""
+This module defines the models for the Versus AI game and session.
+
+Classes:
+    VersusAIGame: Represents a game played between a human and an AI.
+        Attributes:
+            human_color (CharField): The color assigned to the human player.
+            ai_color (CharField): The color assigned to the AI player.
+            human_initial_formation (JSONField): The initial formation of the human player.
+            ai_initial_formation (JSONField): The initial formation of the AI player.
+            move_list (JSONField): The list of moves made during the game.
+        Methods:
+            __str__: Returns a string representation of the VersusAIGame instance.
+
+    VersusAISession: Represents a session for a Versus AI game.
+        Attributes:
+            name (CharField): The name of the session.
+            game (ForeignKey): The game associated with the session.
+            created_at (DateTimeField): The timestamp when the session was created.
+            updated_at (DateTimeField): The timestamp when the session was last updated.
+            is_active (BooleanField): Indicates whether the session is active.
+            access_key (CharField): The access key for the session.
+        Methods:
+            __str__: Returns a string representation of the VersusAISession instance.
+
+"""
 from django.db import models
 
-class Player(models.Model):
-    name = models.CharField(max_length=100)
-    # Additional player-related fields can be added here
+
+class VersusAIGame(models.Model):
+    """
+    A Django model representing a game played against an AI opponent.
+    Attributes:
+        human_color (str): The color assigned to the human player. Expected to be a single 
+        character, B for Blue and R for Red.
+        ai_color (str): The color assigned to the AI player. Expected to be a single character,
+        B for Blue and R for Red.
+        human_initial_formation (dict): The initial formation of the human player's pieces, stored 
+        as a JSON object.
+        ai_initial_formation (dict): The initial formation of the AI player's pieces, stored as a 
+        JSON object.
+        move_list (list): A list of moves made during the game, stored as a JSON object.
+    Methods:
+        __str__(): Returns a string representation of the VersusAIGame instance.
+    """
+    human_color = models.CharField(max_length=1)
+    ai_color = models.CharField(max_length=1)
+    human_initial_formation = models.JSONField()
+    ai_initial_formation = models.JSONField()
+    move_list = models.JSONField()
 
     def __str__(self):
-        return self.name
+        return f"Versus AI Game {self.id}"
 
 
-class Game(models.Model):
-    player1 = models.ForeignKey(
-        Player, on_delete=models.CASCADE, related_name='games_as_player1')
-    player2 = models.ForeignKey(
-        Player, on_delete=models.CASCADE, related_name='games_as_player2')
-    player1_initial_formation = models.JSONField()
-    player2_initial_formation = models.JSONField()
-    start_time = models.DateTimeField(auto_now_add=True)
-    end_time = models.DateTimeField(null=True, blank=True)
-
-    def __str__(self):
-        return f"Game {self.id} between {self.player1} and {self.player2}"
-
-
-class Move(models.Model):
-    game = models.ForeignKey(
-        Game, on_delete=models.CASCADE, related_name='moves')
-    player = models.ForeignKey(Player, on_delete=models.CASCADE)
-    move_number = models.PositiveIntegerField()
-    param1 = models.IntegerField()
-    param2 = models.IntegerField()
-    param3 = models.IntegerField()
-    param4 = models.IntegerField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('game', 'move_number')
-
-    def __str__(self):
-        return f"Move {self.move_number} by {self.player} in Game {self.game.id}"
-
-
-class GameSession(models.Model):
-    player1 = models.ForeignKey(Player, related_name='player1_sessions', on_delete=models.CASCADE)
-    player2 = models.ForeignKey(Player, related_name='player2_sessions', on_delete=models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+class VersusAISession(models.Model):
+    name = models.CharField(max_length=255)
+    game = models.ForeignKey(VersusAIGame, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
     access_key = models.CharField(max_length=64)
-    name = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"Session '{self.name}' between {self.player1} and {self.player2} for game {self.game}"
+        return f"Versus AI Session {self.name} for Game {self.game.id}"
