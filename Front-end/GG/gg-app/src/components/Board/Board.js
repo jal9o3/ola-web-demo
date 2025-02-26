@@ -251,6 +251,10 @@ const Board = () => {
                 console.log(`Empty tile at Position: (${tile.row}, ${tile.col})`);
             }
         });
+        console.log(lastThreeRows)
+
+        const pieceValues = lastThreeRows.map(tile => tile.piece ? rankHierarchy[tile.piece.name] : 0);
+        console.log(pieceValues);
     };
 
     const Tooltip = ({ text, position }) => {
