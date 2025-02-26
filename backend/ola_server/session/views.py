@@ -21,8 +21,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from OLA.core import Player
+from OLA.core import Player, Board, Infostate
 from OLA.constants import Ranking
+from OLA.simulation import MatchSimulator
 
 from .models import VersusAISession, VersusAIGame
 from .serializers import VersusAISessionSerializer, VersusAISessionListSerializer
@@ -170,7 +171,7 @@ class GameDataView(VersusAISessionView):
             'ai_color': game.ai_color,
             'human_initial_formation': game.human_initial_formation,
             'move_list': game.move_list,
-            'current_state': game.current_state
+            'current_infostate': game.current_infostate
         }
         return Response(game_data, status=status.HTTP_200_OK)
 
@@ -213,6 +214,23 @@ class GameDataView(VersusAISessionView):
                             status=status.HTTP_400_BAD_REQUEST)
 
         game.human_initial_formation = human_initial_formation
+
+        blue_formation = (game.human_initial_formation if game.human_color == 'B'
+                          else game.ai_initial_formation)
+        red_formation = (game.human_initial_formation if game.human_color == 'R'
+                         else game.ai_initial_formation)
+        match_simulator = MatchSimulator(formations=[blue_formation, red_formation],
+                                         controllers=[None, None], save_data=False,
+                                         pov=None)
+        arbiter_matrix = match_simulator.setup_arbiter_matrix()
+        arbiter_board = Board(arbiter_matrix, player_to_move=Player.BLUE, blue_anticipating=False,
+                              red_anticipating=False)
+        relevant_color = Player.BLUE if game.human_color == 'B' else Player.RED
+        starting_infostate = Infostate.at_start(owner=relevant_color, board=arbiter_board)
+
+        game.current_state = arbiter_board.matrix
+        game.current_infostate = starting_infostate.matrix
+
         game.save()
 
         game_data = {
@@ -220,5 +238,6 @@ class GameDataView(VersusAISessionView):
             'ai_color': game.ai_color,
             'human_initial_formation': game.human_initial_formation,
             'move_list': game.move_list,
+            'current_infostate': game.current_infostate,
         }
         return Response(game_data, status=status.HTTP_200_OK)

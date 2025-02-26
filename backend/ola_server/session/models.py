@@ -49,6 +49,7 @@ class VersusAIGame(models.Model):
     ai_initial_formation = models.JSONField()
     move_list = models.JSONField()
     current_state = models.JSONField(default=list)
+    current_infostate = models.JSONField(default=list)
 
     def __str__(self):
         return f"Versus AI Game {self.id}"
