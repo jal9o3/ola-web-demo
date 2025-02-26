@@ -243,7 +243,7 @@ const Board = () => {
             return a.row - b.row;
         });
 
-        // Example usage: logging the pieces and empty tiles in the last three rows
+        // Logging the pieces and empty tiles in the last three rows
         lastThreeRows.forEach(tile => {
             if (tile.piece) {
                 console.log(`Piece: ${tile.piece.name}, Position: (${tile.row}, ${tile.col})`);
@@ -253,8 +253,25 @@ const Board = () => {
         });
         console.log(lastThreeRows)
 
-        const pieceValues = lastThreeRows.map(tile => tile.piece ? rankHierarchy[tile.piece.name] : 0);
-        console.log(pieceValues);
+        const formationValues = lastThreeRows.map(tile => tile.piece ? rankHierarchy[tile.piece.name] : 0);
+        console.log(formationValues);
+
+        // Send the formation values to the backend using PATCH
+        fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
+            method: 'PATCH',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+            session_name: sessionName,
+            access_key: accessKey,
+            human_initial_formation: formationValues
+            })
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error updating game data:', error));
+
     };
 
     const Tooltip = ({ text, position }) => {
