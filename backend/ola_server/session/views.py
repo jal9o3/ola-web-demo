@@ -38,6 +38,7 @@ def generate_access_key():
 
     return secrets.token_urlsafe(32)
 
+
 def generate_random_string(length=10):
     """
     Generate a random string of specified length.
@@ -49,6 +50,7 @@ def generate_random_string(length=10):
     """
     alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     return ''.join(secrets.choice(alphabet) for _ in range(length))
+
 
 class VersusAISessionView(APIView):
     """
@@ -104,7 +106,8 @@ class VersusAISessionView(APIView):
         ai_color = 'R' if human_color == 'B' else 'B'
 
         # Generate AI initial formation
-        ai_initial_formation = Player.get_random_formation(Ranking.SORTED_FORMATION)
+        ai_initial_formation = Player.get_random_formation(
+            Ranking.SORTED_FORMATION)
 
         # Create a new VersusAIGame object
         game = VersusAIGame.objects.create(
@@ -127,9 +130,12 @@ class VersusAISessionView(APIView):
 
 class GameDataView(VersusAISessionView):
     """
-    GameDataView handles the HTTP GET requests to retrieve the game's data for a specific session.
+    GameDataView handles the HTTP GET and PATCH requests to retrieve and update the game's data for 
+    a specific session.
     Methods:
     - get(self, request, *args, **kwargs): Retrieves the game's data for the session if the access 
+    key is correct.
+    - patch(self, request, *args, **kwargs): Updates the game's data for the session if the access 
     key is correct.
     """
 
@@ -148,14 +154,66 @@ class GameDataView(VersusAISessionView):
         session_name = request.query_params.get('session_name')
 
         if not access_key or not session_name:
-            return Response({'error': 'Access key and session name are required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Access key and session name are required'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            session = VersusAISession.objects.get(access_key=access_key, name=session_name)
+            session = VersusAISession.objects.get(
+                access_key=access_key, name=session_name)
         except VersusAISession.DoesNotExist:
-            return Response({'error': 'Invalid access key or session name'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Invalid access key or session name'},
+                            status=status.HTTP_404_NOT_FOUND)
 
         game = session.game
+        game_data = {
+            'human_color': game.human_color,
+            'ai_color': game.ai_color,
+            'human_initial_formation': game.human_initial_formation,
+            'move_list': game.move_list,
+        }
+        return Response(game_data, status=status.HTTP_200_OK)
+
+    def patch(self, request, *args, **kwargs):
+        """
+        Handles PATCH requests to update the game's data for a specific session.
+        Args:
+            request: The HTTP request object.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+        Returns:
+            Response: A Response object containing the updated game's data if the access key is 
+            correct, otherwise an error message.
+        """
+        access_key = request.data.get('access_key')
+        session_name = request.data.get('session_name')
+        human_initial_formation = request.data.get('human_initial_formation')
+
+        if not access_key or not session_name or human_initial_formation is None:
+            return Response(
+                {'error': 'Access key, session name, and human initial formation are required'},
+                status=status.HTTP_400_BAD_REQUEST)
+
+        if not isinstance(human_initial_formation, list) or len(human_initial_formation) != 27:
+            return Response({'error': 'Human initial formation must be a list of 27 integers'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            session = VersusAISession.objects.get(
+                access_key=access_key, name=session_name)
+        except VersusAISession.DoesNotExist:
+            return Response({'error': 'Invalid access key or session name'},
+                            status=status.HTTP_404_NOT_FOUND)
+
+        game = session.game
+
+        # Validate human initial formation
+        if sorted(human_initial_formation) != sorted(game.ai_initial_formation):
+            return Response({'error': 'Invalid human initial formation'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        game.human_initial_formation = human_initial_formation
+        game.save()
+
         game_data = {
             'human_color': game.human_color,
             'ai_color': game.ai_color,
