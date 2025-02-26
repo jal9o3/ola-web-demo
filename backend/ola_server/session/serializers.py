@@ -1,40 +1,61 @@
+"""
+This module contains serializers for the VersusAIGame and VersusAISession models.
+
+Classes:
+    VersusAIGameSerializer: A serializer for the VersusAIGame model.
+    VersusAISessionSerializer: A serializer for the VersusAISession model.
+"""
+
 from rest_framework import serializers
-from .models import Player
-from .models import Move
-from .models import Game
-from .models import GameSession
+
+from .models import VersusAIGame, VersusAISession
 
 
-class PlayerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Player
-        fields = ['id', 'name']
-
-
-class MoveSerializer(serializers.ModelSerializer):
-    player = PlayerSerializer(read_only=True)
-
-    class Meta:
-        model = Move
-        fields = ['id', 'game', 'player', 'move_number',
-                  'param1', 'param2', 'param3', 'param4', 'timestamp']
-
-
-class GameSerializer(serializers.ModelSerializer):
-    player1 = PlayerSerializer(read_only=True)
-    player2 = PlayerSerializer(read_only=True)
-    moves = MoveSerializer(many=True, read_only=True)
+class VersusAIGameSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the VersusAIGame model.
+    This serializer converts VersusAIGame model instances to and from JSON format.
+    It includes all fields of the VersusAIGame model.
+    Attributes:
+        Meta (class): Meta options for the serializer.
+            model (VersusAIGame): The model that is being serialized.
+            fields (str): Specifies that all fields of the model should be included in the 
+            serialization.
+    """
 
     class Meta:
-        model = Game
-        fields = ['id', 'player1', 'player2', 'player1_initial_formation',
-                  'player2_initial_formation', 'start_time', 'end_time', 'moves']
+        """
+        Meta class for VersusAIGame serializer.
+        Attributes:
+            model (type): The model class that is being serialized.
+            fields (str): Specifies that all fields in the model should be included in the 
+            serialization.
+        """
+
+        model = VersusAIGame
+        fields = '__all__'
 
 
-class GameSessionSerializer(serializers.ModelSerializer):
+class VersusAISessionSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the VersusAISession model.
+    This serializer converts VersusAISession model instances to and from JSON format.
+    It includes all fields of the VersusAISession model.
+    Attributes:
+        Meta (class): Meta options for the serializer.
+            model (VersusAISession): The model that is being serialized.
+            fields (str): Specifies that all fields of the model should be included in the 
+            serialization.
+    """
+
     class Meta:
-        model = GameSession
-        fields = ['name']
-        extra_kwargs = {
-            'name': {'required': True}
-        }
+        """
+        Meta class for VersusAISession serializer.
+        Attributes:
+            model (type): The model that is being serialized.
+            fields (str): Specifies that all fields of the model should be included in the 
+            serialization.
+        """
+
+        model = VersusAISession
+        fields = '__all__'
