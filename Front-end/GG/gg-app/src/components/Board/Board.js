@@ -35,48 +35,48 @@ import Lieucolb from '../../assets/Lieucolb.png';
 
 // Initial Pieces with 6 Privates and 2 Spies
 const initialPieces = [
-    { id: 1, name: "5-star General", src: Gen5b, position: null, team: "player" },
-    { id: 2, name: "4-star General", src: Gen4b, position: null, team: "player" },
-    { id: 3, name: "3-star General", src: Gen3b, position: null, team: "player" },
-    { id: 4, name: "2-star General", src: Gen2b, position: null, team: "player" },
-    { id: 5, name: "1-star General", src: Gen1b, position: null, team: "player" },
-    { id: 6, name: "Flag", src: Flagb, position: null, team: "player" },
-    { id: 7, name: "Colonel", src: Colonelb, position: null, team: "player" },
-    { id: 8, name: "Captain", src: Captainb, position: null, team: "player" },
-    { id: 9, name: "1st Lieutenant", src: Lieu1stb, position: null, team: "player" },
-    { id: 10, name: "2nd Lieutenant", src: Lieu2ndb, position: null, team: "player" },
-    { id: 11, name: "Spy", src: Spyb, position: null, team: "player" },
-    { id: 12, name: "Spy", src: Spyb, position: null, team: "player" },
-    { id: 13, name: "Major", src: Majorb, position: null, team: "player" },
-    { id: 14, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 15, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 16, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 17, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 18, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 19, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 20, name: "Sergeant", src: Sergeantb, position: null, team: "player" },
-    { id: 21, name: "Lieutenant Colonel", src: Lieucolb, position: null, team: "player" },
-    { id: 22, name: "5-star General", src: Gen5, position: {row: 0, col: 0}, team: "opponent" },
-    { id: 23, name: "4-star General", src: Gen4, position: {row: 0, col: 1}, team: "opponent" },
-    { id: 24, name: "3-star General", src: Gen3, position: {row: 0, col: 2}, team: "opponent" },
-    { id: 25, name: "2-star General", src: Gen2, position: {row: 0, col: 3}, team: "opponent" },
-    { id: 26, name: "1-star General", src: Gen1, position: {row: 0, col: 4}, team: "opponent" },
-    { id: 27, name: "Flag", src: Flag, position: {row: 0, col: 5}, team: "opponent" },
-    { id: 28, name: "Colonel", src: Colonel, position: {row: 0, col: 6}, team: "opponent" },
-    { id: 29, name: "Captain", src: Captain, position: {row: 0, col: 7}, team: "opponent" },
-    { id: 30, name: "1st Lieutenant", src: Lieu1st, position: {row: 0, col: 8}, team: "opponent" },
-    { id: 31, name: "2nd Lieutenant", src: Lieu2nd, position: {row: 1, col: 0}, team: "opponent" },
-    { id: 32, name: "Spy", src: Spy, position: {row: 1, col: 1}, team: "opponent" },
-    { id: 33, name: "Spy", src: Spy, position: {row: 1, col: 2}, team: "opponent" },
-    { id: 34, name: "Major", src: Major, position: {row: 1, col: 3}, team: "opponent" },
-    { id: 35, name: "Private", src: Private, position: {row: 1, col: 4}, team: "opponent" },
-    { id: 36, name: "Private", src: Private, position: {row: 1, col: 5}, team: "opponent" },
-    { id: 37, name: "Private", src: Private, position: {row: 1, col: 6}, team: "opponent" },
-    { id: 38, name: "Private", src: Private, position: {row: 1, col: 7}, team: "opponent" },
-    { id: 39, name: "Private", src: Private, position: {row: 1, col: 8}, team: "opponent" },
-    { id: 40, name: "Private", src: Private, position: {row: 2, col: 0}, team: "opponent" },
-    { id: 41, name: "Sergeant", src: Sergeant, position: {row: 2, col: 1}, team: "opponent" },
-    { id: 42, name: "Lieutenant Colonel", src: Lieucol, position: {row: 2, col: 2}, team: "opponent" },
+    { id: 1, name: "5-star General", src: Gen5b, position: null, team: "blue" },
+    { id: 2, name: "4-star General", src: Gen4b, position: null, team: "blue" },
+    { id: 3, name: "3-star General", src: Gen3b, position: null, team: "blue" },
+    { id: 4, name: "2-star General", src: Gen2b, position: null, team: "blue" },
+    { id: 5, name: "1-star General", src: Gen1b, position: null, team: "blue" },
+    { id: 6, name: "Flag", src: Flagb, position: null, team: "blue" },
+    { id: 7, name: "Colonel", src: Colonelb, position: null, team: "blue" },
+    { id: 8, name: "Captain", src: Captainb, position: null, team: "blue" },
+    { id: 9, name: "1st Lieutenant", src: Lieu1stb, position: null, team: "blue" },
+    { id: 10, name: "2nd Lieutenant", src: Lieu2ndb, position: null, team: "blue" },
+    { id: 11, name: "Spy", src: Spyb, position: null, team: "blue" },
+    { id: 12, name: "Spy", src: Spyb, position: null, team: "blue" },
+    { id: 13, name: "Major", src: Majorb, position: null, team: "blue" },
+    { id: 14, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 15, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 16, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 17, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 18, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 19, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 20, name: "Sergeant", src: Sergeantb, position: null, team: "blue" },
+    { id: 21, name: "Lieutenant Colonel", src: Lieucolb, position: null, team: "blue" },
+    { id: 22, name: "5-star General", src: Gen5, position: { row: 0, col: 0 }, team: "red" },
+    { id: 23, name: "4-star General", src: Gen4, position: { row: 0, col: 1 }, team: "red" },
+    { id: 24, name: "3-star General", src: Gen3, position: { row: 0, col: 2 }, team: "red" },
+    { id: 25, name: "2-star General", src: Gen2, position: { row: 0, col: 3 }, team: "red" },
+    { id: 26, name: "1-star General", src: Gen1, position: { row: 0, col: 4 }, team: "red" },
+    { id: 27, name: "Flag", src: Flag, position: { row: 0, col: 5 }, team: "red" },
+    { id: 28, name: "Colonel", src: Colonel, position: { row: 0, col: 6 }, team: "red" },
+    { id: 29, name: "Captain", src: Captain, position: { row: 0, col: 7 }, team: "red" },
+    { id: 30, name: "1st Lieutenant", src: Lieu1st, position: { row: 0, col: 8 }, team: "red" },
+    { id: 31, name: "2nd Lieutenant", src: Lieu2nd, position: { row: 1, col: 0 }, team: "red" },
+    { id: 32, name: "Spy", src: Spy, position: { row: 1, col: 1 }, team: "red" },
+    { id: 33, name: "Spy", src: Spy, position: { row: 1, col: 2 }, team: "red" },
+    { id: 34, name: "Major", src: Major, position: { row: 1, col: 3 }, team: "red" },
+    { id: 35, name: "Private", src: Private, position: { row: 1, col: 4 }, team: "red" },
+    { id: 36, name: "Private", src: Private, position: { row: 1, col: 5 }, team: "red" },
+    { id: 37, name: "Private", src: Private, position: { row: 1, col: 6 }, team: "red" },
+    { id: 38, name: "Private", src: Private, position: { row: 1, col: 7 }, team: "red" },
+    { id: 39, name: "Private", src: Private, position: { row: 1, col: 8 }, team: "red" },
+    { id: 40, name: "Private", src: Private, position: { row: 2, col: 0 }, team: "red" },
+    { id: 41, name: "Sergeant", src: Sergeant, position: { row: 2, col: 1 }, team: "red" },
+    { id: 42, name: "Lieutenant Colonel", src: Lieucol, position: { row: 2, col: 2 }, team: "red" },
 ];
 
 const Board = () => {
@@ -107,48 +107,53 @@ const Board = () => {
 
     const handleTileClick = (row, col) => {
         if (!gameStarted) return;
-    
+
         if (selectedPiece) {
             const { position, team, name } = selectedPiece;
-    
+
             // Allow moves only Up, Left, or Right (one tile)
             const isValidMove =
                 (row === position.row - 1 && col === position.col) ||  // Up
                 (row === position.row && col === position.col - 1) ||  // Left
                 (row === position.row && col === position.col + 1) ||  // Right
                 (row === position.row + 1 && col === position.col);    // Down
-    
+
             // Check for opponent and allied pieces 
-            const opponentPiece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team !== team);
-            const alliedPiece = pieces.some(p => p.position?.row === row && p.position?.col === col && p.team == team);
-    
+            const opponentPiece = pieces.find(p => p.position?.row === row
+                && p.position?.col === col && p.team !== team);
+            const alliedPiece = pieces.some(p => p.position?.row === row
+                && p.position?.col === col && p.team == team);
+
             if (isValidMove) {
                 if (opponentPiece) {
                     const opponentRank = rankHierarchy[opponentPiece.name];
                     const selectedRank = rankHierarchy[name];
-    
+
                     // Determine the outcome based on ranks
                     if (selectedRank > opponentRank) {
                         // Player's piece wins
-                        setPieces(prevPieces => prevPieces.filter(p => p.id !== opponentPiece.id)); // Remove opponent piece
-                        setPieces(prevPieces => 
+                        setPieces(prevPieces => prevPieces.filter(
+                            p => p.id !== opponentPiece.id)); // Remove opponent piece
+                        setPieces(prevPieces =>
                             prevPieces.map(p =>
                                 p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
                             )
                         );
                     } else if (selectedRank < opponentRank) {
                         // Opponent's piece wins
-                        setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id)); // Remove player's piece
+                        setPieces(prevPieces => prevPieces.filter(
+                            p => p.id !== selectedPiece.id)); // Remove player's piece
                     } else {
                         // Both pieces are eliminated
-                        setPieces(prevPieces => prevPieces.filter(p => p.id !== selectedPiece.id && p.id !== opponentPiece.id));
+                        setPieces(prevPieces => prevPieces.filter(
+                            p => p.id !== selectedPiece.id && p.id !== opponentPiece.id));
                     }
-                } else if (alliedPiece){
-                        //alert("Allies cannot be challenged! Choose another spot.");
-                        return;
+                } else if (alliedPiece) {
+                    //alert("Allies cannot be challenged! Choose another spot.");
+                    return;
                 } else {
                     // Move the selected piece if no opponent piece is present
-                    setPieces(prevPieces => 
+                    setPieces(prevPieces =>
                         prevPieces.map(p =>
                             p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
                         )
@@ -158,12 +163,14 @@ const Board = () => {
 
             } else {
                 // If the move is invalid, do not change the selected piece
-                const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
+                const piece = pieces.find(p => p.position?.row === row && p.position?.col === col
+                    && p.team === "blue");
                 if (piece) setSelectedPiece(piece); // Allow selecting a new piece
             }
         } else {
             // Allow selecting a piece if none is currently selected
-            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
+            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col
+                && p.team === "blue");
             if (piece) setSelectedPiece(piece);
         }
     };
@@ -171,23 +178,23 @@ const Board = () => {
     const handleDrop = (e, row, col) => {
         e.preventDefault();
         if (gameStarted) return;
-    
+
         const pieceId = e.dataTransfer.getData("pieceId");
         if (!pieceId) return;
-    
+
         // Ensure placement is within rows 5, 6, and 7
         if (!gameStarted && (row < 5 || row > 7)) {
             alert("You can only place pieces in rows 5, 6, and 7 before the game starts!");
             return;
         }
-    
+
         // Prevent placing pieces on top of each other
         const isOccupied = pieces.some(p => p.position?.row === row && p.position?.col === col);
         if (isOccupied) {
             //alert("This tile is already occupied! Choose another spot.");
             return;
         }
-    
+
         setPieces(prevPieces =>
             prevPieces.map(piece =>
                 piece.id.toString() === pieceId ? { ...piece, position: { row, col } } : piece
@@ -212,7 +219,7 @@ const Board = () => {
         );
     };
 
-    const handleHelpClick = () => { 
+    const handleHelpClick = () => {
         const hierarchy = `
             Rank Hierarchy:
 
@@ -243,12 +250,12 @@ const Board = () => {
 
     const allPiecesPlaced = pieces.every(piece => piece.position !== null);
 
-    
+
 
     return (
         <div className='board-container'>
-            <button 
-                onClick={handlePlayClick} 
+            <button
+                onClick={handlePlayClick}
                 className={`play-button ${allPiecesPlaced ? '' : 'disabled'} ${playClicked ? 'clicked' : ''}`}
                 disabled={!allPiecesPlaced}
             >
@@ -262,13 +269,14 @@ const Board = () => {
                         return (
                             <div
                                 key={`${row}-${col}`}
-                                className={`tile ${selectedPiece?.position?.row === row && selectedPiece?.position?.col === col ? 'selected' : ''}`}
+                                className={`tile ${selectedPiece?.position?.row === row
+                                    && selectedPiece?.position?.col === col ? 'selected' : ''}`}
                                 onClick={() => handleTileClick(row, col)}
                                 onDrop={(e) => handleDrop(e, row, col)}
                                 onDragOver={allowDrop}
                             >
                                 {piece ? (
-                                    piece.team === "player" ? (
+                                    piece.team === "blue" ? (
                                         <img
                                             src={piece.src}
                                             alt={piece.name}
@@ -276,9 +284,17 @@ const Board = () => {
                                             draggable={!gameStarted}
                                             onDragStart={(e) => handleDragStart(e, piece.id)}
                                             onMouseEnter={(e) => {
-                                                setTooltip({ visible: true, text: piece.name, position: { x: e.clientX, y: e.clientY } });
+                                                setTooltip({
+                                                    visible: true, text: piece.name, position: {
+                                                        x: e.clientX, y: e.clientY
+                                                    }
+                                                });
                                             }}
-                                            onMouseLeave={() => setTooltip({ visible: false, text: '', position: { x: 0, y: 0 } })}
+                                            onMouseLeave={() => setTooltip({
+                                                visible: false, text: '', position: {
+                                                    x: 0, y: 0
+                                                }
+                                            })}
                                         />
                                     ) : (
                                         <div className="opponent-placeholder"></div> // Placeholder for opponent's pieces
@@ -294,7 +310,7 @@ const Board = () => {
             <div className='piece-selection'>
                 <div className='above-content'>
                     {!allPiecesPlaced && <h3>Available Pieces</h3>}
-                    <button 
+                    <button
                         onClick={handleHelpClick}
                         className="help-button">?</button>
                 </div>
@@ -322,7 +338,7 @@ const Board = () => {
                         <p></p> // Optional message when all pieces are placed
                     )}
                 </div>
-                
+
             </div>
         </div>
     );
