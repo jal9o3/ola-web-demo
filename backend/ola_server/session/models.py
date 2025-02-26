@@ -54,6 +54,16 @@ class VersusAIGame(models.Model):
 
 
 class VersusAISession(models.Model):
+    """
+    Represents a session for a game played against an AI.
+    Attributes:
+        name (str): The name of the session.
+        game (VersusAIGame): The game associated with this session.
+        created_at (datetime): The date and time when the session was created.
+        updated_at (datetime): The date and time when the session was last updated.
+        is_active (bool): Indicates whether the session is currently active.
+        access_key (str): The access key for the session.
+    """
     name = models.CharField(max_length=255)
     game = models.ForeignKey(VersusAIGame, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
