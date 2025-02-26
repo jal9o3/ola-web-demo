@@ -37,9 +37,16 @@ const urlParams = new URLSearchParams(window.location.search);
 const accessKey = urlParams.get('accessKey');
 const sessionName = urlParams.get('sessionName');
 
+let aiColor = '';
+let humanColor = '';
+
 fetch(`http://127.0.0.1:8000/api/sessions/game-data/?session_name=${sessionName}&access_key=${accessKey}`)
     .then(response => response.json())
-    .then(data => console.log(data))
+    .then(data => {
+        console.log(data);
+        aiColor = data.ai_color;
+        humanColor = data.human_color;
+    })
     .catch(error => console.error('Error fetching game data:', error));
 
 // Initial Pieces with 6 Privates and 2 Spies
@@ -218,6 +225,21 @@ const Board = () => {
 
         // Remove highlight after 1 second for better UI feedback
         setTimeout(() => setPlayClicked(false), 10000);
+
+        const lastThreeRows = pieces
+            .filter(piece => piece.position && piece.position.row >= 5)
+            .sort((a, b) => {
+                if (a.position.row === b.position.row) {
+                    return a.position.col - b.position.col;
+                }
+                return a.position.row - b.position.row;
+            });
+
+        // Example usage: logging the pieces in the last three rows
+        lastThreeRows.forEach(piece => {
+            console.log(`Piece: ${piece.name}, Position: (${piece.position.row}, ${piece.position.col})`);
+        });
+        console.log(lastThreeRows)
     };
 
     const Tooltip = ({ text, position }) => {
