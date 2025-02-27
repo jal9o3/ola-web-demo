@@ -33,50 +33,66 @@ import Sergeantb from '../../assets/Sergeantb.png';
 import Lieucol from '../../assets/Lieucol.png';
 import Lieucolb from '../../assets/Lieucolb.png';
 
+const urlParams = new URLSearchParams(window.location.search);
+const accessKey = urlParams.get('accessKey');
+const sessionName = urlParams.get('sessionName');
+
+let aiColor = '';
+let humanColor = '';
+
+fetch(`http://127.0.0.1:8000/api/sessions/game-data/?session_name=${sessionName}&access_key=${accessKey}`)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        aiColor = data.ai_color;
+        humanColor = data.human_color;
+    })
+    .catch(error => console.error('Error fetching game data:', error));
+
 // Initial Pieces with 6 Privates and 2 Spies
 const initialPieces = [
-    { id: 1, name: "5-star General", src: Gen5b, position: null, team: "player" },
-    { id: 2, name: "4-star General", src: Gen4b, position: null, team: "player" },
-    { id: 3, name: "3-star General", src: Gen3b, position: null, team: "player" },
-    { id: 4, name: "2-star General", src: Gen2b, position: null, team: "player" },
-    { id: 5, name: "1-star General", src: Gen1b, position: null, team: "player" },
-    { id: 6, name: "Flag", src: Flagb, position: null, team: "player" },
-    { id: 7, name: "Colonel", src: Colonelb, position: null, team: "player" },
-    { id: 8, name: "Captain", src: Captainb, position: null, team: "player" },
-    { id: 9, name: "1st Lieutenant", src: Lieu1stb, position: null, team: "player" },
-    { id: 10, name: "2nd Lieutenant", src: Lieu2ndb, position: null, team: "player" },
-    { id: 11, name: "Spy", src: Spyb, position: null, team: "player" },
-    { id: 12, name: "Spy", src: Spyb, position: null, team: "player" },
-    { id: 13, name: "Major", src: Majorb, position: null, team: "player" },
-    { id: 14, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 15, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 16, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 17, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 18, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 19, name: "Private", src: Privateb, position: null, team: "player" },
-    { id: 20, name: "Sergeant", src: Sergeantb, position: null, team: "player" },
-    { id: 21, name: "Lieutenant Colonel", src: Lieucolb, position: null, team: "player" },
-    { id: 22, name: "5-star General", src: Gen5, position: {row: 0, col: 0}, team: "opponent" },
-    { id: 23, name: "4-star General", src: Gen4, position: {row: 0, col: 1}, team: "opponent" },
-    { id: 24, name: "3-star General", src: Gen3, position: {row: 0, col: 2}, team: "opponent" },
-    { id: 25, name: "2-star General", src: Gen2, position: {row: 0, col: 3}, team: "opponent" },
-    { id: 26, name: "1-star General", src: Gen1, position: {row: 0, col: 4}, team: "opponent" },
-    { id: 27, name: "Flag", src: Flag, position: {row: 0, col: 5}, team: "opponent" },
-    { id: 28, name: "Colonel", src: Colonel, position: {row: 0, col: 6}, team: "opponent" },
-    { id: 29, name: "Captain", src: Captain, position: {row: 0, col: 7}, team: "opponent" },
-    { id: 30, name: "1st Lieutenant", src: Lieu1st, position: {row: 0, col: 8}, team: "opponent" },
-    { id: 31, name: "2nd Lieutenant", src: Lieu2nd, position: {row: 1, col: 0}, team: "opponent" },
-    { id: 32, name: "Spy", src: Spy, position: {row: 1, col: 1}, team: "opponent" },
-    { id: 33, name: "Spy", src: Spy, position: {row: 1, col: 2}, team: "opponent" },
-    { id: 34, name: "Major", src: Major, position: {row: 1, col: 3}, team: "opponent" },
-    { id: 35, name: "Private", src: Private, position: {row: 1, col: 4}, team: "opponent" },
-    { id: 36, name: "Private", src: Private, position: {row: 1, col: 5}, team: "opponent" },
-    { id: 37, name: "Private", src: Private, position: {row: 1, col: 6}, team: "opponent" },
-    { id: 38, name: "Private", src: Private, position: {row: 1, col: 7}, team: "opponent" },
-    { id: 39, name: "Private", src: Private, position: {row: 1, col: 8}, team: "opponent" },
-    { id: 40, name: "Private", src: Private, position: {row: 2, col: 0}, team: "opponent" },
-    { id: 41, name: "Sergeant", src: Sergeant, position: {row: 2, col: 1}, team: "opponent" },
-    { id: 42, name: "Lieutenant Colonel", src: Lieucol, position: {row: 2, col: 2}, team: "opponent" },
+    { id: 1, name: "5-star General", src: Gen5b, position: null, team: "blue" },
+    { id: 2, name: "4-star General", src: Gen4b, position: null, team: "blue" },
+    { id: 3, name: "3-star General", src: Gen3b, position: null, team: "blue" },
+    { id: 4, name: "2-star General", src: Gen2b, position: null, team: "blue" },
+    { id: 5, name: "1-star General", src: Gen1b, position: null, team: "blue" },
+    { id: 6, name: "Flag", src: Flagb, position: null, team: "blue" },
+    { id: 7, name: "Colonel", src: Colonelb, position: null, team: "blue" },
+    { id: 8, name: "Captain", src: Captainb, position: null, team: "blue" },
+    { id: 9, name: "1st Lieutenant", src: Lieu1stb, position: null, team: "blue" },
+    { id: 10, name: "2nd Lieutenant", src: Lieu2ndb, position: null, team: "blue" },
+    { id: 11, name: "Spy", src: Spyb, position: null, team: "blue" },
+    { id: 12, name: "Spy", src: Spyb, position: null, team: "blue" },
+    { id: 13, name: "Major", src: Majorb, position: null, team: "blue" },
+    { id: 14, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 15, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 16, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 17, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 18, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 19, name: "Private", src: Privateb, position: null, team: "blue" },
+    { id: 20, name: "Sergeant", src: Sergeantb, position: null, team: "blue" },
+    { id: 21, name: "Lieutenant Colonel", src: Lieucolb, position: null, team: "blue" },
+    { id: 22, name: "5-star General", src: Gen5, position: { row: 0, col: 0 }, team: "red" },
+    { id: 23, name: "4-star General", src: Gen4, position: { row: 0, col: 1 }, team: "red" },
+    { id: 24, name: "3-star General", src: Gen3, position: { row: 0, col: 2 }, team: "red" },
+    { id: 25, name: "2-star General", src: Gen2, position: { row: 0, col: 3 }, team: "red" },
+    { id: 26, name: "1-star General", src: Gen1, position: { row: 0, col: 4 }, team: "red" },
+    { id: 27, name: "Flag", src: Flag, position: { row: 0, col: 5 }, team: "red" },
+    { id: 28, name: "Colonel", src: Colonel, position: { row: 0, col: 6 }, team: "red" },
+    { id: 29, name: "Captain", src: Captain, position: { row: 0, col: 7 }, team: "red" },
+    { id: 30, name: "1st Lieutenant", src: Lieu1st, position: { row: 0, col: 8 }, team: "red" },
+    { id: 31, name: "2nd Lieutenant", src: Lieu2nd, position: { row: 1, col: 0 }, team: "red" },
+    { id: 32, name: "Spy", src: Spy, position: { row: 1, col: 1 }, team: "red" },
+    { id: 33, name: "Spy", src: Spy, position: { row: 1, col: 2 }, team: "red" },
+    { id: 34, name: "Major", src: Major, position: { row: 1, col: 3 }, team: "red" },
+    { id: 35, name: "Private", src: Private, position: { row: 1, col: 4 }, team: "red" },
+    { id: 36, name: "Private", src: Private, position: { row: 1, col: 5 }, team: "red" },
+    { id: 37, name: "Private", src: Private, position: { row: 1, col: 6 }, team: "red" },
+    { id: 38, name: "Private", src: Private, position: { row: 1, col: 7 }, team: "red" },
+    { id: 39, name: "Private", src: Private, position: { row: 1, col: 8 }, team: "red" },
+    { id: 40, name: "Private", src: Private, position: { row: 2, col: 0 }, team: "red" },
+    { id: 41, name: "Sergeant", src: Sergeant, position: { row: 2, col: 1 }, team: "red" },
+    { id: 42, name: "Lieutenant Colonel", src: Lieucol, position: { row: 2, col: 2 }, team: "red" },
 ];
 
 const Board = () => {
@@ -88,21 +104,52 @@ const Board = () => {
     const [tooltip, setTooltip] = useState({ visible: false, text: '', position: { x: 0, y: 0 } });
 
     const rankHierarchy = {
-        "5-star General": 10,
-        "4-star General": 9,
-        "3-star General": 8,
-        "2-star General": 7,
-        "1-star General": 6,
-        "Lieutenant Colonel": 5,
-        "Colonel": 4,
-        "Major": 3,
-        "Captain": 2,
-        "1st Lieutenant": 1,
-        "2nd Lieutenant": 1,
-        "Sergeant": 1,
-        "Private": 0,
-        "Spy": 11, // Spy can eliminate all officers
-        "Flag": -1 // Flag can be eliminated by any piece
+        "Spy": 15, // Spy can eliminate all officers except privates
+        "5-star General": 14,
+        "4-star General": 13,
+        "3-star General": 12,
+        "2-star General": 11,
+        "1-star General": 10,
+        "Colonel": 9,
+        "Lieutenant Colonel": 8,
+        "Major": 7,
+        "Captain": 6,
+        "1st Lieutenant": 5,
+        "2nd Lieutenant": 4,
+        "Sergeant": 3,
+        "Private": 2,
+        "Flag": 1 // Flag can be eliminated by any piece including the opponent's flag
+    };
+
+    const randomizePieces = () => {
+        const availablePositions = [];
+        for (let row = 5; row <= 7; row++) {
+            for (let col = 0; col < 9; col++) {
+                availablePositions.push({ row, col });
+            }
+        }
+
+        // Shuffle the available positions
+        for (let i = availablePositions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [availablePositions[i], availablePositions[j]] = [availablePositions[j], availablePositions[i]];
+        }
+
+        // Get the pieces that belong to the player
+        const playerPieces = pieces.filter(piece => piece.team === "player" && piece.position === null);
+
+        // Assign random positions to the player pieces
+        const newPieces = playerPieces.map((piece, index) => {
+            const position = availablePositions[index];
+            return { ...piece, position };
+        });
+
+        // Update the pieces state
+        setPieces(prevPieces => 
+            prevPieces.map(piece => 
+                piece.team === "player" ? newPieces.find(p => p.id === piece.id) || piece : piece
+            )
+        );
     };
 
     const randomizePieces = () => {
@@ -138,7 +185,7 @@ const Board = () => {
 
     const handleTileClick = (row, col) => {
         if (!gameStarted) return;
-    
+
         if (selectedPiece) {
             const { position, team, name } = selectedPiece;
     
@@ -148,7 +195,7 @@ const Board = () => {
                 (row === position.row && col === position.col - 1) ||  // Left
                 (row === position.row && col === position.col + 1) ||  // Right
                 (row === position.row + 1 && col === position.col);    // Down
-    
+
             // Check for opponent and allied pieces 
             const opponentPiece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team !== team);
             const alliedPiece = pieces.some(p => p.position?.row === row && p.position?.col === col && p.team === team);
@@ -214,7 +261,7 @@ const Board = () => {
                     alert("Allies cannot be challenged! Choose another spot.");
                 } else {
                     // Move the selected piece if no opponent piece is present
-                    setPieces(prevPieces => 
+                    setPieces(prevPieces =>
                         prevPieces.map(p =>
                             p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
                         )
@@ -236,23 +283,23 @@ const Board = () => {
     const handleDrop = (e, row, col) => {
         e.preventDefault();
         if (gameStarted) return;
-    
+
         const pieceId = e.dataTransfer.getData("pieceId");
         if (!pieceId) return;
-    
+
         // Ensure placement is within rows 5, 6, and 7
         if (!gameStarted && (row < 5 || row > 7)) {
             alert("You can only place pieces in rows 5, 6, and 7 before the game starts!");
             return;
         }
-    
+
         // Prevent placing pieces on top of each other
         const isOccupied = pieces.some(p => p.position?.row === row && p.position?.col === col);
         if (isOccupied) {
             //alert("This tile is already occupied! Choose another spot.");
             return;
         }
-    
+
         setPieces(prevPieces =>
             prevPieces.map(piece =>
                 piece.id.toString() === pieceId ? { ...piece, position: { row, col } } : piece
@@ -267,6 +314,58 @@ const Board = () => {
 
         // Remove highlight after 1 second for better UI feedback
         setTimeout(() => setPlayClicked(false), 10000);
+
+        const lastThreeRows = [];
+
+        for (let row = 5; row < 8; row++) {
+            for (let col = 0; col < 9; col++) {
+                const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
+                lastThreeRows.push({ row, col, piece });
+            }
+        }
+
+        // Sort the array from left to right, top to bottom
+        lastThreeRows.sort((a, b) => {
+            if (a.row === b.row) {
+                return a.col - b.col;
+            }
+            return a.row - b.row;
+        });
+
+        // Logging the pieces and empty tiles in the last three rows
+        lastThreeRows.forEach(tile => {
+            if (tile.piece) {
+                console.log(`Piece: ${tile.piece.name}, Position: (${tile.row}, ${tile.col})`);
+            } else {
+                console.log(`Empty tile at Position: (${tile.row}, ${tile.col})`);
+            }
+        });
+        console.log(lastThreeRows)
+
+        const formationValues = lastThreeRows.map(tile => tile.piece ? rankHierarchy[tile.piece.name] : 0);
+        console.log(formationValues);
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionName = urlParams.get('sessionName');
+        const accessKey = urlParams.get('accessKey');
+        console.log(sessionName);
+        console.log(accessKey);
+
+        // Send the formation values to the backend using PATCH
+        fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
+            method: 'PATCH',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+            session_name: sessionName,
+            access_key: accessKey,
+            human_initial_formation: formationValues
+            })
+        })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error updating game data:', error));
+
     };
 
     const Tooltip = ({ text, position }) => {
@@ -277,25 +376,25 @@ const Board = () => {
         );
     };
 
-    const handleHelpClick = () => { 
+    const handleHelpClick = () => {
         const hierarchy = `
             Rank Hierarchy:
 
-            5-star General: 10
-            4-star General: 9
-            3-star General: 8
-            2-star General: 7
-            1-star General: 6
-            Lieutenant Colonel: 5
-            Colonel: 4
-            Major: 3
-            Captain: 2
-            1st Lieutenant: 1
-            2nd Lieutenant: 1
-            Sergeant: 1
-            Private: 0
-            Spy: 11 (Spy can eliminate all officers)
-            Flag: -1 (Flag can be eliminated by any piece)
+            Spy: 15 (Can only be defeated by privates)
+            5-star General: 14
+            4-star General: 13
+            3-star General: 12
+            2-star General: 11
+            1-star General: 10
+            Colonel: 9
+            Lieutenant Colonel: 8
+            Major: 7
+            Captain: 6
+            1st Lieutenant: 5
+            2nd Lieutenant: 4
+            Sergeant: 3
+            Private: 2
+            Flag: 1 (Flag can be eliminated by any piece including the opponent's flag)
         `;
         alert(hierarchy);
     };
@@ -336,13 +435,14 @@ const Board = () => {
                         return (
                             <div
                                 key={`${row}-${col}`}
-                                className={`tile ${selectedPiece?.position?.row === row && selectedPiece?.position?.col === col ? 'selected' : ''}`}
+                                className={`tile ${selectedPiece?.position?.row === row
+                                    && selectedPiece?.position?.col === col ? 'selected' : ''}`}
                                 onClick={() => handleTileClick(row, col)}
                                 onDrop={(e) => handleDrop(e, row, col)}
                                 onDragOver={allowDrop}
                             >
                                 {piece ? (
-                                    piece.team === "player" ? (
+                                    piece.team === "blue" ? (
                                         <img
                                             src={piece.src}
                                             alt={piece.name}
@@ -350,9 +450,17 @@ const Board = () => {
                                             draggable={!gameStarted}
                                             onDragStart={(e) => handleDragStart(e, piece.id)}
                                             onMouseEnter={(e) => {
-                                                setTooltip({ visible: true, text: piece.name, position: { x: e.clientX, y: e.clientY } });
+                                                setTooltip({
+                                                    visible: true, text: piece.name, position: {
+                                                        x: e.clientX, y: e.clientY
+                                                    }
+                                                });
                                             }}
-                                            onMouseLeave={() => setTooltip({ visible: false, text: '', position: { x: 0, y: 0 } })}
+                                            onMouseLeave={() => setTooltip({
+                                                visible: false, text: '', position: {
+                                                    x: 0, y: 0
+                                                }
+                                            })}
                                         />
                                     ) : (
                                         <div className="opponent-placeholder"></div> // Placeholder for opponent's pieces
@@ -368,7 +476,7 @@ const Board = () => {
             <div className='piece-selection'>
                 <div className='above-content'>
                     {!allPiecesPlaced && <h3>Available Pieces</h3>}
-                    <button 
+                    <button
                         onClick={handleHelpClick}
                         className="help-button">?</button>
                 </div>
@@ -396,7 +504,7 @@ const Board = () => {
                         <p></p> // Optional message when all pieces are placed
                     )}
                 </div>
-                
+
             </div>
         </div>
     );

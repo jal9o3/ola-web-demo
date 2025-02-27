@@ -5,6 +5,8 @@ import './GameModes.css';
 const GameMode = () => {
     const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [sessionName, setSessionName] = useState('');
+    const [accessKey, setAccessKey] = useState('');
 
     const modes = [
         { label: 'Hard Mode', key: 'hard' },
@@ -14,7 +16,34 @@ const GameMode = () => {
     ];
 
     const handleModeClick = (mode) => {
-        navigate(`/board/${mode}`); // Redirects to /board/{mode}
+        fetch('http://127.0.0.1:8000/api/sessions/', {
+            method: 'POST', // Specify the HTTP method
+            headers: {
+                'Content-Type': 'application/json', // Set the content type to JSON
+                // Include other headers as needed
+            },
+            body: JSON.stringify({
+                // Add more key-value pairs as needed
+            }), // Convert the data to a JSON string
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Handle HTTP errors
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Parse the JSON response
+            })
+            .then(data => {
+                // Handle the parsed data
+                console.log(data);
+                setSessionName(data.name); // Save session name
+                setAccessKey(data.access_key); // Save access key
+                navigate(`/board/${mode}?sessionName=${data.name}&accessKey=${data.access_key}`); // Redirect with query parameters
+            })
+            .catch(error => {
+                // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
     };
 
     const handleNext = () => {
@@ -31,12 +60,12 @@ const GameMode = () => {
             <div className="carousel-container">
                 <div className="carousel">
                     {modes.map((mode, index) => {
-                        const position = index === currentIndex 
-                            ? 'center' 
-                            : index === (currentIndex + 1) % modes.length 
-                                ? 'right' 
-                                : index === (currentIndex - 1 + modes.length) % modes.length 
-                                    ? 'left' 
+                        const position = index === currentIndex
+                            ? 'center'
+                            : index === (currentIndex + 1) % modes.length
+                                ? 'right'
+                                : index === (currentIndex - 1 + modes.length) % modes.length
+                                    ? 'left'
                                     : 'hidden';
 
                         return (
