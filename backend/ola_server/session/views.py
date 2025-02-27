@@ -32,7 +32,8 @@ from .serializers import VersusAISessionSerializer, VersusAISessionListSerialize
 def generate_access_key():
     """
     Generate a secure access key.
-    This function generates a URL-safe, random access key using the `secrets` module.
+    This function generates a URL-safe, random access key using the `secrets` 
+    module.
     Returns:
         str: A URL-safe, random access key string of length 32.
     """
@@ -55,13 +56,15 @@ def generate_random_string(length=10):
 
 class VersusAISessionView(APIView):
     """
-    VersusAISessionView handles the HTTP GET and POST requests for VersusAISession objects.
+    VersusAISessionView handles the HTTP GET and POST requests for 
+    VersusAISession objects.
     Methods:
-    - get(self, request, *args, **kwargs): Retrieves all VersusAISession objects and returns them 
-    serialized.
-    - post(self, request, *args, **kwargs): Creates a new VersusAISession object from the provided 
-    data if valid, and returns the serialized data with a status of HTTP 201 Created. If the data is 
-    invalid, returns the errors with a status of HTTP 400 Bad Request.
+    - get(self, request, *args, **kwargs): Retrieves all VersusAISession objects 
+    and returns them serialized.
+    - post(self, request, *args, **kwargs): Creates a new VersusAISession object 
+    from the provided data if valid, and returns the serialized data with a 
+    status of HTTP 201 Created. If the data is invalid, returns the errors with 
+    a status of HTTP 400 Bad Request.
     """
 
     def get(self, request, *args, **kwargs):
@@ -72,7 +75,8 @@ class VersusAISessionView(APIView):
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
         Returns:
-            Response: A Response object containing serialized data of all VersusAISession objects.
+            Response: A Response object containing serialized data of all 
+            VersusAISession objects.
         """
 
         sessions = VersusAISession.objects.all()
@@ -82,17 +86,20 @@ class VersusAISessionView(APIView):
     def post(self, request, *args, **kwargs):
         """
         Handle POST requests to create a new VersusAISession.
-        This method deserializes the incoming request data using the VersusAISessionSerializer.
-        If the data is valid, it saves the new session and returns the serialized data with a
-        201 Created status. If the data is invalid, it returns the errors with a 400 Bad Request 
+        This method deserializes the incoming request data using the 
+        VersusAISessionSerializer.
+        If the data is valid, it saves the new session and returns the 
+        serialized data with a 201 Created status. If the data is invalid, it 
+        returns the errors with a 400 Bad Request 
         status.
         Args:
-            request (Request): The HTTP request object containing the data to be deserialized.
+            request (Request): The HTTP request object containing the data to be 
+            deserialized.
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
         Returns:
-            Response: A Response object containing the serialized data or errors and the appropriate 
-            HTTP status code.
+            Response: A Response object containing the serialized data or errors 
+            and the appropriate HTTP status code.
         """
 
         request.data['access_key'] = generate_access_key()
@@ -131,13 +138,13 @@ class VersusAISessionView(APIView):
 
 class GameDataView(VersusAISessionView):
     """
-    GameDataView handles the HTTP GET and PATCH requests to retrieve and update the game's data for 
-    a specific session.
+    GameDataView handles the HTTP GET and PATCH requests to retrieve and update 
+    the game's data for a specific session.
     Methods:
-    - get(self, request, *args, **kwargs): Retrieves the game's data for the session if the access 
-    key is correct.
-    - patch(self, request, *args, **kwargs): Updates the game's data for the session if the access 
-    key is correct.
+    - get(self, request, *args, **kwargs): Retrieves the game's data for the 
+    session if the access key is correct.
+    - patch(self, request, *args, **kwargs): Updates the game's data for the 
+    session if the access key is correct.
     """
 
     def get(self, request, *args, **kwargs):
@@ -148,14 +155,15 @@ class GameDataView(VersusAISessionView):
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
         Returns:
-            Response: A Response object containing the game's data if the access key is correct, 
-            otherwise an error message.
+            Response: A Response object containing the game's data if the access 
+            key is correct, otherwise an error message.
         """
         access_key = request.query_params.get('access_key')
         session_name = request.query_params.get('session_name')
 
         if not access_key or not session_name:
-            return Response({'error': 'Access key and session name are required'},
+            return Response({'error': 'Access key and session name are required'
+                             },
                             status=status.HTTP_400_BAD_REQUEST)
 
         try:
@@ -183,21 +191,27 @@ class GameDataView(VersusAISessionView):
             *args: Additional positional arguments.
             **kwargs: Additional keyword arguments.
         Returns:
-            Response: A Response object containing the updated game's data if the access key is 
-            correct, otherwise an error message.
+            Response: A Response object containing the updated game's data if 
+            the access key is correct, otherwise an error message.
         """
         access_key = request.data.get('access_key')
         session_name = request.data.get('session_name')
         human_initial_formation = request.data.get('human_initial_formation')
 
-        if not access_key or not session_name or human_initial_formation is None:
+        if (not access_key or not session_name
+                or human_initial_formation is None):
             return Response(
-                {'error': 'Access key, session name, and human initial formation are required'},
+                {'error':
+                 'Access key, session name, and human initial formation are required'
+                 },
                 status=status.HTTP_400_BAD_REQUEST)
 
-        if not isinstance(human_initial_formation, list) or len(human_initial_formation) != 27:
-            return Response({'error': 'Human initial formation must be a list of 27 integers'},
-                            status=status.HTTP_400_BAD_REQUEST)
+        if (not isinstance(human_initial_formation, list)
+                or len(human_initial_formation) != 27):
+            return Response(
+                {'error':
+                 'Human initial formation must be a list of 27 integers'},
+                status=status.HTTP_400_BAD_REQUEST)
 
         try:
             session = VersusAISession.objects.get(
@@ -219,11 +233,14 @@ class GameDataView(VersusAISessionView):
                           else game.ai_initial_formation)
         red_formation = (game.human_initial_formation if game.human_color == 'R'
                          else game.ai_initial_formation)
-        match_simulator = MatchSimulator(formations=[blue_formation, red_formation],
-                                         controllers=[None, None], save_data=False,
+        match_simulator = MatchSimulator(formations=[blue_formation,
+                                                     red_formation],
+                                         controllers=[None, None],
+                                         save_data=False,
                                          pov=None)
         arbiter_matrix = match_simulator.setup_arbiter_matrix()
-        arbiter_board = Board(arbiter_matrix, player_to_move=Player.BLUE, blue_anticipating=False,
+        arbiter_board = Board(arbiter_matrix, player_to_move=Player.BLUE,
+                              blue_anticipating=False,
                               red_anticipating=False)
         relevant_color = Player.BLUE if game.human_color == 'B' else Player.RED
         starting_infostate = Infostate.at_start(

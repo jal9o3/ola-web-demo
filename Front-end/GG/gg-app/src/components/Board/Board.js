@@ -255,6 +255,8 @@ const Board = () => {
 
         const formationValues = lastThreeRows.map(tile => tile.piece ? rankHierarchy[tile.piece.name] : 0);
         console.log(formationValues);
+        console.log(sessionName);
+        console.log(accessKey);
 
         // Send the formation values to the backend using PATCH
         fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
