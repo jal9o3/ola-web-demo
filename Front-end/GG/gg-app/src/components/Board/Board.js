@@ -255,6 +255,9 @@ const Board = () => {
 
         const formationValues = lastThreeRows.map(tile => tile.piece ? rankHierarchy[tile.piece.name] : 0);
         console.log(formationValues);
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionName = urlParams.get('sessionName');
+        const accessKey = urlParams.get('accessKey');
         console.log(sessionName);
         console.log(accessKey);
 
