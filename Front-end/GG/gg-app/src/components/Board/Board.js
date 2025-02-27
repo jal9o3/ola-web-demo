@@ -135,8 +135,8 @@ const Board = () => {
             [availablePositions[i], availablePositions[j]] = [availablePositions[j], availablePositions[i]];
         }
 
-        // Get the pieces that belong to the player
-        const playerPieces = pieces.filter(piece => piece.team === "player" && piece.position === null);
+        // Get the pieces that belong to the blue team
+        const playerPieces = pieces.filter(piece => piece.team === "blue" && piece.position === null);
 
         // Assign random positions to the player pieces
         const newPieces = playerPieces.map((piece, index) => {
@@ -147,38 +147,7 @@ const Board = () => {
         // Update the pieces state
         setPieces(prevPieces => 
             prevPieces.map(piece => 
-                piece.team === "player" ? newPieces.find(p => p.id === piece.id) || piece : piece
-            )
-        );
-    };
-
-    const randomizePieces = () => {
-        const availablePositions = [];
-        for (let row = 5; row <= 7; row++) {
-            for (let col = 0; col < 9; col++) {
-                availablePositions.push({ row, col });
-            }
-        }
-
-        // Shuffle the available positions
-        for (let i = availablePositions.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [availablePositions[i], availablePositions[j]] = [availablePositions[j], availablePositions[i]];
-        }
-
-        // Get the pieces that belong to the player
-        const playerPieces = pieces.filter(piece => piece.team === "player" && piece.position === null);
-
-        // Assign random positions to the player pieces
-        const newPieces = playerPieces.map((piece, index) => {
-            const position = availablePositions[index];
-            return { ...piece, position };
-        });
-
-        // Update the pieces state
-        setPieces(prevPieces => 
-            prevPieces.map(piece => 
-                piece.team === "player" ? newPieces.find(p => p.id === piece.id) || piece : piece
+                piece.team === "blue" ? newPieces.find(p => p.id === piece.id) || piece : piece
             )
         );
     };
