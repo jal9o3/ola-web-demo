@@ -12,6 +12,34 @@
     grid-template-rows: repeat(8, 80px);
     gap: 2px;
     background-color: black;
+    border: 5px solid #06a2a0; /* White outline around the board */
+    border-radius: 5px; /* Optional: rounded corners */
+    padding: 10px; /* Optional: space between the border and the tiles */
+}
+
+.randomize-button {
+    background-color: #4CAF50; 
+    color: white;
+    border: none;
+    bottom: 0%;
+    padding: 10px 2px; 
+    text-align: center; 
+    text-decoration: none; 
+    display:flex;
+    font-size: 16px;
+    margin: 10px 0; 
+    cursor: pointer;
+    border-radius: 5px; 
+    transition: background-color 0.3s;
+}
+
+.randomize-button:hover {
+    background-color: #45a049;
+}
+
+.randomize-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 .tile {
@@ -60,44 +88,26 @@
 }
 
 .selected {
-    background-color: rgba(255, 255, 0, 0.5); /* Highlight selected piece */
+    background-color: rgba(255, 255, 0, 0.5);
 }
 
 .pieces-list {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 3 columns */
-    gap: 6px; /* Adjust spacing between pieces */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 6px; 
     max-width: 350px;
-    justify-items: center; /* Centers items within the grid cells */
-    margin: 10px;
-}
-
-.randomize-button {
-    background-color: #28a745;
-    color: white;
-    margin-top: 25%;
-    font-size: 18px;
-    padding: 25px 50px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-
-.randomize-button.disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
+    justify-items: center;
 }
 
 .piece-image {
-    width: 95%; /* Adjust size if needed */
+    width: 95%;
     height: auto;
     cursor: grab;
 }
 
 .piece-tooltip {
     position: absolute;
-    top: 10px; /* Adjust the position based on cursor */
+    top: 10px;
     left: 50%;
     transform: translateX(-50%);
     background-color: rgba(0, 0, 0, 0.8);
@@ -105,7 +115,7 @@
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 14px;
-    pointer-events: none; /* Prevents tooltip from interfering with hover */
+    pointer-events: none; 
     z-index: 1000;
 }
 
@@ -127,9 +137,9 @@
 }
 
 .opponent-placeholder {
-    width: 40px; /* Adjust size as needed */
-    height: 40px; /* Adjust size as needed */
-    background-color: gray; /* Color for the placeholder */
-    border-radius: 5px; /* Optional: rounded corners */
+    width: 40px; 
+    height: 40px; 
+    background-color: rgb(12, 112, 116); 
+    border-radius: 5px; 
 }
 
