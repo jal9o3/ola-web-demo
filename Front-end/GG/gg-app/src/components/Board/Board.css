@@ -26,12 +26,14 @@
 
 
 .piece-selection {
-    position: relative;
     display: flex;
+    position: relative;
     margin: 50px;
     flex-direction: column;
     align-items: center;
     gap: 5px;
+    background-color: white;
+    border: 1px solid black;
 }
 
 .above-content {
@@ -67,6 +69,24 @@
     gap: 6px; /* Adjust spacing between pieces */
     max-width: 350px;
     justify-items: center; /* Centers items within the grid cells */
+    margin: 10px;
+}
+
+.randomize-button {
+    background-color: #28a745;
+    color: white;
+    margin-top: 25%;
+    font-size: 18px;
+    padding: 25px 50px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.randomize-button.disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
 }
 
 .piece-image {

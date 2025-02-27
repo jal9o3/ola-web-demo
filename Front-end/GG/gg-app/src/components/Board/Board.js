@@ -56,6 +56,7 @@ const initialPieces = [
     { id: 19, name: "Private", src: Privateb, position: null, team: "player" },
     { id: 20, name: "Sergeant", src: Sergeantb, position: null, team: "player" },
     { id: 21, name: "Lieutenant Colonel", src: Lieucolb, position: null, team: "player" },
+
     { id: 22, name: "5-star General", src: Gen5, position: {row: 0, col: 0}, team: "opponent" },
     { id: 23, name: "4-star General", src: Gen4, position: {row: 0, col: 1}, team: "opponent" },
     { id: 24, name: "3-star General", src: Gen3, position: {row: 0, col: 2}, team: "opponent" },
@@ -163,7 +164,7 @@ const Board = () => {
             }
         } else {
             // Allow selecting a piece if none is currently selected
-            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player");
+            const piece = pieces.find(p => p.position?.row === row && p.position?.col === col && p.team === "player"); // Find the piece at the current position
             if (piece) setSelectedPiece(piece);
         }
     };
@@ -235,6 +236,58 @@ const Board = () => {
         alert(hierarchy);
     };
 
+    const handleRandomizeClick = () => {
+        const validRows = [5, 6, 7];
+        let row, col, randomPiece;
+
+        for (row in validRows) {
+            for (col = 0; col < 9; col++) {
+                if (!pieces.some(p => p.position?.row === row && p.position?.col === col)) { // Check if the tile is already occupied
+                    randomPiece = pieces.find(p => p.position === null); // Find a random piece that has not been placed
+                    setPieces(prevPieces => // Place the random piece at the random position
+                        prevPieces.map(p =>
+                            p.id === randomPiece.id ? { ...p, position: { row, col } } : p
+                        )
+                    );
+                };
+            };
+        };
+        <div className='game-board'> 
+            {Array.from({ length: 8 }).map((_, row) => // Generates the rows
+                Array.from({ length: 9 }).map((_, col) => { // Generates the columns
+                    const piece = pieces.find(p => p.position?.row === row && p.position?.col === col); // Find the piece at the current position
+                    return (
+                        <div
+                            key={`${row}-${col}`} // Unique key for each tile
+                        >
+                            {piece ? ( // Render the piece if it exists
+                                piece.team === "player" ? ( // Check the team of the piece
+                                    <img
+                                        src={piece.src}
+                                        alt={piece.name}
+                                        className='piece-image'
+                                    />
+                                ) : (
+                                    <div className="opponent-placeholder"></div> // Placeholder for opponent's pieces
+                                )
+                            ) : null}
+                        </div>
+                    );
+                })
+            )}
+        </div>
+        if (allPiecesPlaced) {
+            return;
+        };
+    };
+
+    const handleSetPiece = (pieceId) => {   
+        const piece = pieces.find(p => p.id === pieceId);
+        if (piece) setSelectedPiece(piece);
+
+
+    }
+
     const handleDragStart = (e, pieceId) => {
         e.dataTransfer.setData("pieceId", pieceId);
     };
@@ -254,21 +307,20 @@ const Board = () => {
             >
                 Play
             </button>
-
-            <div className='game-board'>
-                {Array.from({ length: 8 }).map((_, row) =>
-                    Array.from({ length: 9 }).map((_, col) => {
-                        const piece = pieces.find(p => p.position?.row === row && p.position?.col === col);
+            <div className='game-board'> 
+                {Array.from({ length: 8 }).map((_, row) => // Generates the rows
+                    Array.from({ length: 9 }).map((_, col) => { // Generates the columns
+                        const piece = pieces.find(p => p.position?.row === row && p.position?.col === col); // Find the piece at the current position
                         return (
                             <div
-                                key={`${row}-${col}`}
-                                className={`tile ${selectedPiece?.position?.row === row && selectedPiece?.position?.col === col ? 'selected' : ''}`}
-                                onClick={() => handleTileClick(row, col)}
-                                onDrop={(e) => handleDrop(e, row, col)}
-                                onDragOver={allowDrop}
+                                key={`${row}-${col}`} // Unique key for each tile
+                                className={`tile ${selectedPiece?.position?.row === row && selectedPiece?.position?.col === col ? 'selected' : ''}`} // Highlight the selected piece
+                                onClick={() => handleTileClick(row, col)} // Handle tile click
+                                onDrop={(e) => handleDrop(e, row, col)} // Handle piece drop
+                                onDragOver={allowDrop} // Allow dropping pieces
                             >
-                                {piece ? (
-                                    piece.team === "player" ? (
+                                {piece ? ( // Render the piece if it exists
+                                    piece.team === "player" ? ( // Check the team of the piece
                                         <img
                                             src={piece.src}
                                             alt={piece.name}
@@ -292,26 +344,32 @@ const Board = () => {
             </div>
 
             <div className='piece-selection'>
-                <div className='above-content'>
-                    {!allPiecesPlaced && <h3>Available Pieces</h3>}
+                <div className='above-content'> 
+                    {!allPiecesPlaced && <h3>Available Pieces</h3>} 
                     <button 
                         onClick={handleHelpClick}
                         className="help-button">?</button>
                 </div>
 
                 <div className='pieces-list'>
+                    
                     {!allPiecesPlaced ? (
                         pieces
                             .filter(piece => piece.position === null)
                             .map(piece => (
-                                <div key={piece.id} className="piece-container">
+                                <div key={piece.id} 
+                                    className="piece-container"
+                                    // onClick = {() => handleSetPiece(piece.id)}
+                                    
+
+                                >
                                     <img
                                         src={piece.src}
-                                        alt={piece.name}
+                                        alt={piece.name} // Alternative text for accessibility
                                         className='piece-image'
-                                        draggable={!gameStarted}
-                                        onDragStart={(e) => handleDragStart(e, piece.id)}
-                                        onMouseEnter={(e) => {
+                                        draggable={!gameStarted} // Allow dragging pieces before the game starts
+                                        onDragStart={(e) => handleDragStart(e, piece.id)} // Handle drag start
+                                        onMouseEnter={(e) => { // Show tooltip on mouse enter
                                             setTooltip({ visible: true, text: piece.name, position: { x: e.clientX, y: e.clientY } });
                                         }}
                                         onMouseLeave={() => setTooltip({ visible: false, text: '', position: { x: 0, y: 0 } })}
@@ -324,6 +382,13 @@ const Board = () => {
                 </div>
                 
             </div>
+            <button 
+                onClick={handleRandomizeClick} 
+                className={`randomize-button ${!allPiecesPlaced ? '' : 'disabled'}`}
+                disable={playClicked}
+            >
+                Randomize
+            </button>
         </div>
     );
 };
