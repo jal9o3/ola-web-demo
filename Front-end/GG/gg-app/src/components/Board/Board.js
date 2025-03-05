@@ -592,60 +592,69 @@ const Board = () => {
       </div>
 
       <div className="game-board">
-        {Array.from({ length: 8 }).map((_, row) =>
-          Array.from({ length: 9 }).map((_, col) => {
-            const piece = pieces.find(
-              (p) => p.position?.row === row && p.position?.col === col
-            );
-            return (
-              <div
-                key={`${row}-${col}`}
-                className={`tile ${
-                  selectedPiece?.position?.row === row &&
-                  selectedPiece?.position?.col === col
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => handleTileClick(row, col)}
-                onDrop={(e) => handleDrop(e, row, col)}
-                onDragOver={allowDrop}
-              >
-                {piece ? (
-                  piece.team === "blue" ? (
-                    <img
-                      src={piece.src}
-                      alt={piece.name}
-                      className="piece-image"
-                      draggable={!gameStarted}
-                      onDragStart={(e) => handleDragStart(e, piece.id)}
-                      onMouseEnter={(e) => {
-                        setTooltip({
-                          visible: true,
-                          text: piece.name,
-                          position: {
-                            x: e.clientX,
-                            y: e.clientY,
-                          },
-                        });
-                      }}
-                      onMouseLeave={() =>
-                        setTooltip({
-                          visible: false,
-                          text: "",
-                          position: {
-                            x: 0,
-                            y: 0,
-                          },
-                        })
-                      }
-                    />
-                  ) : (
-                    <div className="opponent-placeholder"></div> // Placeholder for opponent's pieces
-                  )
-                ) : null}
-              </div>
-            );
-          })
+        {/* For every row */}
+        {Array.from({ length: 8 }).map(
+          (
+            _, // Current element
+            row // Current index
+          ) =>
+            // For every column
+            Array.from({ length: 9 }).map((_, col) => {
+              const piece = pieces.find(
+                (p) => p.position?.row === row && p.position?.col === col
+              ); // Find the piece at the current position if any
+              return (
+                <div
+                  key={`${row}-${col}`}
+                  className={`tile ${
+                    selectedPiece?.position?.row === row &&
+                    selectedPiece?.position?.col === col
+                      ? "selected"
+                      : ""
+                  }`} // If piece's location matches selected piece, add to 'selected' class
+                  onClick={() => handleTileClick(row, col)}
+                  onDrop={(e) => handleDrop(e, row, col)}
+                  onDragOver={allowDrop}
+                >
+                  {piece ? (
+                    piece.team === "blue" ? (
+                      // Set the image of a visible piece
+                      <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className="piece-image"
+                        draggable={!gameStarted}
+                        onDragStart={(e) => handleDragStart(e, piece.id)}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: {
+                              x: e.clientX,
+                              y: e.clientY,
+                            },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: {
+                              x: 0,
+                              y: 0,
+                            },
+                          })
+                        }
+                      />
+                    ) : (
+                      // Or, display the placeholder for a hidden piece
+                      <div className="opponent-placeholder"></div>
+                    )
+                  ) : // Otherwise, display an empty tile
+                  null}
+                </div>
+              );
+            })
         )}
         {tooltip.visible && (
           <Tooltip text={tooltip.text} position={tooltip.position} />
