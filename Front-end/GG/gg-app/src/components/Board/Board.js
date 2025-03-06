@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Board.css";
 
 // Import images
@@ -32,24 +32,6 @@ import Sergeant from "../../assets/Sergeant.png";
 import Sergeantb from "../../assets/Sergeantb.png";
 import Lieucol from "../../assets/Lieucol.png";
 import Lieucolb from "../../assets/Lieucolb.png";
-
-const urlParams = new URLSearchParams(window.location.search);
-const accessKey = urlParams.get("accessKey");
-const sessionName = urlParams.get("sessionName");
-
-let aiColor = "";
-let humanColor = "";
-
-fetch(
-  `http://127.0.0.1:8000/api/sessions/game-data/?session_name=${sessionName}&access_key=${accessKey}`
-)
-  .then((response) => response.json())
-  .then((data) => {
-    console.log(data);
-    aiColor = data.ai_color;
-    humanColor = data.human_color;
-  })
-  .catch((error) => console.error("Error fetching game data:", error));
 
 // Initial Pieces with 6 Privates and 2 Spies
 const initialPieces = [
@@ -135,6 +117,42 @@ const initialPieces = [
 // The pieces that belong to the AI will have their names and images set to null
 
 const Board = () => {
+  const [aiColor, setAiColor] = useState("");
+  const [humanColor, setHumanColor] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const accessKey = urlParams.get("accessKey");
+      const sessionName = urlParams.get("sessionName");
+
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/sessions/game-data/?session_name=${sessionName}&access_key=${accessKey}`
+        );
+        const data = await response.json();
+        console.log(data);
+
+        const setColor = (color) => {
+          if (color === "R") return "red";
+          if (color === "B") return "blue";
+          return color;
+        };
+
+        setAiColor(setColor(data.ai_color));
+        setHumanColor(setColor(data.human_color));
+      } catch (error) {
+        console.error("Error fetching game data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log("Done fetching!");
+  console.log(aiColor);
+  console.log(humanColor);
+
   const [pieces, setPieces] = useState(initialPieces);
   const [gameStarted, setGameStarted] = useState(false);
   const [playClicked, setPlayClicked] = useState(false);
@@ -578,7 +596,9 @@ const Board = () => {
         <div className="pieces-list">
           {!allPiecesPlaced ? (
             pieces
-              .filter((piece) => piece.position === null)
+              .filter(
+                (piece) => piece.position === null && piece.team === humanColor
+              )
               .map((piece) => (
                 <div key={piece.id} className="piece-container">
                   <img
