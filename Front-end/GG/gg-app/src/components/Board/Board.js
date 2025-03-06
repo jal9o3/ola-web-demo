@@ -183,13 +183,15 @@ const Board = () => {
   };
 
   const randomizePieces = () => {
+    if (!humanColor) return; // Ensure humanColor is set before proceeding
+  
     const availablePositions = [];
     for (let row = 5; row <= 7; row++) {
       for (let col = 0; col < 9; col++) {
         availablePositions.push({ row, col });
       }
     }
-
+  
     // Shuffle the available positions
     for (let i = availablePositions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -198,27 +200,34 @@ const Board = () => {
         availablePositions[i],
       ];
     }
-
-    // Get the pieces that belong to the blue team
+  
+    // Get the pieces that belong to the human player
     const playerPieces = pieces.filter(
-      (piece) => piece.team === "blue" && piece.position === null
+      (piece) => piece.team === humanColor && piece.position === null
     );
-
+  
+    console.log("Player pieces before randomization:", playerPieces);
+  
     // Assign random positions to the player pieces
     const newPieces = playerPieces.map((piece, index) => {
       const position = availablePositions[index];
       return { ...piece, position };
     });
-
+  
+    console.log("New pieces with positions:", newPieces);
+  
     // Update the pieces state
-    setPieces((prevPieces) =>
-      prevPieces.map((piece) =>
-        piece.team === "blue"
+    setPieces((prevPieces) => {
+      const updatedPieces = prevPieces.map((piece) =>
+        piece.team === humanColor
           ? newPieces.find((p) => p.id === piece.id) || piece
           : piece
-      )
-    );
+      );
+      console.log("Updated pieces state:", updatedPieces);
+      return updatedPieces;
+    });
   };
+  
 
   const handleTileClick = (row, col) => {
     if (!gameStarted) return;
@@ -540,7 +549,7 @@ const Board = () => {
                   onDragOver={allowDrop}
                 >
                   {piece ? (
-                    piece.team === "blue" ? (
+                    piece.team === humanColor ? (
                       // Set the image of a visible piece
                       <img
                         src={piece.src}
