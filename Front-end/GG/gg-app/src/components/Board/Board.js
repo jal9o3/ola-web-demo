@@ -646,10 +646,11 @@ const Board = () => {
                           })
                         }
                       />
-                    ) : (
-                      // Or, display the placeholder for a hidden piece
+                    ) : gameStarted ? (
+                      // Display the placeholder for a hidden piece only when the game has started
                       <div className="opponent-placeholder"></div>
-                    )
+                    ) : // Otherwise, display an empty tile
+                    null
                   ) : // Otherwise, display an empty tile
                   null}
                 </div>
