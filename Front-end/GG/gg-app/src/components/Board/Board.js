@@ -500,16 +500,19 @@ const Board = () => {
   const allowDrop = (e) => e.preventDefault();
 
   const allPiecesPlaced = pieces.every((piece) => piece.position !== null);
+  const allHumanPiecesPlaced = pieces
+    .filter((piece) => piece.team === humanColor)
+    .every((piece) => piece.position !== null);
 
   return (
     <div className="board-container">
       <div className="button-container">
         <button
           onClick={handlePlayClick}
-          className={`play-button ${allPiecesPlaced ? "" : "disabled"} ${
+          className={`play-button ${allHumanPiecesPlaced ? "" : "disabled"} ${
             playClicked ? "clicked" : ""
           }`}
-          disabled={!allPiecesPlaced}
+          disabled={!allHumanPiecesPlaced}
         >
           Play
         </button>
