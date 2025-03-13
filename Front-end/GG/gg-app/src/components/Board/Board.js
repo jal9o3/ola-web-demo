@@ -167,21 +167,21 @@ const Board = () => {
   });
 
   const rankHierarchy = {
-      Spy: 15, // Spy can eliminate all officers except privates
-      "5-star General": 14,
-      "4-star General": 13,
-      "3-star General": 12,
-      "2-star General": 11,
-      "1-star General": 10,
-      Colonel: 9,
-      "Lieutenant Colonel": 8,
-      Major: 7,
-      Captain: 6,
-      "1st Lieutenant": 5,
-      "2nd Lieutenant": 4,
-      Sergeant: 3,
-      Private: 2,
-      Flag: 1, // Flag can be eliminated by any piece including the opponent's flag
+    Spy: 15, // Spy can eliminate all officers except privates
+    "5-star General": 14,
+    "4-star General": 13,
+    "3-star General": 12,
+    "2-star General": 11,
+    "1-star General": 10,
+    Colonel: 9,
+    "Lieutenant Colonel": 8,
+    Major: 7,
+    Captain: 6,
+    "1st Lieutenant": 5,
+    "2nd Lieutenant": 4,
+    Sergeant: 3,
+    Private: 2,
+    Flag: 1, // Flag can be eliminated by any piece including the opponent's flag
   };
 
   const randomizePieces = () => {
@@ -471,90 +471,89 @@ const Board = () => {
       for (let row = 0; row < 8; row++) {
         for (let col = 0; col < 9; col++) {
           console.log(`Row ${row}, Col ${col}:`, current_infostate[row][col]);
-            if (current_infostate[row][col][0] === 0 && current_infostate[row][col][1] === 0) {
+          if (
+            current_infostate[row][col][0] === 0 &&
+            current_infostate[row][col][1] === 0
+          ) {
             console.log(`Row ${row}, Col ${col} is a blank tile`);
-            }
-            else if (
-              current_infostate[row][col][0] >= BLUE_FLAG &&
-              current_infostate[row][col][0] <= BLUE_SPY &&
-              current_infostate[row][col][1] >= BLUE_FLAG &&
-              current_infostate[row][col][1] <= BLUE_SPY &&
-              humanColor === "blue"
-            ) {
-              console.log(`Row ${row}, Col ${col} is a blue piece`);
-              console.log(`Allied piece`);
-              const pieceName = Object.keys(rankHierarchy).find(
-                (key) => rankHierarchy[key] === current_infostate[row][col][0]
-              );
-                const piece = initialPieces.find(
-                  (p) => p.name === pieceName && p.team === humanColor
-                );
-                newPieces.push({
-                  id: pieceName,
-                  name: pieceName,
-                  src: piece ? piece.src : null,
-                  position: { row, col },
-                  team: humanColor,
-                });
-            }
-            else if (
-              current_infostate[row][col][0] >= BLUE_FLAG &&
-              current_infostate[row][col][0] <= BLUE_SPY &&
-              current_infostate[row][col][1] >= BLUE_FLAG &&
-              current_infostate[row][col][1] <= BLUE_SPY &&
-              humanColor === "red"
-            ) {
-              console.log(`Row ${row}, Col ${col} is a blue piece`);
-              console.log(`Opponent piece`);
-              newPieces.push({
-                id: `opponent-${row}-${col}`,
-                name: null,
-                src: null,
-                position: { row, col },
-                team: "blue",
-              });
-            }
-            else if (
-              current_infostate[row][col][0] >= RED_FLAG &&
-              current_infostate[row][col][0] <= RED_SPY &&
-              current_infostate[row][col][1] >= RED_FLAG &&
-              current_infostate[row][col][1] <= RED_SPY &&
-              humanColor === "red"
-            ) {
-              console.log(`Row ${row}, Col ${col} is a red piece`);
-              console.log(`Allied piece`);
-              const pieceName = Object.keys(rankHierarchy).find(
-                (key) => rankHierarchy[key] === current_infostate[row][col][0] - BLUE_SPY
-              );
-                const piece = initialPieces.find(
-                  (p) => p.name === pieceName && p.team === humanColor
-                );
-                newPieces.push({
-                  id: pieceName,
-                  name: pieceName,
-                  src: piece ? piece.src : null,
-                  position: { row, col },
-                  team: humanColor,
-                });
-            }
-            else if (
-              current_infostate[row][col][0] >= RED_FLAG &&
-              current_infostate[row][col][0] <= RED_SPY &&
-              current_infostate[row][col][1] >= RED_FLAG &&
-              current_infostate[row][col][1] <= RED_SPY &&
-              humanColor === "blue"
-            ) {
-              console.log(`Row ${row}, Col ${col} is a red piece`);
-              console.log(`Opponent piece`);
-              newPieces.push({
-                id: `opponent-${row}-${col}`,
-                name: null,
-                src: null,
-                position: { row, col },
-                team: "red",
-              });
-            }
-
+          } else if (
+            current_infostate[row][col][0] >= BLUE_FLAG &&
+            current_infostate[row][col][0] <= BLUE_SPY &&
+            current_infostate[row][col][1] >= BLUE_FLAG &&
+            current_infostate[row][col][1] <= BLUE_SPY &&
+            humanColor === "blue"
+          ) {
+            console.log(`Row ${row}, Col ${col} is a blue piece`);
+            console.log(`Allied piece`);
+            const pieceName = Object.keys(rankHierarchy).find(
+              (key) => rankHierarchy[key] === current_infostate[row][col][0]
+            );
+            const piece = initialPieces.find(
+              (p) => p.name === pieceName && p.team === humanColor
+            );
+            newPieces.push({
+              id: pieceName,
+              name: pieceName,
+              src: piece ? piece.src : null,
+              position: { row, col },
+              team: humanColor,
+            });
+          } else if (
+            current_infostate[row][col][0] >= BLUE_FLAG &&
+            current_infostate[row][col][0] <= BLUE_SPY &&
+            current_infostate[row][col][1] >= BLUE_FLAG &&
+            current_infostate[row][col][1] <= BLUE_SPY &&
+            humanColor === "red"
+          ) {
+            console.log(`Row ${row}, Col ${col} is a blue piece`);
+            console.log(`Opponent piece`);
+            newPieces.push({
+              id: `opponent-${row}-${col}`,
+              name: null,
+              src: null,
+              position: { row, col },
+              team: "blue",
+            });
+          } else if (
+            current_infostate[row][col][0] >= RED_FLAG &&
+            current_infostate[row][col][0] <= RED_SPY &&
+            current_infostate[row][col][1] >= RED_FLAG &&
+            current_infostate[row][col][1] <= RED_SPY &&
+            humanColor === "red"
+          ) {
+            console.log(`Row ${row}, Col ${col} is a red piece`);
+            console.log(`Allied piece`);
+            const pieceName = Object.keys(rankHierarchy).find(
+              (key) =>
+                rankHierarchy[key] === current_infostate[row][col][0] - BLUE_SPY
+            );
+            const piece = initialPieces.find(
+              (p) => p.name === pieceName && p.team === humanColor
+            );
+            newPieces.push({
+              id: pieceName,
+              name: pieceName,
+              src: piece ? piece.src : null,
+              position: { row, col },
+              team: humanColor,
+            });
+          } else if (
+            current_infostate[row][col][0] >= RED_FLAG &&
+            current_infostate[row][col][0] <= RED_SPY &&
+            current_infostate[row][col][1] >= RED_FLAG &&
+            current_infostate[row][col][1] <= RED_SPY &&
+            humanColor === "blue"
+          ) {
+            console.log(`Row ${row}, Col ${col} is a red piece`);
+            console.log(`Opponent piece`);
+            newPieces.push({
+              id: `opponent-${row}-${col}`,
+              name: null,
+              src: null,
+              position: { row, col },
+              team: "red",
+            });
+          }
         }
       }
       setPieces(newPieces);
