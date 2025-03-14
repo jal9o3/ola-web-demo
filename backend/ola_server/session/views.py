@@ -268,4 +268,24 @@ class GameDataView(VersusAISessionView):
                 'move_list': game.move_list,
                 'current_infostate': game.current_infostate,
             }
-        return Response(game_data, status=status.HTTP_200_OK)
+            return Response(game_data, status=status.HTTP_200_OK)
+
+        if game.has_started:
+            game.move_list.append(request.data.get('move'))
+            game.turn_number += 1
+            game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
+            game.save()
+
+            game_data = {
+                'human_color': game.human_color,
+                'ai_color': game.ai_color,
+                'has_started': game.has_started,
+                'human_initial_formation': game.human_initial_formation,
+                'move_list': game.move_list,
+                'current_infostate': game.current_infostate,
+                'turn_number': game.turn_number,
+                'player_to_move': game.player_to_move,
+            }
+            return Response(game_data, status=status.HTTP_200_OK)
+
+        return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)

@@ -251,9 +251,13 @@ const Board = () => {
       if (isValidMove && opponentPiece) {
         // TODO: submit move to the server
         console.log("TODO: submit move to the engine server");
+        const move = `${position.row}${position.col}${row}${col}`;
+        console.log("Move:", move);
       } else if (isValidMove && alliedPiece) {
         alert("Allies cannot be challenged! Choose another spot.");
       } else if (isValidMove) {
+        const move = `${position.row}${position.col}${row}${col}`;
+        console.log("Move:", move);
         setPieces((prevPieces) =>
           prevPieces.map((p) =>
             p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
