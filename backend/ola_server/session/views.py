@@ -179,7 +179,9 @@ class GameDataView(VersusAISessionView):
             'ai_color': game.ai_color,
             'human_initial_formation': game.human_initial_formation,
             'move_list': game.move_list,
-            'current_infostate': game.current_infostate
+            'current_infostate': game.current_infostate,
+            'turn_number': game.turn_number,
+            'player_to_move': game.player_to_move,
         }
         return Response(game_data, status=status.HTTP_200_OK)
 
@@ -198,20 +200,10 @@ class GameDataView(VersusAISessionView):
         session_name = request.data.get('session_name')
         human_initial_formation = request.data.get('human_initial_formation')
 
-        if (not access_key or not session_name
-                or human_initial_formation is None):
-            return Response(
-                {'error':
-                 'Access key, session name, and human initial formation are required'
-                 },
-                status=status.HTTP_400_BAD_REQUEST)
-
-        if (not isinstance(human_initial_formation, list)
-                or len(human_initial_formation) != 27):
-            return Response(
-                {'error':
-                 'Human initial formation must be a list of 27 integers'},
-                status=status.HTTP_400_BAD_REQUEST)
+        if not access_key or not session_name:
+            return Response({'error': 'Access key and session name are required'
+                             },
+                            status=status.HTTP_400_BAD_REQUEST)
 
         try:
             session = VersusAISession.objects.get(
@@ -222,40 +214,58 @@ class GameDataView(VersusAISessionView):
 
         game = session.game
 
+        if (not game.has_started and human_initial_formation is None):
+            return Response(
+                {'error':
+                 'Human initial formation required before the game can start'
+                 },
+                status=status.HTTP_400_BAD_REQUEST)
+
+        if (not game.has_started and not isinstance(human_initial_formation, list)
+                or len(human_initial_formation) != 27):
+            return Response(
+                {'error':
+                 'Human initial formation must be a list of 27 integers'},
+                status=status.HTTP_400_BAD_REQUEST)
+
         # Validate human initial formation
-        if sorted(human_initial_formation) != sorted(game.ai_initial_formation):
+        if (not game.has_started and
+                sorted(human_initial_formation) != sorted(game.ai_initial_formation)):
             return Response({'error': 'Invalid human initial formation'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        game.human_initial_formation = human_initial_formation
+        if not game.has_started:
+            game.human_initial_formation = human_initial_formation
 
-        blue_formation = (game.human_initial_formation if game.human_color == 'B'
-                          else game.ai_initial_formation)
-        red_formation = (game.human_initial_formation if game.human_color == 'R'
-                         else game.ai_initial_formation)
-        match_simulator = MatchSimulator(formations=[blue_formation,
-                                                     red_formation],
-                                         controllers=[None, None],
-                                         save_data=False,
-                                         pov=None)
-        arbiter_matrix = match_simulator.setup_arbiter_matrix()
-        arbiter_board = Board(arbiter_matrix, player_to_move=Player.BLUE,
-                              blue_anticipating=False,
-                              red_anticipating=False)
-        relevant_color = Player.BLUE if game.human_color == 'B' else Player.RED
-        starting_infostate = Infostate.at_start(
-            owner=relevant_color, board=arbiter_board)
+            blue_formation = (game.human_initial_formation if game.human_color == 'B'
+                              else game.ai_initial_formation)
+            red_formation = (game.human_initial_formation if game.human_color == 'R'
+                             else game.ai_initial_formation)
+            match_simulator = MatchSimulator(formations=[blue_formation,
+                                                         red_formation],
+                                             controllers=[None, None],
+                                             save_data=False,
+                                             pov=None)
+            arbiter_matrix = match_simulator.setup_arbiter_matrix()
+            arbiter_board = Board(arbiter_matrix, player_to_move=Player.BLUE,
+                                  blue_anticipating=False,
+                                  red_anticipating=False)
+            relevant_color = Player.BLUE if game.human_color == 'B' else Player.RED
+            starting_infostate = Infostate.at_start(
+                owner=relevant_color, board=arbiter_board)
 
-        game.current_state = arbiter_board.matrix
-        game.current_infostate = starting_infostate.matrix
+            game.current_state = arbiter_board.matrix
+            game.current_infostate = starting_infostate.matrix
+            game.has_started = True
 
-        game.save()
+            game.save()
 
-        game_data = {
-            'human_color': game.human_color,
-            'ai_color': game.ai_color,
-            'human_initial_formation': game.human_initial_formation,
-            'move_list': game.move_list,
-            'current_infostate': game.current_infostate,
-        }
+            game_data = {
+                'human_color': game.human_color,
+                'ai_color': game.ai_color,
+                'has_started': game.has_started,
+                'human_initial_formation': game.human_initial_formation,
+                'move_list': game.move_list,
+                'current_infostate': game.current_infostate,
+            }
         return Response(game_data, status=status.HTTP_200_OK)

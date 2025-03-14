@@ -45,11 +45,14 @@ class VersusAIGame(models.Model):
     """
     human_color = models.CharField(max_length=1)
     ai_color = models.CharField(max_length=1)
+    has_started = models.BooleanField(default=False)
     human_initial_formation = models.JSONField()
     ai_initial_formation = models.JSONField()
     move_list = models.JSONField()
     current_state = models.JSONField(default=list)
     current_infostate = models.JSONField(default=list)
+    turn_number = models.IntegerField(default=1)
+    player_to_move = models.CharField(max_length=1, default='B')
 
     def __str__(self):
         return f"Versus AI Game {self.id}"
