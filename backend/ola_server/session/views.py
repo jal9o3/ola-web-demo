@@ -312,7 +312,8 @@ class GameDataView(VersusAISessionView):
                                                       rank_ceiling=col[1]))
                     elif Ranking.FLAG + Ranking.SPY <= col[0] <= 2 * Ranking.SPY:
                         new_row.append(InfostatePiece(color=Player.RED,
-                                                      rank_floor=col[0] - Ranking.SPY,
+                                                      rank_floor=col[0] -
+                                                      Ranking.SPY,
                                                       rank_ceiling=col[1] - Ranking.SPY))
                     elif col[0] == Ranking.BLANK:
                         new_row.append(InfostatePiece(color=Player.ARBITER,
@@ -326,32 +327,35 @@ class GameDataView(VersusAISessionView):
                                           anticipating=False)
 
             input_move = request.data.get('move')
-            if input_move in current_board.actions():
-                next_board = current_board.transition(action=input_move)
 
-                result = current_board.classify_action_result(action=input_move,
-                                                              new_board=next_board)
+        if (game.has_started and input_move in current_board.actions()
+                and not current_board.is_terminal()):
+            next_board = current_board.transition(action=input_move)
 
-                next_infostate = current_infostate.transition(action=input_move,
-                                                              result=result)
+            result = current_board.classify_action_result(action=input_move,
+                                                            new_board=next_board)
 
-                next_infostate_matrix = Infostate.to_matrix(
-                    infostate_board=next_infostate.abstracted_board)
+            next_infostate = current_infostate.transition(action=input_move,
+                                                            result=result)
 
-                game.move_list.append(input_move)
+            next_infostate_matrix = Infostate.to_matrix(
+                infostate_board=next_infostate.abstracted_board)
 
-                game.turn_number += 1
-                game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
+            game.move_list.append(input_move)
 
+            game.turn_number += 1
+            game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
+
+            if not next_board.is_terminal():
                 # The AI will now make a move
                 ai_action = random.choice(next_board.actions())
                 previous_board = copy.deepcopy(next_board)
                 previous_infostate = copy.deepcopy(next_infostate)
                 next_board = previous_board.transition(action=ai_action)
                 result = previous_board.classify_action_result(action=ai_action,
-                                                        new_board=next_board)
+                                                                new_board=next_board)
                 next_infostate = previous_infostate.transition(action=ai_action,
-                                                        result=result)
+                                                                result=result)
                 next_infostate_matrix = Infostate.to_matrix(
                     infostate_board=next_infostate.abstracted_board)
                 game.current_state = next_board.matrix
@@ -359,20 +363,30 @@ class GameDataView(VersusAISessionView):
                 game.move_list.append(ai_action)
                 game.turn_number += 1
                 game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
-                game.save()
-
-                game_data = {
-                    'human_color': game.human_color,
-                    'ai_color': game.ai_color,
-                    'has_started': game.has_started,
-                    'human_initial_formation': game.human_initial_formation,
-                    'move_list': game.move_list,
-                    'current_infostate': game.current_infostate,
-                    'turn_number': game.turn_number,
-                    'player_to_move': game.player_to_move,
-                }
-                return Response(game_data, status=status.HTTP_200_OK)
-            else:
-                return Response({'error': 'Invalid move'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            game.save()
+            game_data = {
+                'human_color': game.human_color,
+                'ai_color': game.ai_color,
+                'has_started': game.has_started,
+                'human_initial_formation': game.human_initial_formation,
+                'move_list': game.move_list,
+                'current_infostate': game.current_infostate,
+                'turn_number': game.turn_number,
+                'player_to_move': game.player_to_move,
+            }
+            return Response(game_data, status=status.HTTP_200_OK)
+        else:
+            game_data = {
+                'human_color': game.human_color,
+                'ai_color': game.ai_color,
+                'has_started': game.has_started,
+                'human_initial_formation': game.human_initial_formation,
+                'move_list': game.move_list,
+                'current_infostate': game.current_infostate,
+                'turn_number': game.turn_number,
+                'player_to_move': game.player_to_move,
+            }
+            return Response(game_data, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
