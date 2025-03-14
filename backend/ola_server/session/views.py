@@ -16,6 +16,7 @@ Class VersusAISessionView:
 """
 import secrets
 import random
+import copy
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -258,6 +259,7 @@ class GameDataView(VersusAISessionView):
 
             # If the AI is playing as blue, the AI will make the first move
             if game.ai_color == 'B':
+                game.has_started = True
                 # Choose at random, for now
                 ai_action = random.choice(arbiter_board.actions())
                 next_board = arbiter_board.transition(action=ai_action)
@@ -272,7 +274,6 @@ class GameDataView(VersusAISessionView):
                 game.move_list.append(ai_action)
                 game.turn_number += 1
                 game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
-                game.has_started = True
             else:
                 game.current_state = arbiter_board.matrix
                 game.current_infostate = starting_infostate.matrix
@@ -337,11 +338,25 @@ class GameDataView(VersusAISessionView):
                 next_infostate_matrix = Infostate.to_matrix(
                     infostate_board=next_infostate.abstracted_board)
 
-                game.current_state = next_board.matrix
-                game.current_infostate = next_infostate_matrix
-
                 game.move_list.append(input_move)
 
+                game.turn_number += 1
+                game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
+
+                # The AI will now make a move
+                ai_action = random.choice(next_board.actions())
+                previous_board = copy.deepcopy(next_board)
+                previous_infostate = copy.deepcopy(next_infostate)
+                next_board = previous_board.transition(action=ai_action)
+                result = previous_board.classify_action_result(action=ai_action,
+                                                        new_board=next_board)
+                next_infostate = previous_infostate.transition(action=ai_action,
+                                                        result=result)
+                next_infostate_matrix = Infostate.to_matrix(
+                    infostate_board=next_infostate.abstracted_board)
+                game.current_state = next_board.matrix
+                game.current_infostate = next_infostate_matrix
+                game.move_list.append(ai_action)
                 game.turn_number += 1
                 game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
                 game.save()

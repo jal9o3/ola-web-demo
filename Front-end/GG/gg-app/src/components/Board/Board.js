@@ -274,8 +274,10 @@ const Board = () => {
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
           })
           .catch((error) => console.error("Error updating game data:", error));
+          setSelectedPiece(null); // Deselect the piece after the move
       } else if (isValidMove && alliedPiece) {
         alert("Allies cannot be challenged! Choose another spot.");
+        setSelectedPiece(null); // Deselect the piece after the move
       } else if (isValidMove) {
         const move = `${position.row}${position.col}${row}${col}`;
         // Submit the move to the backend using PATCH
