@@ -208,15 +208,11 @@ const Board = () => {
       (piece) => piece.team === humanColor && piece.position === null
     );
 
-    console.log("Player pieces before randomization:", playerPieces);
-
     // Assign random positions to the player pieces
     const newPieces = playerPieces.map((piece, index) => {
       const position = availablePositions[index];
       return { ...piece, position };
     });
-
-    console.log("New pieces with positions:", newPieces);
 
     // Update the pieces state
     setPieces((prevPieces) => {
@@ -225,7 +221,6 @@ const Board = () => {
           ? newPieces.find((p) => p.id === piece.id) || piece
           : piece
       );
-      console.log("Updated pieces state:", updatedPieces);
       return updatedPieces;
     });
   };
@@ -341,22 +336,9 @@ const Board = () => {
       return a.row - b.row;
     });
 
-    // Logging the pieces and empty tiles in the last three rows
-    lastThreeRows.forEach((tile) => {
-      if (tile.piece) {
-        console.log(
-          `Piece: ${tile.piece.name}, Position: (${tile.row}, ${tile.col})`
-        );
-      } else {
-        console.log(`Empty tile at Position: (${tile.row}, ${tile.col})`);
-      }
-    });
-    console.log(lastThreeRows);
-
     const formationValues = lastThreeRows.map((tile) =>
       tile.piece ? rankHierarchy[tile.piece.name] : 0
     );
-    console.log(formationValues);
     const urlParams = new URLSearchParams(window.location.search);
     const sessionName = urlParams.get("sessionName");
     const accessKey = urlParams.get("accessKey");
@@ -387,15 +369,13 @@ const Board = () => {
   useEffect(() => {
     if (current_infostate.length > 0) {
       const newPieces = [];
-      console.log("Current Infostate Matrix:");
       for (let row = 0; row < 8; row++) {
         for (let col = 0; col < 9; col++) {
-          console.log(`Row ${row}, Col ${col}:`, current_infostate[row][col]);
           if (
             current_infostate[row][col][0] === 0 &&
             current_infostate[row][col][1] === 0
           ) {
-            console.log(`Row ${row}, Col ${col} is a blank tile`);
+            // Empty tile
           } else if (
             current_infostate[row][col][0] >= BLUE_FLAG &&
             current_infostate[row][col][0] <= BLUE_SPY &&
@@ -403,8 +383,6 @@ const Board = () => {
             current_infostate[row][col][1] <= BLUE_SPY &&
             humanColor === "blue"
           ) {
-            console.log(`Row ${row}, Col ${col} is a blue piece`);
-            console.log(`Allied piece`);
             const pieceName = Object.keys(rankHierarchy).find(
               (key) => rankHierarchy[key] === current_infostate[row][col][0]
             );
@@ -425,8 +403,6 @@ const Board = () => {
             current_infostate[row][col][1] <= BLUE_SPY &&
             humanColor === "red"
           ) {
-            console.log(`Row ${row}, Col ${col} is a blue piece`);
-            console.log(`Opponent piece`);
             newPieces.push({
               id: `opponent-${row}-${col}`,
               name: null,
@@ -441,8 +417,6 @@ const Board = () => {
             current_infostate[row][col][1] <= RED_SPY &&
             humanColor === "red"
           ) {
-            console.log(`Row ${row}, Col ${col} is a red piece`);
-            console.log(`Allied piece`);
             const pieceName = Object.keys(rankHierarchy).find(
               (key) =>
                 rankHierarchy[key] === current_infostate[row][col][0] - BLUE_SPY
@@ -464,8 +438,6 @@ const Board = () => {
             current_infostate[row][col][1] <= RED_SPY &&
             humanColor === "blue"
           ) {
-            console.log(`Row ${row}, Col ${col} is a red piece`);
-            console.log(`Opponent piece`);
             newPieces.push({
               id: `opponent-${row}-${col}`,
               name: null,
@@ -479,14 +451,6 @@ const Board = () => {
       setPieces(newPieces);
     }
   }, [current_infostate]);
-
-  // Add this useEffect to log the updated current_infostate
-  useEffect(() => {
-    console.log("Current Infostate:");
-    console.log(current_infostate);
-    console.log("Pieces:");
-    console.log(pieces);
-  }, [current_infostate, pieces]);
 
   const Tooltip = ({ text, position }) => {
     return (
