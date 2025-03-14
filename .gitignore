@@ -4,3 +4,4 @@ backend/ola_server/session/__pycache__/admin.cpython-312.pyc
 backend/ola_server/session/__pycache__/*.pyc
 backend/ola_server/session/migrations/__pycache__/*.pyc
 backend/ola_server/session/migrations/__pycache__/__init__.cpython-312.pyc
+backend/ola_server/OLA
