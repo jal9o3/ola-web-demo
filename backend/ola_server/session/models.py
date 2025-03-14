@@ -53,6 +53,8 @@ class VersusAIGame(models.Model):
     current_infostate = models.JSONField(default=list)
     turn_number = models.IntegerField(default=1)
     player_to_move = models.CharField(max_length=1, default='B')
+    blue_anticipating = models.BooleanField(default=False)
+    red_anticipating = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Versus AI Game {self.id}"

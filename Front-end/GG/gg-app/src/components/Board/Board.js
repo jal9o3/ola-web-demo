@@ -33,6 +33,8 @@ import Sergeantb from "../../assets/Sergeantb.png";
 import Lieucol from "../../assets/Lieucol.png";
 import Lieucolb from "../../assets/Lieucolb.png";
 
+import { processInfostate } from "../../utils/processInfostate";
+
 // Initial Pieces with 6 Privates and 2 Spies
 const initialPieces = [
   { id: 1, name: "5-star General", src: Gen5b, position: null, team: "blue" },
@@ -228,6 +230,10 @@ const Board = () => {
   const handleTileClick = (row, col) => {
     if (!gameStarted) return;
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionName = urlParams.get("sessionName");
+    const accessKey = urlParams.get("accessKey");
+
     if (selectedPiece) {
       const { position, team, name } = selectedPiece;
 
@@ -249,21 +255,48 @@ const Board = () => {
       );
 
       if (isValidMove && opponentPiece) {
-        // TODO: submit move to the server
-        console.log("TODO: submit move to the engine server");
         const move = `${position.row}${position.col}${row}${col}`;
-        console.log("Move:", move);
+        // Submit the move to the backend using PATCH
+        fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            session_name: sessionName,
+            access_key: accessKey,
+            move: move,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
+          })
+          .catch((error) => console.error("Error updating game data:", error));
       } else if (isValidMove && alliedPiece) {
         alert("Allies cannot be challenged! Choose another spot.");
       } else if (isValidMove) {
         const move = `${position.row}${position.col}${row}${col}`;
-        console.log("Move:", move);
-        setPieces((prevPieces) =>
-          prevPieces.map((p) =>
-            p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
-          )
-        );
-        setSelectedPiece(null); // Deselect the piece after the move
+        // Submit the move to the backend using PATCH
+        fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            session_name: sessionName,
+            access_key: accessKey,
+            move: move,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
+          })
+          .catch((error) => console.error("Error updating game data:", error));
+          setSelectedPiece(null); // Deselect the piece after the move
       } else {
         // If the move is invalid, allow selecting a new piece
         const piece = pieces.find(
@@ -372,86 +405,16 @@ const Board = () => {
 
   useEffect(() => {
     if (current_infostate.length > 0) {
-      const newPieces = [];
-      for (let row = 0; row < 8; row++) {
-        for (let col = 0; col < 9; col++) {
-          if (
-            current_infostate[row][col][0] === 0 &&
-            current_infostate[row][col][1] === 0
-          ) {
-            // Empty tile
-          } else if (
-            current_infostate[row][col][0] >= BLUE_FLAG &&
-            current_infostate[row][col][0] <= BLUE_SPY &&
-            current_infostate[row][col][1] >= BLUE_FLAG &&
-            current_infostate[row][col][1] <= BLUE_SPY &&
-            humanColor === "blue"
-          ) {
-            const pieceName = Object.keys(rankHierarchy).find(
-              (key) => rankHierarchy[key] === current_infostate[row][col][0]
-            );
-            const piece = initialPieces.find(
-              (p) => p.name === pieceName && p.team === humanColor
-            );
-            newPieces.push({
-              id: pieceName,
-              name: pieceName,
-              src: piece ? piece.src : null,
-              position: { row, col },
-              team: humanColor,
-            });
-          } else if (
-            current_infostate[row][col][0] >= BLUE_FLAG &&
-            current_infostate[row][col][0] <= BLUE_SPY &&
-            current_infostate[row][col][1] >= BLUE_FLAG &&
-            current_infostate[row][col][1] <= BLUE_SPY &&
-            humanColor === "red"
-          ) {
-            newPieces.push({
-              id: `opponent-${row}-${col}`,
-              name: null,
-              src: null,
-              position: { row, col },
-              team: "blue",
-            });
-          } else if (
-            current_infostate[row][col][0] >= RED_FLAG &&
-            current_infostate[row][col][0] <= RED_SPY &&
-            current_infostate[row][col][1] >= RED_FLAG &&
-            current_infostate[row][col][1] <= RED_SPY &&
-            humanColor === "red"
-          ) {
-            const pieceName = Object.keys(rankHierarchy).find(
-              (key) =>
-                rankHierarchy[key] === current_infostate[row][col][0] - BLUE_SPY
-            );
-            const piece = initialPieces.find(
-              (p) => p.name === pieceName && p.team === humanColor
-            );
-            newPieces.push({
-              id: pieceName,
-              name: pieceName,
-              src: piece ? piece.src : null,
-              position: { row, col },
-              team: humanColor,
-            });
-          } else if (
-            current_infostate[row][col][0] >= RED_FLAG &&
-            current_infostate[row][col][0] <= RED_SPY &&
-            current_infostate[row][col][1] >= RED_FLAG &&
-            current_infostate[row][col][1] <= RED_SPY &&
-            humanColor === "blue"
-          ) {
-            newPieces.push({
-              id: `opponent-${row}-${col}`,
-              name: null,
-              src: null,
-              position: { row, col },
-              team: "red",
-            });
-          }
-        }
-      }
+      const newPieces = processInfostate(
+        current_infostate,
+        humanColor,
+        rankHierarchy,
+        initialPieces,
+        BLUE_FLAG,
+        BLUE_SPY,
+        RED_FLAG,
+        RED_SPY
+      );
       setPieces(newPieces);
     }
   }, [current_infostate]);
@@ -573,8 +536,7 @@ const Board = () => {
                             text: "",
                             position: {
                               x: 0,
-                              y: 0,
-                            },
+                              y: 0 },
                           })
                         }
                       />
