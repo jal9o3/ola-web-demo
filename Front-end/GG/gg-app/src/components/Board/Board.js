@@ -253,97 +253,17 @@ const Board = () => {
           p.position?.row === row && p.position?.col === col && p.team === team
       );
 
-      if (isValidMove) {
-        if (opponentPiece) {
-          // Handle special case for Spy first
-          if (name === "Spy" && opponentPiece.name === "Private") {
-            // Spy loses to Private
-            console.log(`${opponentPiece.name} defeats ${name}`);
-            setPieces((prevPieces) =>
-              prevPieces.filter((p) => p.id !== selectedPiece.id)
-            );
-          } else if (name === "Spy" && opponentPiece.name !== "Flag") {
-            // Spy wins against all officers
-            console.log(`${name} defeats ${opponentPiece.name}`);
-            setPieces((prevPieces) =>
-              prevPieces
-                .map((p) =>
-                  p.id === selectedPiece.id
-                    ? { ...p, position: { row, col } }
-                    : p
-                )
-                .filter((p) => p.id !== opponentPiece.id)
-            );
-          } else if (opponentPiece.name === "Spy" && name === "Private") {
-            // Private defeats Spy
-            console.log(`${name} defeats ${opponentPiece.name}`);
-            setPieces((prevPieces) =>
-              prevPieces
-                .map((p) =>
-                  p.id === selectedPiece.id
-                    ? { ...p, position: { row, col } }
-                    : p
-                )
-                .filter((p) => p.id !== opponentPiece.id)
-            );
-          } else if (opponentPiece.name === "Spy" && name !== "Flag") {
-            // Spy defeats all officers
-            console.log(`${opponentPiece.name} defeats ${name}`);
-            setPieces((prevPieces) =>
-              prevPieces.filter((p) => p.id !== selectedPiece.id)
-            );
-          } else {
-            // Regular combat resolution based on rank
-            const selectedRank = rankHierarchy[name];
-            const opponentRank = rankHierarchy[opponentPiece.name];
-
-            if (selectedRank > opponentRank) {
-              // Player's piece wins
-              console.log(`${name} defeats ${opponentPiece.name}`);
-              setPieces((prevPieces) =>
-                prevPieces
-                  .map((p) =>
-                    p.id === selectedPiece.id
-                      ? { ...p, position: { row, col } }
-                      : p
-                  )
-                  .filter((p) => p.id !== opponentPiece.id)
-              );
-            } else if (selectedRank < opponentRank) {
-              // Opponent's piece wins
-              console.log(`${opponentPiece.name} defeats ${name}`);
-              setPieces((prevPieces) =>
-                prevPieces
-                  .map((p) =>
-                    p.id === opponentPiece.id
-                      ? { ...p, position: { row, col } }
-                      : p
-                  )
-                  .filter((p) => p.id !== selectedPiece.id)
-              );
-            } else {
-              // Both pieces are eliminated
-              console.log(
-                `${name} and ${opponentPiece.name} are both eliminated`
-              );
-              setPieces((prevPieces) =>
-                prevPieces.filter(
-                  (p) => p.id !== selectedPiece.id && p.id !== opponentPiece.id
-                )
-              );
-            }
-          }
-        } else if (alliedPiece) {
-          // Alert if trying to move to an allied piece
-          alert("Allies cannot be challenged! Choose another spot.");
-        } else {
-          // Move the selected piece if no opponent piece is present
-          setPieces((prevPieces) =>
-            prevPieces.map((p) =>
-              p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
-            )
-          );
-        }
+      if (isValidMove && opponentPiece) {
+        // TODO: submit move to the server
+        console.log("TODO: submit move to the engine server");
+      } else if (isValidMove && alliedPiece) {
+        alert("Allies cannot be challenged! Choose another spot.");
+      } else if (isValidMove) {
+        setPieces((prevPieces) =>
+          prevPieces.map((p) =>
+        p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+          )
+        );
         setSelectedPiece(null); // Deselect the piece after the move
       } else {
         // If the move is invalid, allow selecting a new piece
