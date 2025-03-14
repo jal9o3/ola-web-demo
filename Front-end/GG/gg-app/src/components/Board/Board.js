@@ -261,7 +261,7 @@ const Board = () => {
       } else if (isValidMove) {
         setPieces((prevPieces) =>
           prevPieces.map((p) =>
-        p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+            p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
           )
         );
         setSelectedPiece(null); // Deselect the piece after the move
