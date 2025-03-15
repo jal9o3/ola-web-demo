@@ -363,6 +363,8 @@ const AnalysisTool = () => {
   const [suggestedMoves, setSuggestedMoves] = useState([]);
   const [validMoves, setValidMoves] = useState([]);
   const [flipped, setFlipped] = useState(false);
+  const [color, setColor] = useState("B");
+  const [toMove, setToMove] = useState("B");
 
   // Calculate valid moves when a piece is selected
   useEffect(() => {
@@ -765,6 +767,15 @@ const AnalysisTool = () => {
     );
   };
 
+  // Log changes to color and toMove
+  useEffect(() => {
+    console.log("Color changed to:", color);
+  }, [color]);
+
+  useEffect(() => {
+    console.log("ToMove changed to:", toMove);
+  }, [toMove]);
+
   return (
     <div className="analysis-tool-container">
       <button
@@ -785,6 +796,33 @@ const AnalysisTool = () => {
           Flip Board
         </label>
       </div>
+
+      <div className="color-selector">
+        <label htmlFor="color-select">Choose Team:</label>
+        <select
+          id="color-select"
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
+          disabled={gameStarted}
+        >
+          <option value="B">Blue</option>
+          <option value="R">Red</option>
+        </select>
+      </div>
+
+      <div className="to-move-selector">
+        <label htmlFor="to-move-select">Player to move:</label>
+        <select
+          id="to-move-select"
+          value={toMove}
+          onChange={(e) => setToMove(e.target.value)}
+        >
+          <option value="B">Blue</option>
+          <option value="R">Red</option>
+        </select>
+      </div>
+
+
 
       {!flipped && (
         <div className="game-board">
