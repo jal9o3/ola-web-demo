@@ -845,29 +845,33 @@ const AnalysisTool = () => {
                   onDragOver={allowDrop}
                 >
                   {piece ? (
-                    <img
-                      src={piece.src}
-                      alt={piece.name}
-                      className="piece-image"
-                      draggable={true}
-                      onDragStart={(e) => {
-                        e.dataTransfer.setData("pieceId", piece.id);
-                      }}
-                      onMouseEnter={(e) => {
-                        setTooltip({
-                          visible: true,
-                          text: piece.name,
-                          position: { x: e.clientX, y: e.clientY },
-                        });
-                      }}
-                      onMouseLeave={() =>
-                        setTooltip({
-                          visible: false,
-                          text: "",
-                          position: { x: 0, y: 0 },
-                        })
-                      }
-                    />
+                    piece.team === "opponent" ? (
+                      <div className="opponent-placeholder"></div>
+                    ) : (
+                      <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className="piece-image"
+                        draggable={true}
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("pieceId", piece.id);
+                        }}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: { x: e.clientX, y: e.clientY },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: { x: 0, y: 0 },
+                          })
+                        }
+                      />
+                    )
                   ) : null}
                 </div>
               );
@@ -904,29 +908,33 @@ const AnalysisTool = () => {
                   onDragOver={allowDrop}
                 >
                   {piece ? (
-                    <img
-                      src={piece.src}
-                      alt={piece.name}
-                      className="piece-image"
-                      draggable={true}
-                      onDragStart={(e) => {
-                        e.dataTransfer.setData("pieceId", piece.id);
-                      }}
-                      onMouseEnter={(e) => {
-                        setTooltip({
-                          visible: true,
-                          text: piece.name,
-                          position: { x: e.clientX, y: e.clientY },
-                        });
-                      }}
-                      onMouseLeave={() =>
-                        setTooltip({
-                          visible: false,
-                          text: "",
-                          position: { x: 0, y: 0 },
-                        })
-                      }
-                    />
+                    piece.team === "opponent" ? (
+                      <div className="opponent-placeholder"></div>
+                    ) : (
+                      <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className="piece-image"
+                        draggable={true}
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("pieceId", piece.id);
+                        }}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: { x: e.clientX, y: e.clientY },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: { x: 0, y: 0 },
+                          })
+                        }
+                      />
+                    )
                   ) : null}
                 </div>
               );

@@ -89,3 +89,10 @@
     border: 2px solid #2ecc71;
     background-color: rgba(0, 0, 0, 0);
 }
+
+.opponent-placeholder {
+    width: 40px; 
+    height: 40px; 
+    background-color: rgb(12, 112, 116); 
+    border-radius: 5px; 
+}
