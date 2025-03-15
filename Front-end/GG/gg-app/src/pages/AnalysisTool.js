@@ -163,17 +163,24 @@ const initialPieces = [
     team: "player",
   },
   {
+    id: 42,
+    name: "Private",
+    src: Privateb,
+    position: { row: 7, col: 0 },
+    team: "player",
+  },
+  {
     id: 19,
     name: "Sergeant",
     src: Sergeantb,
-    position: { row: 7, col: 0 },
+    position: { row: 7, col: 1 },
     team: "player",
   },
   {
     id: 20,
     name: "Lieutenant Colonel",
     src: Lieucolb,
-    position: { row: 7, col: 1 },
+    position: { row: 7, col: 2 },
     team: "player",
   },
   {
