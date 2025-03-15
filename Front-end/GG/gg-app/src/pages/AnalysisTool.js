@@ -846,7 +846,27 @@ const AnalysisTool = () => {
                 >
                   {piece ? (
                     piece.team === "opponent" ? (
-                      <div className="opponent-placeholder"></div>
+                      <div
+                        className="opponent-placeholder"
+                        draggable={true}
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("pieceId", piece.id);
+                        }}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: { x: e.clientX, y: e.clientY },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: { x: 0, y: 0 },
+                          })
+                        }
+                      ></div>
                     ) : (
                       <img
                         src={piece.src}
@@ -909,7 +929,27 @@ const AnalysisTool = () => {
                 >
                   {piece ? (
                     piece.team === "opponent" ? (
-                      <div className="opponent-placeholder"></div>
+                      <div
+                        className="opponent-placeholder"
+                        draggable={true}
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("pieceId", piece.id);
+                        }}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: { x: e.clientX, y: e.clientY },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: { x: 0, y: 0 },
+                          })
+                        }
+                      ></div>
                     ) : (
                       <img
                         src={piece.src}
