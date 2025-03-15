@@ -764,7 +764,7 @@ const AnalysisTool = () => {
         className="play-button"
         disabled={gameStarted}
       >
-        Play
+        Begin Analysis
       </button>
 
       <div className="game-board">
@@ -822,28 +822,10 @@ const AnalysisTool = () => {
 
       <div className="analysis-container">
         <h3>
-          Suggested Moves for{" "}
-          {selectedPiece ? selectedPiece.name : "Selected Piece"}
+          Suggested Strategy:
         </h3>
         <div className="suggested-moves">
-          {selectedPiece ? (
-            suggestedMoves.length > 0 ? (
-              suggestedMoves.map((move, index) => (
-                <div key={index} className="suggested-move-item">
-                  <p>
-                    <strong>Move {index + 1}:</strong> Move {selectedPiece.name}{" "}
-                    to ({move.position.row}, {move.position.col}) - Probability:{" "}
-                    {move.confidence}%
-                  </p>
-                  <p className="move-description">{move.description}</p>
-                </div>
-              ))
-            ) : (
-              <p>No valid moves available for this piece.</p>
-            )
-          ) : (
-            <p>Select a piece to see suggested moves.</p>
-          )}
+          <p>[Insert Strategy]</p>
         </div>
       </div>
     </div>
