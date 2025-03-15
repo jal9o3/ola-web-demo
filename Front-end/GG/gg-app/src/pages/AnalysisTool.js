@@ -355,6 +355,7 @@ const AnalysisTool = () => {
   });
   const [suggestedMoves, setSuggestedMoves] = useState([]);
   const [validMoves, setValidMoves] = useState([]);
+  const [flipped, setFlipped] = useState(false);
 
   // Calculate valid moves when a piece is selected
   useEffect(() => {
@@ -767,63 +768,133 @@ const AnalysisTool = () => {
         Begin Analysis
       </button>
 
-      <div className="game-board">
-        {Array.from({ length: 8 }).map((_, row) =>
-          Array.from({ length: 9 }).map((_, col) => {
-            const piece = pieces.find(
-              (p) => p.position?.row === row && p.position?.col === col
-            );
-            return (
-              <div
-                key={`${row}-${col}`}
-                className={`tile ${
-                  selectedPiece?.position?.row === row &&
-                  selectedPiece?.position?.col === col
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => handleTileClick(row, col)}
-                onDrop={(e) => handleDrop(e, row, col)}
-                onDragOver={allowDrop}
-              >
-                {piece ? (
-                  <img
-                    src={piece.src}
-                    alt={piece.name}
-                    className="piece-image"
-                    draggable={true}
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData("pieceId", piece.id);
-                    }}
-                    onMouseEnter={(e) => {
-                      setTooltip({
-                        visible: true,
-                        text: piece.name,
-                        position: { x: e.clientX, y: e.clientY },
-                      });
-                    }}
-                    onMouseLeave={() =>
-                      setTooltip({
-                        visible: false,
-                        text: "",
-                        position: { x: 0, y: 0 },
-                      })
-                    }
-                  />
-                ) : null}
-              </div>
-            );
-          })
-        )}
-        {tooltip.visible && (
-          <Tooltip text={tooltip.text} position={tooltip.position} />
-        )}
+      <div className="toggle-container">
+        <label>
+          <input
+            type="checkbox"
+            checked={flipped}
+            onChange={(e) => setFlipped(e.target.checked)}
+          />
+          Flip Board
+        </label>
       </div>
 
+      {!flipped && (
+        <div className="game-board">
+          {Array.from({ length: 8 }).map((_, row) =>
+            Array.from({ length: 9 }).map((_, col) => {
+              const piece = pieces.find(
+                (p) => p.position?.row === row && p.position?.col === col
+              );
+              return (
+                <div
+                  key={`${row}-${col}`}
+                  className={`tile ${
+                    selectedPiece?.position?.row === row &&
+                    selectedPiece?.position?.col === col
+                      ? "selected"
+                      : ""
+                  }`}
+                  onClick={() => handleTileClick(row, col)}
+                  onDrop={(e) => handleDrop(e, row, col)}
+                  onDragOver={allowDrop}
+                >
+                  {piece ? (
+                    <img
+                      src={piece.src}
+                      alt={piece.name}
+                      className="piece-image"
+                      draggable={true}
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData("pieceId", piece.id);
+                      }}
+                      onMouseEnter={(e) => {
+                        setTooltip({
+                          visible: true,
+                          text: piece.name,
+                          position: { x: e.clientX, y: e.clientY },
+                        });
+                      }}
+                      onMouseLeave={() =>
+                        setTooltip({
+                          visible: false,
+                          text: "",
+                          position: { x: 0, y: 0 },
+                        })
+                      }
+                    />
+                  ) : null}
+                </div>
+              );
+            })
+          )}
+          {tooltip.visible && (
+            <Tooltip text={tooltip.text} position={tooltip.position} />
+          )}
+        </div>
+      )}
+
+      {flipped && (
+        <div className={`game-board flipped`}>
+          {Array.from({ length: 8 }).map((_, row) =>
+            Array.from({ length: 9 }).map((_, col) => {
+              const flippedRow = 7 - row;
+              const flippedCol = 8 - col;
+              const piece = pieces.find(
+                (p) =>
+                  p.position?.row === flippedRow &&
+                  p.position?.col === flippedCol
+              );
+              return (
+                <div
+                  key={`${flippedRow}-${flippedCol}`}
+                  className={`tile ${
+                    selectedPiece?.position?.row === flippedRow &&
+                    selectedPiece?.position?.col === flippedCol
+                      ? "selected"
+                      : ""
+                  }`}
+                  onClick={() => handleTileClick(flippedRow, flippedCol)}
+                  onDrop={(e) => handleDrop(e, flippedRow, flippedCol)}
+                  onDragOver={allowDrop}
+                >
+                  {piece ? (
+                    <img
+                      src={piece.src}
+                      alt={piece.name}
+                      className="piece-image"
+                      draggable={true}
+                      onDragStart={(e) => {
+                        e.dataTransfer.setData("pieceId", piece.id);
+                      }}
+                      onMouseEnter={(e) => {
+                        setTooltip({
+                          visible: true,
+                          text: piece.name,
+                          position: { x: e.clientX, y: e.clientY },
+                        });
+                      }}
+                      onMouseLeave={() =>
+                        setTooltip({
+                          visible: false,
+                          text: "",
+                          position: { x: 0, y: 0 },
+                        })
+                      }
+                    />
+                  ) : null}
+                </div>
+              );
+            })
+          )}
+          {tooltip.visible && (
+            <Tooltip text={tooltip.text} position={tooltip.position} />
+          )}
+        </div>
+      )}
+
       <div className="analysis-container">
-        <h3>
-          Suggested Strategy:
-        </h3>
+        <h3>Suggested Strategy:</h3>
         <div className="suggested-moves">
           <p>[Insert Strategy]</p>
         </div>
