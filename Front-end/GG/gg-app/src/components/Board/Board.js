@@ -127,6 +127,7 @@ const Board = () => {
   const [aiColor, setAiColor] = useState("");
   const [humanColor, setHumanColor] = useState("");
   const [current_infostate, setCurrentInfostate] = useState([]);
+  const [currentTurn, setCurrentTurn] = useState("Your turn"); // Default to player's turn
 
   useEffect(() => {
     const fetchData = async () => {
@@ -275,6 +276,22 @@ const Board = () => {
           })
           .catch((error) => console.error("Error updating game data:", error));
           setSelectedPiece(null); // Deselect the piece after the move
+
+          // Move the selected piece if no opponent piece is present
+setPieces(prevPieces =>
+  prevPieces.map(p =>
+      p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+  )
+);
+// Switch turn to AI after player's move
+                setCurrentTurn("AI's turn");
+
+                // Simulate AI's move (this is just a placeholder for actual AI logic)
+                setTimeout(() => {
+                    // Here you would implement the AI's logic to make a move
+                    // For now, we'll just switch back to the player's turn
+                    setCurrentTurn("Your turn");
+                }, 1000); // Simulate a delay for the AI's turn
       } else if (isValidMove && alliedPiece) {
         alert("Allies cannot be challenged! Choose another spot.");
         setSelectedPiece(null); // Deselect the piece after the move
@@ -468,6 +485,11 @@ const Board = () => {
 
   return (
     <div className="board-container">
+    {gameStarted && (
+            <div className="turn-indicator">
+                <h3>{currentTurn}</h3>
+            </div>
+        )}
       <div className="button-container">
         <button
           onClick={handlePlayClick}
@@ -603,6 +625,7 @@ const Board = () => {
         </div>
       </div>
     </div>
+    
   );
 };
 
