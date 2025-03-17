@@ -786,17 +786,6 @@ const AnalysisTool = () => {
         Begin Analysis
       </button>
 
-      <div className="toggle-container">
-        <label>
-          <input
-            type="checkbox"
-            checked={flipped}
-            onChange={(e) => setFlipped(e.target.checked)}
-          />
-          Flip Board
-        </label>
-      </div>
-
       <div className="color-selector">
         <label htmlFor="color-select">Choose Team:</label>
         <select
