@@ -842,20 +842,6 @@ const AnalysisTool = () => {
                     onDragStart={(e) => {
                       e.dataTransfer.setData("pieceId", piece.id);
                     }}
-                    onMouseEnter={(e) => {
-                      setTooltip({
-                      visible: true,
-                      text: piece.name,
-                      position: { x: e.clientX, y: e.clientY },
-                      });
-                    }}
-                    onMouseLeave={() =>
-                      setTooltip({
-                      visible: false,
-                      text: "",
-                      position: { x: 0, y: 0 },
-                      })
-                    }
                     ></div>
                   ) : (
                     <img
@@ -926,20 +912,6 @@ const AnalysisTool = () => {
                     onDragStart={(e) => {
                       e.dataTransfer.setData("pieceId", piece.id);
                     }}
-                    onMouseEnter={(e) => {
-                      setTooltip({
-                      visible: true,
-                      text: piece.name,
-                      position: { x: e.clientX, y: e.clientY },
-                      });
-                    }}
-                    onMouseLeave={() =>
-                      setTooltip({
-                      visible: false,
-                      text: "",
-                      position: { x: 0, y: 0 },
-                      })
-                    }
                     ></div>
                   ) : (
                     <img
