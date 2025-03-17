@@ -18,6 +18,10 @@ import secrets
 import random
 import copy
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -25,10 +29,13 @@ from rest_framework import status
 from OLA.core import Player, Board, Infostate, InfostatePiece
 from OLA.constants import Ranking
 from OLA.simulation import MatchSimulator
+from OLA.training import TimelessBoard
 
 from .models import VersusAISession, VersusAIGame
 from .serializers import VersusAISessionSerializer, VersusAISessionListSerializer
 
+INPUT_SIZE = 147
+OUTPUT_SIZE = 254
 
 def generate_access_key():
     """
@@ -333,10 +340,10 @@ class GameDataView(VersusAISessionView):
             next_board = current_board.transition(action=input_move)
 
             result = current_board.classify_action_result(action=input_move,
-                                                            new_board=next_board)
+                                                          new_board=next_board)
 
             next_infostate = current_infostate.transition(action=input_move,
-                                                            result=result)
+                                                          result=result)
 
             next_infostate_matrix = Infostate.to_matrix(
                 infostate_board=next_infostate.abstracted_board)
@@ -353,9 +360,9 @@ class GameDataView(VersusAISessionView):
                 previous_infostate = copy.deepcopy(next_infostate)
                 next_board = previous_board.transition(action=ai_action)
                 result = previous_board.classify_action_result(action=ai_action,
-                                                                new_board=next_board)
+                                                               new_board=next_board)
                 next_infostate = previous_infostate.transition(action=ai_action,
-                                                                result=result)
+                                                               result=result)
                 next_infostate_matrix = Infostate.to_matrix(
                     infostate_board=next_infostate.abstracted_board)
                 game.current_state = next_board.matrix
@@ -363,7 +370,7 @@ class GameDataView(VersusAISessionView):
                 game.move_list.append(ai_action)
                 game.turn_number += 1
                 game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
-            
+
             game.save()
             game_data = {
                 'human_color': game.human_color,
@@ -390,3 +397,101 @@ class GameDataView(VersusAISessionView):
             return Response(game_data, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FiveLayer(nn.Module):
+    def __init__(self):
+        super(FiveLayer, self).__init__()
+        self.fc1 = nn.Linear(INPUT_SIZE, 256)
+        self.fc2 = nn.Linear(256, 128)
+        self.fc3 = nn.Linear(128, 64)
+        self.fc4 = nn.Linear(64, 32)
+        self.fc5 = nn.Linear(32, OUTPUT_SIZE)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = F.relu(self.fc4(x))
+        x = self.fc5(x)
+        return F.softmax(x, dim=1)
+
+
+class AnalysisView(APIView):
+
+    def post(self, request, *args, **kwargs):
+
+        model_name = request.data.get('model_name')
+        infostate_matrix = request.data.get('infostate_matrix')
+        color = request.data.get('color')
+        player_to_move = request.data.get('player_to_move')
+        anticipating = request.data.get('anticipating')
+
+        if model_name is None:
+            return Response({'error': 'Model name is required'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if infostate_matrix is None:
+            return Response({'error': 'Infostate matrix is required'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        # Create matrix with InfostatePiece objects
+        abstract_matrix = []
+        for row in infostate_matrix:
+            new_row = []
+            for col in row:
+                if Ranking.FLAG <= col[0] <= Ranking.SPY:
+                    new_row.append(InfostatePiece(color=Player.BLUE,
+                                                  rank_floor=col[0],
+                                                  rank_ceiling=col[1]))
+                elif Ranking.FLAG + Ranking.SPY <= col[0] <= 2 * Ranking.SPY:
+                    new_row.append(InfostatePiece(color=Player.RED,
+                                                  rank_floor=col[0] -
+                                                  Ranking.SPY,
+                                                  rank_ceiling=col[1] - Ranking.SPY))
+                elif col[0] == Ranking.BLANK:
+                    new_row.append(InfostatePiece(color=Player.ARBITER,
+                                                  rank_floor=col[0],
+                                                  rank_ceiling=col[1]))
+            abstract_matrix.append(new_row)
+
+        owner = Player.BLUE if color == 'B' else Player.RED
+        player_to_move = Player.BLUE if player_to_move == 'B' else Player.RED
+
+        infostate = Infostate(abstracted_board=abstract_matrix,
+                              owner=owner,
+                              player_to_move=player_to_move,
+                              anticipating=anticipating)
+
+        # Obtain inference from the model
+        model = FiveLayer()
+        model.load_state_dict(torch.load(f"./{model_name}.pth"))
+        model.eval()
+
+        input_infostate = list(map(int, str(infostate).split(" ")))
+        # Convert input_infostate to a PyTorch Tensor
+        input_infostate = torch.tensor(input_infostate, dtype=torch.float32)
+        # Reshape the input to have an extra dimension
+        input_infostate = input_infostate.unsqueeze(0)  # Add a batch dimension
+        full_strategy = model(input_infostate)
+        # Get the probabilities for each action from the model output
+        full_strategy = full_strategy.squeeze(0).tolist()
+
+        fullgame_actions = TimelessBoard.actions()
+        valid_actions = infostate.actions()
+        strategy = [0.0 for _ in range(len(valid_actions))]
+        for action in fullgame_actions:
+            if action not in valid_actions:
+                full_strategy[fullgame_actions.index(action)] = 0.0
+        if sum(full_strategy) > 0:
+            full_strategy = [x / sum(full_strategy) for x in full_strategy]
+
+        for i, action in enumerate(fullgame_actions):
+            if action in valid_actions:
+                strategy[valid_actions.index(action)] = full_strategy[i]
+        if sum(strategy) <= 0:
+            strategy = [1/len(valid_actions)
+                        for _ in range(len(valid_actions))]
+
+        # Return the dictionary of actions and their probabilities
+        return Response({'strategy': dict(zip(valid_actions, strategy))})

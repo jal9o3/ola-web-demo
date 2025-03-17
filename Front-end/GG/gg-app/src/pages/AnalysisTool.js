@@ -369,7 +369,7 @@ const AnalysisTool = () => {
   const [toMove, setToMove] = useState("B");
   const [infostateMatrix, setInfoStateMatrix] = useState([]);
   const [anticipating, setAnticipating] = useState(false);
-  const [modelName, setModelName] = useState('');
+  const [modelName, setModelName] = useState('fivelayer'); // Initialize with a default value
 
   const BLUE_FLAG = 1;
   const BLUE_SPY = 15; // Rankings are 1 to 15
@@ -792,36 +792,6 @@ const AnalysisTool = () => {
     setInfoStateMatrix(boardMatrix);
   };
 
-  const fetchAnalysis = async () => {
-    try {
-      const response = await fetch("http://127.0.0.1:3000/analysis", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model_name: modelName,
-          infostate_matrix: infostateMatrix,
-          color: color,
-          player_to_move: toMove,
-          anticipating: anticipating,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log(data);
-      // Process the response data as needed
-    } catch (error) {
-      console.error("Failed to fetch analysis:", error);
-    }
-  };
-
-  
-
   const Tooltip = ({ text, position }) => {
     return (
       <div
@@ -855,10 +825,29 @@ const AnalysisTool = () => {
         RED_FLAG,
         RED_SPY
       );
+      console.log(infostateMatrix);
       setPieces(newPieces);
-      console.log(pieces);
+
+      fetch(`http://127.0.0.1:8000/api/analysis/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model_name: modelName,
+          infostate_matrix: infostateMatrix,
+          color: color,
+          player_to_move: toMove,
+          anticipating: anticipating,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => console.error("Error updating game data:", error));
     }
-  }, [infostateMatrix]);
+  }, [infostateMatrix, modelName]);
 
   return (
     <div className="analysis-tool-container">
@@ -875,10 +864,10 @@ const AnalysisTool = () => {
         <select
           id="model-select"
           value={modelName}
-          onChange={(e) => console.log("Model selected:", e.target.value)}
+          onChange={(e) => setModelName(e.target.value)}
           disabled={gameStarted}
         >
-          <option value="fiveLayer">fiveLayer</option>
+          <option value="fivelayer">fivelayer</option>
         </select>
       </div>
 
