@@ -780,7 +780,7 @@ const AnalysisTool = () => {
         boardMatrix[row][col][1] = rankValue + BLUE_SPY;
       } else if (piece.team === "blue" && color === "R") {
         const { row, col } = piece.position;
-        boardMatrix[row][col] = [RED_FLAG, RED_SPY];
+        boardMatrix[row][col] = [BLUE_FLAG, BLUE_SPY];
       }
     });
     console.log(boardMatrix);
