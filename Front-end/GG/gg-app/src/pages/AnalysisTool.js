@@ -851,6 +851,11 @@ const AnalysisTool = () => {
     }
   }, [infostateMatrix, modelName]);
 
+  useEffect(() => {
+    const strategySum = Object.values(strategy).reduce((sum, value) => sum + value, 0);
+    console.log("Sum of strategy values:", strategySum);
+  }, [strategy]);
+
   return (
     <div className="analysis-tool-container">
       <button
@@ -1065,11 +1070,13 @@ const AnalysisTool = () => {
       <div className="analysis-container">
         <h3>Suggested Strategy:</h3>
         <div className="suggested-moves">
-          {Object.entries(strategy).map(([key, value]) => (
-            <div key={key}>
-              {key}: {value}
-            </div>
-          ))}
+          {Object.entries(strategy)
+            .sort(([, valueA], [, valueB]) => valueB - valueA) // Sort by descending values
+            .map(([key, value]) => (
+              <div key={key}>
+                {key}: {value}
+              </div>
+            ))}
         </div>
       </div>
     </div>
