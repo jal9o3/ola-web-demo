@@ -917,6 +917,20 @@ const AnalysisTool = () => {
                   onClick={() => handleTileClick(row, col)}
                   onDrop={(e) => handleDrop(e, row, col)}
                   onDragOver={allowDrop}
+                  onMouseEnter={(e) => {
+                    setTooltip({
+                      visible: true,
+                      text: `Row: ${row}, Col: ${col}`,
+                      position: { x: e.clientX, y: e.clientY },
+                    });
+                  }}
+                  onMouseLeave={() =>
+                    setTooltip({
+                      visible: false,
+                      text: "",
+                      position: { x: 0, y: 0 },
+                    })
+                  }
                 >
                   {piece ? (
                     (piece.team === "blue" && color === "R") ||
@@ -940,7 +954,7 @@ const AnalysisTool = () => {
                         onMouseEnter={(e) => {
                           setTooltip({
                             visible: true,
-                            text: piece.name,
+                            text: `${piece.name} (Row: ${row}, Col: ${col})`,
                             position: { x: e.clientX, y: e.clientY },
                           });
                         }}
@@ -987,6 +1001,20 @@ const AnalysisTool = () => {
                   onClick={() => handleTileClick(flippedRow, flippedCol)}
                   onDrop={(e) => handleDrop(e, flippedRow, flippedCol)}
                   onDragOver={allowDrop}
+                  onMouseEnter={(e) => {
+                    setTooltip({
+                      visible: true,
+                      text: `Row: ${flippedRow}, Col: ${flippedCol}`,
+                      position: { x: e.clientX, y: e.clientY },
+                    });
+                  }}
+                  onMouseLeave={() =>
+                    setTooltip({
+                      visible: false,
+                      text: "",
+                      position: { x: 0, y: 0 },
+                    })
+                  }
                 >
                   {piece ? (
                     (piece.team === "blue" && color === "R") ||
@@ -1010,7 +1038,7 @@ const AnalysisTool = () => {
                         onMouseEnter={(e) => {
                           setTooltip({
                             visible: true,
-                            text: piece.name,
+                            text: `${piece.name} (Row: ${flippedRow}, Col: ${flippedCol})`,
                             position: { x: e.clientX, y: e.clientY },
                           });
                         }}
