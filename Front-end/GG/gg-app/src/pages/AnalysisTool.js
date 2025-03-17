@@ -824,7 +824,7 @@ const AnalysisTool = () => {
 
 
 
-      {!flipped && (
+      {color === "B" && (
         <div className="game-board">
           {Array.from({ length: 8 }).map((_, row) =>
             Array.from({ length: 9 }).map((_, col) => {
@@ -897,16 +897,16 @@ const AnalysisTool = () => {
                 </div>
                 );
             })
-          )}
-          {tooltip.visible && (
+            )}
+            {tooltip.visible && (
             <Tooltip text={tooltip.text} position={tooltip.position} />
+            )}
+          </div>
           )}
-        </div>
-      )}
 
-      {flipped && (
-        <div className={`game-board flipped`}>
-          {Array.from({ length: 8 }).map((_, row) =>
+          {color === "R" && (
+          <div className={`game-board flipped`}>
+            {Array.from({ length: 8 }).map((_, row) =>
             Array.from({ length: 9 }).map((_, col) => {
               const flippedRow = 7 - row;
               const flippedCol = 8 - col;
