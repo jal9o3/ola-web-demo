@@ -370,6 +370,7 @@ const AnalysisTool = () => {
   const [infostateMatrix, setInfoStateMatrix] = useState([]);
   const [anticipating, setAnticipating] = useState(false);
   const [modelName, setModelName] = useState('fivelayer'); // Initialize with a default value
+  const [strategy, setStrategy] = useState({});
 
   const BLUE_FLAG = 1;
   const BLUE_SPY = 15; // Rankings are 1 to 15
@@ -844,6 +845,7 @@ const AnalysisTool = () => {
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
+          setStrategy(data.strategy);
         })
         .catch((error) => console.error("Error updating game data:", error));
     }
@@ -1035,7 +1037,11 @@ const AnalysisTool = () => {
       <div className="analysis-container">
         <h3>Suggested Strategy:</h3>
         <div className="suggested-moves">
-          <p>[Insert Strategy]</p>
+          {Object.entries(strategy).map(([key, value]) => (
+            <div key={key}>
+              {key}: {value}
+            </div>
+          ))}
         </div>
       </div>
     </div>
