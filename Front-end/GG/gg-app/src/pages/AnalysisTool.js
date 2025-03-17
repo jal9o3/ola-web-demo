@@ -34,6 +34,8 @@ import Sergeantb from "../assets/Sergeantb.png";
 import Lieucol from "../assets/Lieucol.png";
 import Lieucolb from "../assets/Lieucolb.png";
 
+// TODO: Change the initial rows of blue and red
+
 // Initial Pieces with positions for both player and opponent
 const initialPieces = [
   {
@@ -753,7 +755,37 @@ const AnalysisTool = () => {
   };
 
   const handlePlayClick = () => {
+    const BLUE_FLAG = 1;
+    const BLUE_SPY = 15; // Rankings are 1 to 15
+    const RED_FLAG = 16;
+    const RED_SPY = 30; // Red pieces are denoted as ranking + 15
+
     setGameStarted(true);
+
+    const boardMatrix = Array.from({ length: 8 }, () =>
+      Array.from({ length: 9 }, () => Array(2).fill(0))
+    );
+    console.log("Initialized board matrix:", boardMatrix);
+    pieces.forEach((piece) => {
+      if (piece.team === "blue" && color === "B") {
+        const { row, col } = piece.position;
+        const rankValue = rankHierarchy[piece.name];
+        boardMatrix[row][col][0] = rankValue;
+        boardMatrix[row][col][1] = rankValue;
+      } else if (piece.team === "red" && color === "B") {
+        const { row, col } = piece.position;
+        boardMatrix[row][col] = [RED_FLAG, RED_SPY];
+      } else if (piece.team === "red" && color === "R") {
+        const { row, col } = piece.position;
+        const rankValue = rankHierarchy[piece.name];
+        boardMatrix[row][col][0] = rankValue + BLUE_SPY;
+        boardMatrix[row][col][1] = rankValue + BLUE_SPY;
+      } else if (piece.team === "blue" && color === "R") {
+        const { row, col } = piece.position;
+        boardMatrix[row][col] = [RED_FLAG, RED_SPY];
+      }
+    });
+    console.log(boardMatrix);
   };
 
   const Tooltip = ({ text, position }) => {
@@ -811,8 +843,6 @@ const AnalysisTool = () => {
         </select>
       </div>
 
-
-
       {color === "B" && (
         <div className="game-board">
           {Array.from({ length: 8 }).map((_, row) =>
@@ -820,68 +850,68 @@ const AnalysisTool = () => {
               const piece = pieces.find(
                 (p) => p.position?.row === row && p.position?.col === col
               );
-                return (
+              return (
                 <div
                   key={`${row}-${col}`}
                   className={`tile ${
-                  selectedPiece?.position?.row === row &&
-                  selectedPiece?.position?.col === col
-                    ? "selected"
-                    : ""
+                    selectedPiece?.position?.row === row &&
+                    selectedPiece?.position?.col === col
+                      ? "selected"
+                      : ""
                   }`}
                   onClick={() => handleTileClick(row, col)}
                   onDrop={(e) => handleDrop(e, row, col)}
                   onDragOver={allowDrop}
                 >
                   {piece ? (
-                  (piece.team === "blue" && color === "R") ||
-                  (piece.team === "red" && color === "B") ? (
-                    <div
-                    className="opponent-placeholder"
-                    draggable={true}
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData("pieceId", piece.id);
-                    }}
-                    ></div>
-                  ) : (
-                    <img
-                    src={piece.src}
-                    alt={piece.name}
-                    className="piece-image"
-                    draggable={true}
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData("pieceId", piece.id);
-                    }}
-                    onMouseEnter={(e) => {
-                      setTooltip({
-                      visible: true,
-                      text: piece.name,
-                      position: { x: e.clientX, y: e.clientY },
-                      });
-                    }}
-                    onMouseLeave={() =>
-                      setTooltip({
-                      visible: false,
-                      text: "",
-                      position: { x: 0, y: 0 },
-                      })
-                    }
-                    />
-                  )
+                    (piece.team === "blue" && color === "R") ||
+                    (piece.team === "red" && color === "B") ? (
+                      <div
+                        className="opponent-placeholder"
+                        draggable={true}
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("pieceId", piece.id);
+                        }}
+                      ></div>
+                    ) : (
+                      <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className="piece-image"
+                        draggable={true}
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("pieceId", piece.id);
+                        }}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: { x: e.clientX, y: e.clientY },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: { x: 0, y: 0 },
+                          })
+                        }
+                      />
+                    )
                   ) : null}
                 </div>
-                );
+              );
             })
-            )}
-            {tooltip.visible && (
-            <Tooltip text={tooltip.text} position={tooltip.position} />
-            )}
-          </div>
           )}
+          {tooltip.visible && (
+            <Tooltip text={tooltip.text} position={tooltip.position} />
+          )}
+        </div>
+      )}
 
-          {color === "R" && (
-          <div className={`game-board flipped`}>
-            {Array.from({ length: 8 }).map((_, row) =>
+      {color === "R" && (
+        <div className={`game-board flipped`}>
+          {Array.from({ length: 8 }).map((_, row) =>
             Array.from({ length: 9 }).map((_, col) => {
               const flippedRow = 7 - row;
               const flippedCol = 8 - col;
@@ -890,57 +920,57 @@ const AnalysisTool = () => {
                   p.position?.row === flippedRow &&
                   p.position?.col === flippedCol
               );
-                return (
+              return (
                 <div
                   key={`${flippedRow}-${flippedCol}`}
                   className={`tile ${
-                  selectedPiece?.position?.row === flippedRow &&
-                  selectedPiece?.position?.col === flippedCol
-                    ? "selected"
-                    : ""
+                    selectedPiece?.position?.row === flippedRow &&
+                    selectedPiece?.position?.col === flippedCol
+                      ? "selected"
+                      : ""
                   }`}
                   onClick={() => handleTileClick(flippedRow, flippedCol)}
                   onDrop={(e) => handleDrop(e, flippedRow, flippedCol)}
                   onDragOver={allowDrop}
                 >
                   {piece ? (
-                  (piece.team === "blue" && color === "R") ||
-                  (piece.team === "red" && color === "B") ? (
-                    <div
-                    className="opponent-placeholder"
-                    draggable={true}
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData("pieceId", piece.id);
-                    }}
-                    ></div>
-                  ) : (
-                    <img
-                    src={piece.src}
-                    alt={piece.name}
-                    className="piece-image"
-                    draggable={true}
-                    onDragStart={(e) => {
-                      e.dataTransfer.setData("pieceId", piece.id);
-                    }}
-                    onMouseEnter={(e) => {
-                      setTooltip({
-                      visible: true,
-                      text: piece.name,
-                      position: { x: e.clientX, y: e.clientY },
-                      });
-                    }}
-                    onMouseLeave={() =>
-                      setTooltip({
-                      visible: false,
-                      text: "",
-                      position: { x: 0, y: 0 },
-                      })
-                    }
-                    />
-                  )
+                    (piece.team === "blue" && color === "R") ||
+                    (piece.team === "red" && color === "B") ? (
+                      <div
+                        className="opponent-placeholder"
+                        draggable={true}
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("pieceId", piece.id);
+                        }}
+                      ></div>
+                    ) : (
+                      <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className="piece-image"
+                        draggable={true}
+                        onDragStart={(e) => {
+                          e.dataTransfer.setData("pieceId", piece.id);
+                        }}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: { x: e.clientX, y: e.clientY },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: { x: 0, y: 0 },
+                          })
+                        }
+                      />
+                    )
                   ) : null}
                 </div>
-                );
+              );
             })
           )}
           {tooltip.visible && (
