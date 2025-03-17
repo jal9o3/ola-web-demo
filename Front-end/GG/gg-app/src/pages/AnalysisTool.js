@@ -334,21 +334,21 @@ const initialPieces = [
 
 // Rank hierarchy for combat resolution
 const rankHierarchy = {
-  "5-star General": 10,
-  "4-star General": 9,
-  "3-star General": 8,
-  "2-star General": 7,
-  "1-star General": 6,
-  "Lieutenant Colonel": 5,
-  Colonel: 4,
-  Major: 3,
-  Captain: 2,
-  "1st Lieutenant": 1,
-  "2nd Lieutenant": 1,
-  Sergeant: 1,
-  Private: 0,
-  Spy: -1, // Spy can eliminate all officers but is defeated by Private
-  Flag: -1, // Flag can be eliminated by any piece
+  Spy: 15, // Spy can eliminate all officers but is defeated by Private
+  "5-star General": 14,
+  "4-star General": 13,
+  "3-star General": 12,
+  "2-star General": 11,
+  "1-star General": 10,
+  Colonel: 9,
+  "Lieutenant Colonel": 8,
+  Major: 7,
+  Captain: 6,
+  "1st Lieutenant": 5,
+  "2nd Lieutenant": 4,
+  Sergeant: 3,
+  Private: 2,
+  Flag: 1, // Flag can be eliminated by any piece
 };
 
 const AnalysisTool = () => {
