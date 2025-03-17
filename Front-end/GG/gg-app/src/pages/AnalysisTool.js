@@ -41,294 +41,294 @@ const initialPieces = [
     name: "5-star General",
     src: Gen5b,
     position: { row: 5, col: 0 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 2,
     name: "4-star General",
     src: Gen4b,
     position: { row: 5, col: 1 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 3,
     name: "3-star General",
     src: Gen3b,
     position: { row: 5, col: 2 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 4,
     name: "2-star General",
     src: Gen2b,
     position: { row: 5, col: 3 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 5,
     name: "1-star General",
     src: Gen1b,
     position: { row: 5, col: 4 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 6,
     name: "Flag",
     src: Flagb,
     position: { row: 5, col: 5 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 7,
     name: "Colonel",
     src: Colonelb,
     position: { row: 5, col: 6 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 8,
     name: "Captain",
     src: Captainb,
     position: { row: 5, col: 7 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 9,
     name: "1st Lieutenant",
     src: Lieu1stb,
     position: { row: 5, col: 8 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 10,
     name: "2nd Lieutenant",
     src: Lieu2ndb,
     position: { row: 6, col: 0 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 11,
     name: "Spy",
     src: Spyb,
     position: { row: 6, col: 1 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 12,
     name: "Spy",
     src: Spyb,
     position: { row: 6, col: 2 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 13,
     name: "Major",
     src: Majorb,
     position: { row: 6, col: 3 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 14,
     name: "Private",
     src: Privateb,
     position: { row: 6, col: 4 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 15,
     name: "Private",
     src: Privateb,
     position: { row: 6, col: 5 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 16,
     name: "Private",
     src: Privateb,
     position: { row: 6, col: 6 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 17,
     name: "Private",
     src: Privateb,
     position: { row: 6, col: 7 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 18,
     name: "Private",
     src: Privateb,
     position: { row: 6, col: 8 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 42,
     name: "Private",
     src: Privateb,
     position: { row: 7, col: 0 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 19,
     name: "Sergeant",
     src: Sergeantb,
     position: { row: 7, col: 1 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 20,
     name: "Lieutenant Colonel",
     src: Lieucolb,
     position: { row: 7, col: 2 },
-    team: "player",
+    team: "blue",
   },
   {
     id: 21,
     name: "5-star General",
     src: Gen5,
     position: { row: 0, col: 0 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 22,
     name: "4-star General",
     src: Gen4,
     position: { row: 0, col: 1 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 23,
     name: "3-star General",
     src: Gen3,
     position: { row: 0, col: 2 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 24,
     name: "2-star General",
     src: Gen2,
     position: { row: 0, col: 3 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 25,
     name: "1-star General",
     src: Gen1,
     position: { row: 0, col: 4 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 26,
     name: "Flag",
     src: Flag,
     position: { row: 0, col: 5 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 27,
     name: "Colonel",
     src: Colonel,
     position: { row: 0, col: 6 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 28,
     name: "Captain",
     src: Captain,
     position: { row: 0, col: 7 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 29,
     name: "1st Lieutenant",
     src: Lieu1st,
     position: { row: 0, col: 8 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 30,
     name: "2nd Lieutenant",
     src: Lieu2nd,
     position: { row: 1, col: 0 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 31,
     name: "Spy",
     src: Spy,
     position: { row: 1, col: 1 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 32,
     name: "Spy",
     src: Spy,
     position: { row: 1, col: 2 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 33,
     name: "Major",
     src: Major,
     position: { row: 1, col: 3 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 34,
     name: "Private",
     src: Private,
     position: { row: 1, col: 4 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 35,
     name: "Private",
     src: Private,
     position: { row: 1, col: 5 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 36,
     name: "Private",
     src: Private,
     position: { row: 1, col: 6 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 37,
     name: "Private",
     src: Private,
     position: { row: 1, col: 7 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 38,
     name: "Private",
     src: Private,
     position: { row: 1, col: 8 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 39,
     name: "Private",
     src: Private,
     position: { row: 2, col: 0 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 40,
     name: "Sergeant",
     src: Sergeant,
     position: { row: 2, col: 1 },
-    team: "opponent",
+    team: "red",
   },
   {
     id: 41,
     name: "Lieutenant Colonel",
     src: Lieucol,
     position: { row: 2, col: 2 },
-    team: "opponent",
+    team: "red",
   },
 ];
 
@@ -831,70 +831,71 @@ const AnalysisTool = () => {
               const piece = pieces.find(
                 (p) => p.position?.row === row && p.position?.col === col
               );
-              return (
+                return (
                 <div
                   key={`${row}-${col}`}
                   className={`tile ${
-                    selectedPiece?.position?.row === row &&
-                    selectedPiece?.position?.col === col
-                      ? "selected"
-                      : ""
+                  selectedPiece?.position?.row === row &&
+                  selectedPiece?.position?.col === col
+                    ? "selected"
+                    : ""
                   }`}
                   onClick={() => handleTileClick(row, col)}
                   onDrop={(e) => handleDrop(e, row, col)}
                   onDragOver={allowDrop}
                 >
                   {piece ? (
-                    piece.team === "opponent" ? (
-                      <div
-                        className="opponent-placeholder"
-                        draggable={true}
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData("pieceId", piece.id);
-                        }}
-                        onMouseEnter={(e) => {
-                          setTooltip({
-                            visible: true,
-                            text: piece.name,
-                            position: { x: e.clientX, y: e.clientY },
-                          });
-                        }}
-                        onMouseLeave={() =>
-                          setTooltip({
-                            visible: false,
-                            text: "",
-                            position: { x: 0, y: 0 },
-                          })
-                        }
-                      ></div>
-                    ) : (
-                      <img
-                        src={piece.src}
-                        alt={piece.name}
-                        className="piece-image"
-                        draggable={true}
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData("pieceId", piece.id);
-                        }}
-                        onMouseEnter={(e) => {
-                          setTooltip({
-                            visible: true,
-                            text: piece.name,
-                            position: { x: e.clientX, y: e.clientY },
-                          });
-                        }}
-                        onMouseLeave={() =>
-                          setTooltip({
-                            visible: false,
-                            text: "",
-                            position: { x: 0, y: 0 },
-                          })
-                        }
-                      />
-                    )
+                  (piece.team === "blue" && color === "R") ||
+                  (piece.team === "red" && color === "B") ? (
+                    <div
+                    className="opponent-placeholder"
+                    draggable={true}
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("pieceId", piece.id);
+                    }}
+                    onMouseEnter={(e) => {
+                      setTooltip({
+                      visible: true,
+                      text: piece.name,
+                      position: { x: e.clientX, y: e.clientY },
+                      });
+                    }}
+                    onMouseLeave={() =>
+                      setTooltip({
+                      visible: false,
+                      text: "",
+                      position: { x: 0, y: 0 },
+                      })
+                    }
+                    ></div>
+                  ) : (
+                    <img
+                    src={piece.src}
+                    alt={piece.name}
+                    className="piece-image"
+                    draggable={true}
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("pieceId", piece.id);
+                    }}
+                    onMouseEnter={(e) => {
+                      setTooltip({
+                      visible: true,
+                      text: piece.name,
+                      position: { x: e.clientX, y: e.clientY },
+                      });
+                    }}
+                    onMouseLeave={() =>
+                      setTooltip({
+                      visible: false,
+                      text: "",
+                      position: { x: 0, y: 0 },
+                      })
+                    }
+                    />
+                  )
                   ) : null}
                 </div>
-              );
+                );
             })
           )}
           {tooltip.visible && (
@@ -914,70 +915,71 @@ const AnalysisTool = () => {
                   p.position?.row === flippedRow &&
                   p.position?.col === flippedCol
               );
-              return (
+                return (
                 <div
                   key={`${flippedRow}-${flippedCol}`}
                   className={`tile ${
-                    selectedPiece?.position?.row === flippedRow &&
-                    selectedPiece?.position?.col === flippedCol
-                      ? "selected"
-                      : ""
+                  selectedPiece?.position?.row === flippedRow &&
+                  selectedPiece?.position?.col === flippedCol
+                    ? "selected"
+                    : ""
                   }`}
                   onClick={() => handleTileClick(flippedRow, flippedCol)}
                   onDrop={(e) => handleDrop(e, flippedRow, flippedCol)}
                   onDragOver={allowDrop}
                 >
                   {piece ? (
-                    piece.team === "opponent" ? (
-                      <div
-                        className="opponent-placeholder"
-                        draggable={true}
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData("pieceId", piece.id);
-                        }}
-                        onMouseEnter={(e) => {
-                          setTooltip({
-                            visible: true,
-                            text: piece.name,
-                            position: { x: e.clientX, y: e.clientY },
-                          });
-                        }}
-                        onMouseLeave={() =>
-                          setTooltip({
-                            visible: false,
-                            text: "",
-                            position: { x: 0, y: 0 },
-                          })
-                        }
-                      ></div>
-                    ) : (
-                      <img
-                        src={piece.src}
-                        alt={piece.name}
-                        className="piece-image"
-                        draggable={true}
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData("pieceId", piece.id);
-                        }}
-                        onMouseEnter={(e) => {
-                          setTooltip({
-                            visible: true,
-                            text: piece.name,
-                            position: { x: e.clientX, y: e.clientY },
-                          });
-                        }}
-                        onMouseLeave={() =>
-                          setTooltip({
-                            visible: false,
-                            text: "",
-                            position: { x: 0, y: 0 },
-                          })
-                        }
-                      />
-                    )
+                  (piece.team === "blue" && color === "R") ||
+                  (piece.team === "red" && color === "B") ? (
+                    <div
+                    className="opponent-placeholder"
+                    draggable={true}
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("pieceId", piece.id);
+                    }}
+                    onMouseEnter={(e) => {
+                      setTooltip({
+                      visible: true,
+                      text: piece.name,
+                      position: { x: e.clientX, y: e.clientY },
+                      });
+                    }}
+                    onMouseLeave={() =>
+                      setTooltip({
+                      visible: false,
+                      text: "",
+                      position: { x: 0, y: 0 },
+                      })
+                    }
+                    ></div>
+                  ) : (
+                    <img
+                    src={piece.src}
+                    alt={piece.name}
+                    className="piece-image"
+                    draggable={true}
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("pieceId", piece.id);
+                    }}
+                    onMouseEnter={(e) => {
+                      setTooltip({
+                      visible: true,
+                      text: piece.name,
+                      position: { x: e.clientX, y: e.clientY },
+                      });
+                    }}
+                    onMouseLeave={() =>
+                      setTooltip({
+                      visible: false,
+                      text: "",
+                      position: { x: 0, y: 0 },
+                      })
+                    }
+                    />
+                  )
                   ) : null}
                 </div>
-              );
+                );
             })
           )}
           {tooltip.visible && (
