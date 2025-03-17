@@ -841,7 +841,7 @@ const AnalysisTool = () => {
         </select>
       </div>
 
-      {color === "B" && (
+      {color === "R" && (
         <div className="game-board">
           {Array.from({ length: 8 }).map((_, row) =>
             Array.from({ length: 9 }).map((_, col) => {
@@ -907,7 +907,7 @@ const AnalysisTool = () => {
         </div>
       )}
 
-      {color === "R" && (
+      {color === "B" && (
         <div className={`game-board flipped`}>
           {Array.from({ length: 8 }).map((_, row) =>
             Array.from({ length: 9 }).map((_, col) => {
