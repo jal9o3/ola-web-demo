@@ -34,6 +34,8 @@ import Sergeantb from "../assets/Sergeantb.png";
 import Lieucol from "../assets/Lieucol.png";
 import Lieucolb from "../assets/Lieucolb.png";
 
+import { processInfostate } from "../utils/processInfostate";
+
 // Initial Pieces with positions for both player and opponent
 const initialPieces = [
   {
@@ -365,6 +367,14 @@ const AnalysisTool = () => {
   const [flipped, setFlipped] = useState(false);
   const [color, setColor] = useState("B");
   const [toMove, setToMove] = useState("B");
+  const [infostateMatrix, setInfoStateMatrix] = useState([]);
+  const [anticipating, setAnticipating] = useState(false);
+  const [modelName, setModelName] = useState('');
+
+  const BLUE_FLAG = 1;
+  const BLUE_SPY = 15; // Rankings are 1 to 15
+  const RED_FLAG = 16;
+  const RED_SPY = 30; // Red pieces are denoted as ranking + 15
 
   // Calculate valid moves when a piece is selected
   useEffect(() => {
@@ -753,11 +763,6 @@ const AnalysisTool = () => {
   };
 
   const handlePlayClick = () => {
-    const BLUE_FLAG = 1;
-    const BLUE_SPY = 15; // Rankings are 1 to 15
-    const RED_FLAG = 16;
-    const RED_SPY = 30; // Red pieces are denoted as ranking + 15
-
     setGameStarted(true);
 
     const boardMatrix = Array.from({ length: 8 }, () =>
@@ -784,7 +789,38 @@ const AnalysisTool = () => {
       }
     });
     console.log(boardMatrix);
+    setInfoStateMatrix(boardMatrix);
   };
+
+  const fetchAnalysis = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:3000/analysis", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model_name: modelName,
+          infostate_matrix: infostateMatrix,
+          color: color,
+          player_to_move: toMove,
+          anticipating: anticipating,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+      // Process the response data as needed
+    } catch (error) {
+      console.error("Failed to fetch analysis:", error);
+    }
+  };
+
+  
 
   const Tooltip = ({ text, position }) => {
     return (
@@ -806,6 +842,24 @@ const AnalysisTool = () => {
     console.log("ToMove changed to:", toMove);
   }, [toMove]);
 
+  useEffect(() => {
+    const teamColor = color === "B" ? "blue" : "red";
+    if (infostateMatrix.length > 0) {
+      const newPieces = processInfostate(
+        infostateMatrix,
+        teamColor,
+        rankHierarchy,
+        initialPieces,
+        BLUE_FLAG,
+        BLUE_SPY,
+        RED_FLAG,
+        RED_SPY
+      );
+      setPieces(newPieces);
+      console.log(pieces);
+    }
+  }, [infostateMatrix]);
+
   return (
     <div className="analysis-tool-container">
       <button
@@ -815,6 +869,18 @@ const AnalysisTool = () => {
       >
         Begin Analysis
       </button>
+
+      <div className="model-selector">
+        <label htmlFor="model-select">Choose Model:</label>
+        <select
+          id="model-select"
+          value={modelName}
+          onChange={(e) => console.log("Model selected:", e.target.value)}
+          disabled={gameStarted}
+        >
+          <option value="fiveLayer">fiveLayer</option>
+        </select>
+      </div>
 
       <div className="color-selector">
         <label htmlFor="color-select">Choose Team:</label>
