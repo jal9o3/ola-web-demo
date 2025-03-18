@@ -499,26 +499,40 @@ class AnalysisView(APIView):
 
         fullgame_actions = TimelessBoard.actions()
         valid_actions = infostate.actions()
-        strategy = [0.0 for _ in range(len(valid_actions))]
-        for action in fullgame_actions:
-            if action not in valid_actions:
-                full_strategy[fullgame_actions.index(action)] = 0.0
-        if sum(full_strategy) > 0:
-            full_strategy = [x / sum(full_strategy) for x in full_strategy]
-
-        for i, action in enumerate(fullgame_actions):
-            if action in valid_actions:
-                strategy[valid_actions.index(action)] = full_strategy[i]
-        if sum(strategy) <= 0:
-            strategy = [1/len(valid_actions)
-                        for _ in range(len(valid_actions))]
-
         anticipating = infostate.anticipating
         player_to_move = "B" if infostate.player_to_move == Player.BLUE else "R"
-
         new_infostate_matrix = Infostate.to_matrix(
             infostate_board=infostate.abstracted_board)
-        return Response({'strategy': dict(zip(valid_actions, strategy)),
-                         'infostate_matrix': new_infostate_matrix,
-                         'anticipating': anticipating,
-                         'player_to_move': player_to_move, }, status=status.HTTP_200_OK)
+
+        if infostate.player_to_move == infostate.owner:
+            strategy = [0.0 for _ in range(len(valid_actions))]
+
+            for action in fullgame_actions:
+                if action not in valid_actions:
+                    full_strategy[fullgame_actions.index(action)] = 0.0
+            if sum(full_strategy) > 0:
+                full_strategy = [x / sum(full_strategy) for x in full_strategy]
+
+            for i, action in enumerate(fullgame_actions):
+                if action in valid_actions:
+                    strategy[valid_actions.index(action)] = full_strategy[i]
+            if sum(strategy) <= 0:
+                strategy = [1/len(valid_actions)
+                            for _ in range(len(valid_actions))]
+
+            sampled_action = random.choices(valid_actions, weights=strategy,
+                                            k=1)[0]
+
+            return Response({'strategy': dict(zip(valid_actions, strategy)),
+                             'sampled_action': sampled_action,
+                            'infostate_matrix': new_infostate_matrix,
+                             'anticipating': anticipating,
+                             'player_to_move': player_to_move, },
+                            status=status.HTTP_200_OK)
+        else:
+            return Response({'strategy': {},
+                            'sampled_action': None,
+                             'infostate_matrix': new_infostate_matrix,
+                             'anticipating': anticipating,
+                             'player_to_move': player_to_move, },
+                            status=status.HTTP_200_OK)

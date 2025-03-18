@@ -373,6 +373,7 @@ const AnalysisTool = () => {
   const [strategy, setStrategy] = useState({});
   const [action, setAction] = useState("");
   const [outcome, setOutcome] = useState("");
+  const [sampledChoice, setSampledChoice] = useState(null);
 
   const BLUE_FLAG = 1;
   const BLUE_SPY = 15; // Rankings are 1 to 15
@@ -570,6 +571,7 @@ const AnalysisTool = () => {
             console.log(data);
             setInfoStateMatrix(data.infostate_matrix)
             setStrategy(data.strategy);
+            setSampledChoice(data.sampled_action);
             setAnticipating(data.anticipating);
             setToMove(data.player_to_move);
           })
@@ -829,6 +831,7 @@ const AnalysisTool = () => {
         .then((data) => {
           console.log(data);
           setStrategy(data.strategy);
+          setSampledChoice(data.sampled_action);
         })
         .catch((error) => console.error("Error updating game data:", error));
     }
@@ -864,6 +867,7 @@ const AnalysisTool = () => {
         console.log(data);
         setInfoStateMatrix(data.infostate_matrix)
         setStrategy(data.strategy);
+        setSampledChoice(data.sampled_action);
         setAnticipating(data.anticipating);
         setToMove(data.player_to_move);
       })
@@ -1092,8 +1096,11 @@ const AnalysisTool = () => {
               </div>
             ))}
         </div>
+        <div className="sampled-action"></div>
+          <h3>Sampled Action:</h3>
+          <p>{sampledChoice ? sampledChoice : "No action sampled yet"}</p>
+        </div>
       </div>
-    </div>
   );
 };
 
