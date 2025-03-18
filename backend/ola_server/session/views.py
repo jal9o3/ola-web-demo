@@ -477,7 +477,9 @@ class AnalysisView(APIView):
             elif move_result == "loss":
                 result = Result.LOSS
 
-            infostate = infostate.transition(action=player_move, result=result)
+            if player_move in infostate.actions():
+                infostate = infostate.transition(action=player_move,
+                                                 result=result)
 
         # Obtain inference from the model
         model = None
@@ -510,8 +512,13 @@ class AnalysisView(APIView):
         if sum(strategy) <= 0:
             strategy = [1/len(valid_actions)
                         for _ in range(len(valid_actions))]
-        
+
+        anticipating = infostate.anticipating
+        player_to_move = "B" if infostate.player_to_move == Player.BLUE else "R"
+
         new_infostate_matrix = Infostate.to_matrix(
             infostate_board=infostate.abstracted_board)
         return Response({'strategy': dict(zip(valid_actions, strategy)),
-                         'infostate_matrix': new_infostate_matrix})
+                         'infostate_matrix': new_infostate_matrix,
+                         'anticipating': anticipating,
+                         'player_to_move': player_to_move, }, status=status.HTTP_200_OK)

@@ -371,6 +371,8 @@ const AnalysisTool = () => {
   const [anticipating, setAnticipating] = useState(false);
   const [modelName, setModelName] = useState("fivelayer"); // Initialize with a default value
   const [strategy, setStrategy] = useState({});
+  const [action, setAction] = useState("");
+  const [outcome, setOutcome] = useState("");
 
   const BLUE_FLAG = 1;
   const BLUE_SPY = 15; // Rankings are 1 to 15
@@ -515,21 +517,24 @@ const AnalysisTool = () => {
         const winButton = document.createElement("button");
         winButton.textContent = "Win";
         winButton.onclick = () => {
-          console.log("Victory! Submit to backend.");
+          setOutcome("win");
+          setAction(move); // Move this here
           document.body.removeChild(outcomeContainer);
         };
 
         const lossButton = document.createElement("button");
         lossButton.textContent = "Loss";
         lossButton.onclick = () => {
-          console.log("Defeat! Submit to backend.");
+          setOutcome("loss");
+          setAction(move); // Move this here
           document.body.removeChild(outcomeContainer);
         };
 
         const drawButton = document.createElement("button");
         drawButton.textContent = "Draw";
         drawButton.onclick = () => {
-          console.log("Draw! Submit to backend.");
+          setOutcome("draw");
+          setAction(move); // Move this here
           document.body.removeChild(outcomeContainer);
         };
 
@@ -538,6 +543,7 @@ const AnalysisTool = () => {
         outcomeContainer.appendChild(drawButton);
 
         document.body.appendChild(outcomeContainer);
+
         setSelectedPiece(null); // Deselect the piece after the move
       } else if (isValidMove && alliedPiece) {
         alert("Allies cannot be challenged! Choose another spot.");
@@ -564,6 +570,8 @@ const AnalysisTool = () => {
             console.log(data);
             setInfoStateMatrix(data.infostate_matrix)
             setStrategy(data.strategy);
+            setAnticipating(data.anticipating);
+            setToMove(data.player_to_move);
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -833,6 +841,34 @@ const AnalysisTool = () => {
     );
     console.log("Sum of strategy values:", strategySum);
   }, [strategy]);
+
+  useEffect(() => {
+    console.log(outcome)
+    fetch(`http://127.0.0.1:8000/api/analysis/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model_name: modelName,
+        infostate_matrix: infostateMatrix,
+        color: color,
+        player_to_move: toMove,
+        anticipating: anticipating,
+        player_move: action,
+        move_result: outcome,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setInfoStateMatrix(data.infostate_matrix)
+        setStrategy(data.strategy);
+        setAnticipating(data.anticipating);
+        setToMove(data.player_to_move);
+      })
+      .catch((error) => console.error("Error updating game data:", error));
+  }, [outcome, action]);
 
   return (
     <div className="analysis-tool-container">
