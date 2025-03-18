@@ -369,7 +369,7 @@ const AnalysisTool = () => {
   const [toMove, setToMove] = useState("B");
   const [infostateMatrix, setInfoStateMatrix] = useState([]);
   const [anticipating, setAnticipating] = useState(false);
-  const [modelName, setModelName] = useState('fivelayer'); // Initialize with a default value
+  const [modelName, setModelName] = useState("fivelayer"); // Initialize with a default value
   const [strategy, setStrategy] = useState({});
 
   const BLUE_FLAG = 1;
@@ -500,97 +500,72 @@ const AnalysisTool = () => {
           p.position?.row === row && p.position?.col === col && p.team === team
       );
 
-      if (isValidMove) {
-        if (opponentPiece) {
-          // Handle special case for Spy first
-          if (name === "Spy" && opponentPiece.name === "Private") {
-            // Spy loses to Private
-            console.log(`${opponentPiece.name} defeats ${name}`);
-            setPieces((prevPieces) =>
-              prevPieces.filter((p) => p.id !== selectedPiece.id)
-            );
-          } else if (name === "Spy" && opponentPiece.name !== "Flag") {
-            // Spy wins against all officers
-            console.log(`${name} defeats ${opponentPiece.name}`);
-            setPieces((prevPieces) =>
-              prevPieces
-                .map((p) =>
-                  p.id === selectedPiece.id
-                    ? { ...p, position: { row, col } }
-                    : p
-                )
-                .filter((p) => p.id !== opponentPiece.id)
-            );
-          } else if (opponentPiece.name === "Spy" && name === "Private") {
-            // Private defeats Spy
-            console.log(`${name} defeats ${opponentPiece.name}`);
-            setPieces((prevPieces) =>
-              prevPieces
-                .map((p) =>
-                  p.id === selectedPiece.id
-                    ? { ...p, position: { row, col } }
-                    : p
-                )
-                .filter((p) => p.id !== opponentPiece.id)
-            );
-          } else if (opponentPiece.name === "Spy" && name !== "Flag") {
-            // Spy defeats all officers
-            console.log(`${opponentPiece.name} defeats ${name}`);
-            setPieces((prevPieces) =>
-              prevPieces.filter((p) => p.id !== selectedPiece.id)
-            );
-          } else {
-            // Regular combat resolution based on rank
-            const selectedRank = rankHierarchy[name];
-            const opponentRank = rankHierarchy[opponentPiece.name];
+      if (isValidMove && opponentPiece) {
+        const move = `${position.row}${position.col}${row}${col}`;
+        const outcomeContainer = document.createElement("div");
+        outcomeContainer.style.position = "absolute";
+        outcomeContainer.style.top = "50%";
+        outcomeContainer.style.left = "50%";
+        outcomeContainer.style.transform = "translate(-50%, -50%)";
+        outcomeContainer.style.backgroundColor = "white";
+        outcomeContainer.style.padding = "20px";
+        outcomeContainer.style.border = "1px solid black";
+        outcomeContainer.style.zIndex = "1000";
 
-            if (selectedRank > opponentRank) {
-              // Player's piece wins
-              console.log(`${name} defeats ${opponentPiece.name}`);
-              setPieces((prevPieces) =>
-                prevPieces
-                  .map((p) =>
-                    p.id === selectedPiece.id
-                      ? { ...p, position: { row, col } }
-                      : p
-                  )
-                  .filter((p) => p.id !== opponentPiece.id)
-              );
-            } else if (selectedRank < opponentRank) {
-              // Opponent's piece wins
-              console.log(`${opponentPiece.name} defeats ${name}`);
-              setPieces((prevPieces) =>
-                prevPieces
-                  .map((p) =>
-                    p.id === opponentPiece.id
-                      ? { ...p, position: { row, col } }
-                      : p
-                  )
-                  .filter((p) => p.id !== selectedPiece.id)
-              );
-            } else {
-              // Both pieces are eliminated
-              console.log(
-                `${name} and ${opponentPiece.name} are both eliminated`
-              );
-              setPieces((prevPieces) =>
-                prevPieces.filter(
-                  (p) => p.id !== selectedPiece.id && p.id !== opponentPiece.id
-                )
-              );
-            }
-          }
-        } else if (alliedPiece) {
-          // Alert if trying to move to an allied piece
-          alert("Allies cannot be challenged! Choose another spot.");
-        } else {
-          // Move the selected piece if no opponent piece is present
-          setPieces((prevPieces) =>
-            prevPieces.map((p) =>
-              p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
-            )
-          );
-        }
+        const winButton = document.createElement("button");
+        winButton.textContent = "Win";
+        winButton.onclick = () => {
+          console.log("Victory! Submit to backend.");
+          document.body.removeChild(outcomeContainer);
+        };
+
+        const lossButton = document.createElement("button");
+        lossButton.textContent = "Loss";
+        lossButton.onclick = () => {
+          console.log("Defeat! Submit to backend.");
+          document.body.removeChild(outcomeContainer);
+        };
+
+        const drawButton = document.createElement("button");
+        drawButton.textContent = "Draw";
+        drawButton.onclick = () => {
+          console.log("Draw! Submit to backend.");
+          document.body.removeChild(outcomeContainer);
+        };
+
+        outcomeContainer.appendChild(winButton);
+        outcomeContainer.appendChild(lossButton);
+        outcomeContainer.appendChild(drawButton);
+
+        document.body.appendChild(outcomeContainer);
+        setSelectedPiece(null); // Deselect the piece after the move
+      } else if (isValidMove && alliedPiece) {
+        alert("Allies cannot be challenged! Choose another spot.");
+        setSelectedPiece(null); // Deselect the piece
+      } else if (isValidMove) {
+        const move = `${position.row}${position.col}${row}${col}`;
+        fetch(`http://127.0.0.1:8000/api/analysis/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model_name: modelName,
+            infostate_matrix: infostateMatrix,
+            color: color,
+            player_to_move: toMove,
+            anticipating: anticipating,
+            player_move: move,
+            move_result: "occupy",
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            setInfoStateMatrix(data.infostate_matrix)
+            setStrategy(data.strategy);
+          })
+          .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
       } else {
         // If the move is invalid, allow selecting a new piece
@@ -852,7 +827,10 @@ const AnalysisTool = () => {
   }, [infostateMatrix, modelName]);
 
   useEffect(() => {
-    const strategySum = Object.values(strategy).reduce((sum, value) => sum + value, 0);
+    const strategySum = Object.values(strategy).reduce(
+      (sum, value) => sum + value,
+      0
+    );
     console.log("Sum of strategy values:", strategySum);
   }, [strategy]);
 

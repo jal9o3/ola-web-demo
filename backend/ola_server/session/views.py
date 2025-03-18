@@ -27,7 +27,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from OLA.core import Player, Board, Infostate, InfostatePiece
-from OLA.constants import Ranking
+from OLA.constants import Ranking, Result
 from OLA.simulation import MatchSimulator
 from OLA.training import TimelessBoard
 
@@ -36,6 +36,7 @@ from .serializers import VersusAISessionSerializer, VersusAISessionListSerialize
 
 INPUT_SIZE = 147
 OUTPUT_SIZE = 254
+
 
 def generate_access_key():
     """
@@ -426,6 +427,8 @@ class AnalysisView(APIView):
         color = request.data.get('color')
         player_to_move = request.data.get('player_to_move')
         anticipating = request.data.get('anticipating')
+        player_move = request.data.get('player_move')
+        move_result = request.data.get('move_result')
 
         if model_name is None:
             return Response({'error': 'Model name is required'},
@@ -463,8 +466,23 @@ class AnalysisView(APIView):
                               player_to_move=player_to_move,
                               anticipating=anticipating)
 
+        if player_move is not None and move_result is not None:
+            result = None  # Initialize the result
+            if move_result == "occupy":
+                result = Result.OCCUPY
+            elif move_result == "win":
+                result = Result.WIN
+            elif move_result == "draw":
+                result = Result.DRAW
+            elif move_result == "loss":
+                result = Result.LOSS
+
+            infostate = infostate.transition(action=player_move, result=result)
+
         # Obtain inference from the model
-        model = FiveLayer()
+        model = None
+        if model_name == "fivelayer":
+            model = FiveLayer()
         model.load_state_dict(torch.load(f"./{model_name}.pth"))
         model.eval()
 
@@ -492,6 +510,8 @@ class AnalysisView(APIView):
         if sum(strategy) <= 0:
             strategy = [1/len(valid_actions)
                         for _ in range(len(valid_actions))]
-
-        # Return the dictionary of actions and their probabilities
-        return Response({'strategy': dict(zip(valid_actions, strategy))})
+        
+        new_infostate_matrix = Infostate.to_matrix(
+            infostate_board=infostate.abstracted_board)
+        return Response({'strategy': dict(zip(valid_actions, strategy)),
+                         'infostate_matrix': new_infostate_matrix})
