@@ -483,7 +483,7 @@ class AnalysisView(APIView):
 
         # Obtain inference from the model
         model = None
-        if model_name == "fivelayer":
+        if model_name in ["fivelayer", "fivelayer10k"]:
             model = FiveLayer()
         model.load_state_dict(torch.load(f"./{model_name}.pth"))
         model.eval()

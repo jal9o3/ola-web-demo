@@ -812,6 +812,8 @@ const AnalysisTool = () => {
         RED_SPY
       );
       console.log(infostateMatrix);
+      console.log("Model Name:");
+      console.log(modelName);
       setPieces(newPieces);
 
       fetch(`http://127.0.0.1:8000/api/analysis/`, {
@@ -890,9 +892,9 @@ const AnalysisTool = () => {
           id="model-select"
           value={modelName}
           onChange={(e) => setModelName(e.target.value)}
-          disabled={gameStarted}
         >
           <option value="fivelayer">fivelayer</option>
+          <option value="fivelayer10k">fivelayer10k</option>
         </select>
       </div>
 
