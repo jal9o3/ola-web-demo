@@ -2,6 +2,8 @@ import React from 'react';
 import './Home.css';  // Correct CSS import
 import { useNavigate } from 'react-router-dom';
 
+import background from '../assets/background.png';
+
 const menuItems = [
     { label: 'MATCH HISTORY', position: 'right1' },
     { label: 'RULES & TUTORIAL', position: 'left1' },
@@ -75,7 +77,7 @@ function Home() {
         <main className="container">
             <img
                 loading="lazy"
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/22f1b63660476b3583838e2006560d0eb1c4da0fa34c43f42de47994a2ea3c4a?placeholderIfAbsent=true&apiKey=495cfffe0c9a47b6b0144a560efce18c"
+                src={background} //"https://cdn.builder.io/api/v1/image/assets/TEMP/22f1b63660476b3583838e2006560d0eb1c4da0fa34c43f42de47994a2ea3c4a?placeholderIfAbsent=true&apiKey=495cfffe0c9a47b6b0144a560efce18c"
                 className="backgroundImage"
                 alt=""
                 role="presentation"
