@@ -785,6 +785,34 @@ const handleTileClick = (row, col) => {
     setInfoStateMatrix(boardMatrix);
   };
 
+  const handleGetAIFormation = () => {
+    setGameStarted(true);
+
+    const filteredPieces = pieces.filter((piece) => {
+      if (color === "B" && piece.team === "blue") {
+        return false; // Remove blue pieces if color is B
+      }
+      if (color === "R" && piece.team === "red") {
+        return false; // Remove red pieces if color is R
+      }
+      return true; // Keep all other pieces
+    });
+    setPieces(filteredPieces);
+
+    fetch(`http://127.0.0.1:8000/api/aiformation/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => console.error("Error updating game data:", error));
+
+  };
+
   const Tooltip = ({ text, position }) => {
     return (
       <div
@@ -893,6 +921,14 @@ const handleTileClick = (row, col) => {
         Begin Analysis
       </button>
 
+      <button
+        onClick={handleGetAIFormation}
+        className="ai-formation-button"
+        disabled={gameStarted}
+      >
+        Get AI Formation
+      </button>
+
       <div className="model-selector">
         <label htmlFor="model-select">Choose Model:</label>
         <select
@@ -902,6 +938,7 @@ const handleTileClick = (row, col) => {
         >
           <option value="fivelayer">fivelayer</option>
           <option value="fivelayer10k">fivelayer10k</option>
+          <option value="csd10k">csd10k</option>
         </select>
       </div>
 

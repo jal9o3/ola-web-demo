@@ -418,6 +418,13 @@ class FiveLayer(nn.Module):
         return F.softmax(x, dim=1)
 
 
+class AIFormationView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        return Response(Player.get_sensible_random_formation(
+            Ranking.SORTED_FORMATION))
+
+
 class AnalysisView(APIView):
 
     def post(self, request, *args, **kwargs):
@@ -483,7 +490,7 @@ class AnalysisView(APIView):
 
         # Obtain inference from the model
         model = None
-        if model_name in ["fivelayer", "fivelayer10k"]:
+        if model_name in ["fivelayer", "fivelayer10k", "csd10k"]:
             model = FiveLayer()
         model.load_state_dict(torch.load(f"./{model_name}.pth"))
         model.eval()
