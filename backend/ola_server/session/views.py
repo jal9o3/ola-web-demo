@@ -37,6 +37,22 @@ from .serializers import VersusAISessionSerializer, VersusAISessionListSerialize
 INPUT_SIZE = 147
 OUTPUT_SIZE = 254
 
+class FiveLayer(nn.Module):
+    def __init__(self):
+        super(FiveLayer, self).__init__()
+        self.fc1 = nn.Linear(INPUT_SIZE, 256)
+        self.fc2 = nn.Linear(256, 128)
+        self.fc3 = nn.Linear(128, 64)
+        self.fc4 = nn.Linear(64, 32)
+        self.fc5 = nn.Linear(32, OUTPUT_SIZE)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = F.relu(self.fc4(x))
+        x = self.fc5(x)
+        return F.softmax(x, dim=1)
 
 def generate_access_key():
     """
@@ -123,7 +139,7 @@ class VersusAISessionView(APIView):
         ai_color = 'R' if human_color == 'B' else 'B'
 
         # Generate AI initial formation
-        ai_initial_formation = Player.get_random_formation(
+        ai_initial_formation = Player.get_sensible_random_formation(
             Ranking.SORTED_FORMATION)
 
         # Create a new VersusAIGame object
@@ -208,6 +224,8 @@ class GameDataView(VersusAISessionView):
         access_key = request.data.get('access_key')
         session_name = request.data.get('session_name')
         human_initial_formation = request.data.get('human_initial_formation')
+        model_name = request.data.get('model')
+        print(f"model_name {model_name}")
 
         if not access_key or not session_name:
             return Response({'error': 'Access key and session name are required'
@@ -268,8 +286,44 @@ class GameDataView(VersusAISessionView):
             # If the AI is playing as blue, the AI will make the first move
             if game.ai_color == 'B':
                 game.has_started = True
-                # Choose at random, for now
-                ai_action = random.choice(arbiter_board.actions())
+                # Let the model choose
+                model = None
+                if model_name in ["fivelayer", "fivelayer10k", "csd10k"]:
+                    model = FiveLayer()
+                model.load_state_dict(torch.load(f"./{model_name}.pth"))
+                model.eval()
+
+                input_infostate = list(map(int, str(starting_infostate).split(" ")))
+                # Convert input_infostate to a PyTorch Tensor
+                input_infostate = torch.tensor(input_infostate, dtype=torch.float32)
+                # Reshape the input to have an extra dimension
+                input_infostate = input_infostate.unsqueeze(0)  # Add a batch dimension
+                full_strategy = model(input_infostate)
+                # Get the probabilities for each action from the model output
+                full_strategy = full_strategy.squeeze(0).tolist()
+
+                fullgame_actions = TimelessBoard.actions()
+                valid_actions = starting_infostate.actions()
+                player_to_move = "B" if starting_infostate.player_to_move == Player.BLUE else "R"
+
+                strategy = [0.0 for _ in range(len(valid_actions))]
+
+                for action in fullgame_actions:
+                    if action not in valid_actions:
+                        full_strategy[fullgame_actions.index(action)] = 0.0
+                if sum(full_strategy) > 0:
+                    full_strategy = [x / sum(full_strategy) for x in full_strategy]
+
+                for i, action in enumerate(fullgame_actions):
+                    if action in valid_actions:
+                        strategy[valid_actions.index(action)] = full_strategy[i]
+                if sum(strategy) <= 0:
+                    strategy = [1/len(valid_actions)
+                                for _ in range(len(valid_actions))]
+
+                ai_action = random.choices(valid_actions, weights=strategy, k=1)[0]
+
+
                 next_board = arbiter_board.transition(action=ai_action)
                 result = arbiter_board.classify_action_result(action=ai_action,
                                                               new_board=next_board)
@@ -356,7 +410,43 @@ class GameDataView(VersusAISessionView):
 
             if not next_board.is_terminal():
                 # The AI will now make a move
-                ai_action = random.choice(next_board.actions())
+                model = None
+                if model_name in ["fivelayer", "fivelayer10k", "csd10k"]:
+                    model = FiveLayer()
+                model.load_state_dict(torch.load(f"./{model_name}.pth"))
+                model.eval()
+
+                input_infostate = list(map(int, str(next_infostate).split(" ")))
+                # Convert input_infostate to a PyTorch Tensor
+                input_infostate = torch.tensor(input_infostate, dtype=torch.float32)
+                # Reshape the input to have an extra dimension
+                input_infostate = input_infostate.unsqueeze(0)  # Add a batch dimension
+                full_strategy = model(input_infostate)
+                # Get the probabilities for each action from the model output
+                full_strategy = full_strategy.squeeze(0).tolist()
+
+                fullgame_actions = TimelessBoard.actions()
+                valid_actions = next_infostate.actions()
+                player_to_move = "B" if next_infostate.player_to_move == Player.BLUE else "R"
+
+                strategy = [0.0 for _ in range(len(valid_actions))]
+
+                for action in fullgame_actions:
+                    if action not in valid_actions:
+                        full_strategy[fullgame_actions.index(action)] = 0.0
+                if sum(full_strategy) > 0:
+                    full_strategy = [x / sum(full_strategy) for x in full_strategy]
+
+                for i, action in enumerate(fullgame_actions):
+                    if action in valid_actions:
+                        strategy[valid_actions.index(action)] = full_strategy[i]
+                if sum(strategy) <= 0:
+                    strategy = [1/len(valid_actions)
+                                for _ in range(len(valid_actions))]
+
+                ai_action = random.choices(valid_actions, weights=strategy,
+                                                k=1)[0]
+                
                 previous_board = copy.deepcopy(next_board)
                 previous_infostate = copy.deepcopy(next_infostate)
                 next_board = previous_board.transition(action=ai_action)
@@ -398,25 +488,6 @@ class GameDataView(VersusAISessionView):
             return Response(game_data, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class FiveLayer(nn.Module):
-    def __init__(self):
-        super(FiveLayer, self).__init__()
-        self.fc1 = nn.Linear(INPUT_SIZE, 256)
-        self.fc2 = nn.Linear(256, 128)
-        self.fc3 = nn.Linear(128, 64)
-        self.fc4 = nn.Linear(64, 32)
-        self.fc5 = nn.Linear(32, OUTPUT_SIZE)
-
-    def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
-        x = F.relu(self.fc4(x))
-        x = self.fc5(x)
-        return F.softmax(x, dim=1)
-
 
 class AIFormationView(APIView):
 

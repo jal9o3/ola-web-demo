@@ -128,6 +128,7 @@ const Board = () => {
   const [humanColor, setHumanColor] = useState("");
   const [current_infostate, setCurrentInfostate] = useState([]);
   const [currentTurn, setCurrentTurn] = useState("Your turn"); // Default to player's turn
+  const [modelName, setModelName] = useState("csd10k");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -267,6 +268,7 @@ const Board = () => {
             session_name: sessionName,
             access_key: accessKey,
             move: move,
+            model: modelName,
           }),
         })
           .then((response) => response.json())
@@ -275,23 +277,23 @@ const Board = () => {
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
           })
           .catch((error) => console.error("Error updating game data:", error));
-          setSelectedPiece(null); // Deselect the piece after the move
+        setSelectedPiece(null); // Deselect the piece after the move
 
-          // Move the selected piece if no opponent piece is present
-setPieces(prevPieces =>
-  prevPieces.map(p =>
-      p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
-  )
-);
-// Switch turn to AI after player's move
-                setCurrentTurn("AI's turn");
+        // Move the selected piece if no opponent piece is present
+        setPieces((prevPieces) =>
+          prevPieces.map((p) =>
+            p.id === selectedPiece.id ? { ...p, position: { row, col } } : p
+          )
+        );
+        // Switch turn to AI after player's move
+        setCurrentTurn("AI's turn");
 
-                // Simulate AI's move (this is just a placeholder for actual AI logic)
-                setTimeout(() => {
-                    // Here you would implement the AI's logic to make a move
-                    // For now, we'll just switch back to the player's turn
-                    setCurrentTurn("Your turn");
-                }, 1000); // Simulate a delay for the AI's turn
+        // Simulate AI's move (this is just a placeholder for actual AI logic)
+        setTimeout(() => {
+          // Here you would implement the AI's logic to make a move
+          // For now, we'll just switch back to the player's turn
+          setCurrentTurn("Your turn");
+        }, 1000); // Simulate a delay for the AI's turn
       } else if (isValidMove && alliedPiece) {
         alert("Allies cannot be challenged! Choose another spot.");
         setSelectedPiece(null); // Deselect the piece after the move
@@ -307,6 +309,7 @@ setPieces(prevPieces =>
             session_name: sessionName,
             access_key: accessKey,
             move: move,
+            model: modelName,
           }),
         })
           .then((response) => response.json())
@@ -315,7 +318,7 @@ setPieces(prevPieces =>
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
           })
           .catch((error) => console.error("Error updating game data:", error));
-          setSelectedPiece(null); // Deselect the piece after the move
+        setSelectedPiece(null); // Deselect the piece after the move
       } else {
         // If the move is invalid, allow selecting a new piece
         const piece = pieces.find(
@@ -411,6 +414,7 @@ setPieces(prevPieces =>
         session_name: sessionName,
         access_key: accessKey,
         human_initial_formation: formationValues,
+        model: modelName,
       }),
     })
       .then((response) => response.json())
@@ -485,11 +489,25 @@ setPieces(prevPieces =>
 
   return (
     <div className="board-container">
-    {gameStarted && (
-            <div className="turn-indicator">
-                <h3>{currentTurn}</h3>
-            </div>
-        )}
+      {gameStarted && (
+        <div className="turn-indicator">
+          <h3>{currentTurn}</h3>
+        </div>
+      )}
+
+      <div className="model-selector">
+        <label htmlFor="model-select">Choose Model:</label>
+        <select
+          id="model-select"
+          value={modelName}
+          onChange={(e) => setModelName(e.target.value)}
+        >
+          <option value="fivelayer">fivelayer</option>
+          <option value="fivelayer10k">fivelayer10k</option>
+          <option value="csd10k">csd10k</option>
+        </select>
+      </div>
+
       <div className="button-container">
         <button
           onClick={handlePlayClick}
@@ -560,7 +578,8 @@ setPieces(prevPieces =>
                             text: "",
                             position: {
                               x: 0,
-                              y: 0 },
+                              y: 0,
+                            },
                           })
                         }
                       />
@@ -625,7 +644,6 @@ setPieces(prevPieces =>
         </div>
       </div>
     </div>
-    
   );
 };
 
