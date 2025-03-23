@@ -374,6 +374,7 @@ const AnalysisTool = () => {
   const [action, setAction] = useState("");
   const [outcome, setOutcome] = useState("");
   const [sampledChoice, setSampledChoice] = useState(null);
+  const [aiFormation, setAIFormation] = useState([]);
 
   const BLUE_FLAG = 1;
   const BLUE_SPY = 15; // Rankings are 1 to 15
@@ -480,125 +481,126 @@ const AnalysisTool = () => {
     }
   }, [selectedPiece, pieces, gameStarted]);
 
-const handleTileClick = (row, col) => {
-  if (!gameStarted) return;
+  const handleTileClick = (row, col) => {
+    if (!gameStarted) return;
 
-  // Remove the outcomeContainer if it exists
-  const existingOutcomeContainer = document.querySelector(".outcome-container");
-  if (existingOutcomeContainer) {
-    document.body.removeChild(existingOutcomeContainer);
-  }
+    // Remove the outcomeContainer if it exists
+    const existingOutcomeContainer =
+      document.querySelector(".outcome-container");
+    if (existingOutcomeContainer) {
+      document.body.removeChild(existingOutcomeContainer);
+    }
 
-  if (selectedPiece) {
-    const { position, team, name } = selectedPiece;
+    if (selectedPiece) {
+      const { position, team, name } = selectedPiece;
 
-    // Allow moves in all directions (one tile)
-    const isValidMove =
-      (row === position.row - 1 && col === position.col) || // Up
-      (row === position.row && col === position.col - 1) || // Left
-      (row === position.row && col === position.col + 1) || // Right
-      (row === position.row + 1 && col === position.col); // Down
+      // Allow moves in all directions (one tile)
+      const isValidMove =
+        (row === position.row - 1 && col === position.col) || // Up
+        (row === position.row && col === position.col - 1) || // Left
+        (row === position.row && col === position.col + 1) || // Right
+        (row === position.row + 1 && col === position.col); // Down
 
-    // Check for opponent and allied pieces
-    const opponentPiece = pieces.find(
-      (p) =>
-        p.position?.row === row && p.position?.col === col && p.team !== team
-    );
-    const alliedPiece = pieces.some(
-      (p) =>
-        p.position?.row === row && p.position?.col === col && p.team === team
-    );
+      // Check for opponent and allied pieces
+      const opponentPiece = pieces.find(
+        (p) =>
+          p.position?.row === row && p.position?.col === col && p.team !== team
+      );
+      const alliedPiece = pieces.some(
+        (p) =>
+          p.position?.row === row && p.position?.col === col && p.team === team
+      );
 
-    if (isValidMove && opponentPiece) {
-      const move = `${position.row}${position.col}${row}${col}`;
-      const outcomeContainer = document.createElement("div");
-      outcomeContainer.className = "outcome-container"; // Add a class for easier selection
-      outcomeContainer.style.position = "absolute";
-      outcomeContainer.style.top = "50%";
-      outcomeContainer.style.left = "50%";
-      outcomeContainer.style.transform = "translate(-50%, -50%)";
-      outcomeContainer.style.backgroundColor = "white";
-      outcomeContainer.style.padding = "20px";
-      outcomeContainer.style.border = "1px solid black";
-      outcomeContainer.style.zIndex = "1000";
+      if (isValidMove && opponentPiece) {
+        const move = `${position.row}${position.col}${row}${col}`;
+        const outcomeContainer = document.createElement("div");
+        outcomeContainer.className = "outcome-container"; // Add a class for easier selection
+        outcomeContainer.style.position = "absolute";
+        outcomeContainer.style.top = "50%";
+        outcomeContainer.style.left = "50%";
+        outcomeContainer.style.transform = "translate(-50%, -50%)";
+        outcomeContainer.style.backgroundColor = "white";
+        outcomeContainer.style.padding = "20px";
+        outcomeContainer.style.border = "1px solid black";
+        outcomeContainer.style.zIndex = "1000";
 
-      const winButton = document.createElement("button");
-      winButton.textContent = "Win";
-      winButton.onclick = () => {
-        setOutcome("win");
-        setAction(move);
-        document.body.removeChild(outcomeContainer);
-      };
+        const winButton = document.createElement("button");
+        winButton.textContent = "Win";
+        winButton.onclick = () => {
+          setOutcome("win");
+          setAction(move);
+          document.body.removeChild(outcomeContainer);
+        };
 
-      const lossButton = document.createElement("button");
-      lossButton.textContent = "Loss";
-      lossButton.onclick = () => {
-        setOutcome("loss");
-        setAction(move);
-        document.body.removeChild(outcomeContainer);
-      };
+        const lossButton = document.createElement("button");
+        lossButton.textContent = "Loss";
+        lossButton.onclick = () => {
+          setOutcome("loss");
+          setAction(move);
+          document.body.removeChild(outcomeContainer);
+        };
 
-      const drawButton = document.createElement("button");
-      drawButton.textContent = "Draw";
-      drawButton.onclick = () => {
-        setOutcome("draw");
-        setAction(move);
-        document.body.removeChild(outcomeContainer);
-      };
+        const drawButton = document.createElement("button");
+        drawButton.textContent = "Draw";
+        drawButton.onclick = () => {
+          setOutcome("draw");
+          setAction(move);
+          document.body.removeChild(outcomeContainer);
+        };
 
-      outcomeContainer.appendChild(winButton);
-      outcomeContainer.appendChild(lossButton);
-      outcomeContainer.appendChild(drawButton);
+        outcomeContainer.appendChild(winButton);
+        outcomeContainer.appendChild(lossButton);
+        outcomeContainer.appendChild(drawButton);
 
-      document.body.appendChild(outcomeContainer);
+        document.body.appendChild(outcomeContainer);
 
-      setSelectedPiece(null); // Deselect the piece after the move
-    } else if (isValidMove && alliedPiece) {
-      alert("Allies cannot be challenged! Choose another spot.");
-      setSelectedPiece(null); // Deselect the piece
-    } else if (isValidMove) {
-      const move = `${position.row}${position.col}${row}${col}`;
-      fetch(`http://127.0.0.1:8000/api/analysis/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          model_name: modelName,
-          infostate_matrix: infostateMatrix,
-          color: color,
-          player_to_move: toMove,
-          anticipating: anticipating,
-          player_move: move,
-          move_result: "occupy",
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          setInfoStateMatrix(data.infostate_matrix);
-          setStrategy(data.strategy);
-          setSampledChoice(data.sampled_action);
-          setAnticipating(data.anticipating);
-          setToMove(data.player_to_move);
+        setSelectedPiece(null); // Deselect the piece after the move
+      } else if (isValidMove && alliedPiece) {
+        alert("Allies cannot be challenged! Choose another spot.");
+        setSelectedPiece(null); // Deselect the piece
+      } else if (isValidMove) {
+        const move = `${position.row}${position.col}${row}${col}`;
+        fetch(`http://127.0.0.1:8000/api/analysis/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model_name: modelName,
+            infostate_matrix: infostateMatrix,
+            color: color,
+            player_to_move: toMove,
+            anticipating: anticipating,
+            player_move: move,
+            move_result: "occupy",
+          }),
         })
-        .catch((error) => console.error("Error updating game data:", error));
-      setSelectedPiece(null); // Deselect the piece after the move
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            setInfoStateMatrix(data.infostate_matrix);
+            setStrategy(data.strategy);
+            setSampledChoice(data.sampled_action);
+            setAnticipating(data.anticipating);
+            setToMove(data.player_to_move);
+          })
+          .catch((error) => console.error("Error updating game data:", error));
+        setSelectedPiece(null); // Deselect the piece after the move
+      } else {
+        // If the move is invalid, allow selecting a new piece
+        const piece = pieces.find(
+          (p) => p.position?.row === row && p.position?.col === col
+        );
+        if (piece) setSelectedPiece(piece);
+      }
     } else {
-      // If the move is invalid, allow selecting a new piece
+      // Allow selecting a piece if none is currently selected
       const piece = pieces.find(
         (p) => p.position?.row === row && p.position?.col === col
       );
       if (piece) setSelectedPiece(piece);
     }
-  } else {
-    // Allow selecting a piece if none is currently selected
-    const piece = pieces.find(
-      (p) => p.position?.row === row && p.position?.col === col
-    );
-    if (piece) setSelectedPiece(piece);
-  }
-};
+  };
 
   const allowDrop = (e) => e.preventDefault();
 
@@ -786,8 +788,6 @@ const handleTileClick = (row, col) => {
   };
 
   const handleGetAIFormation = () => {
-    setGameStarted(true);
-
     const filteredPieces = pieces.filter((piece) => {
       if (color === "B" && piece.team === "blue") {
         return false; // Remove blue pieces if color is B
@@ -808,9 +808,9 @@ const handleTileClick = (row, col) => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        setAIFormation(data);
       })
       .catch((error) => console.error("Error updating game data:", error));
-
   };
 
   const Tooltip = ({ text, position }) => {
@@ -832,6 +832,10 @@ const handleTileClick = (row, col) => {
   useEffect(() => {
     console.log("ToMove changed to:", toMove);
   }, [toMove]);
+
+  useEffect(() => {
+    console.log(infostateMatrix);
+  }, [infostateMatrix]);
 
   useEffect(() => {
     const teamColor = color === "B" ? "blue" : "red";
@@ -875,6 +879,50 @@ const handleTileClick = (row, col) => {
   }, [infostateMatrix, modelName]);
 
   useEffect(() => {
+    const tuples = [];
+    if (color === "R") {
+      for (let row = 5; row <= 7; row++) {
+        for (let col = 0; col <= 8; col++) {
+          tuples.push([row, col]);
+        }
+      }
+    } else if (color === "B") {
+      for (let row = 2; row >= 0; row--) {
+        for (let col = 8; col >= 0; col--) {
+          tuples.push([row, col]);
+        }
+      }
+    }
+    console.log("Generated tuples:", tuples);
+
+    aiFormation.forEach((value) => {
+      if (value === 0) {
+        tuples.shift(); // Remove the first element in tuples
+      } else {
+        const rankName = Object.keys(rankHierarchy).find(
+          (key) => rankHierarchy[key] === value
+        );
+        const team = color === "B" ? "blue" : "red";
+        const position = tuples.shift(); // Get and remove the first element in tuples
+
+        const newPiece = {
+          id: pieces.length + 1 + Math.floor(Math.random() * 1000), // Generate a new unique ID with randomness
+          name: rankName,
+          src:
+            initialPieces.find(
+              (piece) => piece.name === rankName && piece.team === team
+            )?.src || "", // Use the src from initialPieces or fallback to an empty string
+          position: { row: position[0], col: position[1] },
+          team: team,
+        };
+
+        setPieces((prevPieces) => [...prevPieces, newPiece]);
+      }
+    });
+    console.log(pieces);
+  }, [aiFormation]);
+
+  useEffect(() => {
     const strategySum = Object.values(strategy).reduce(
       (sum, value) => sum + value,
       0
@@ -883,7 +931,7 @@ const handleTileClick = (row, col) => {
   }, [strategy]);
 
   useEffect(() => {
-    console.log(outcome)
+    console.log(outcome);
     fetch(`http://127.0.0.1:8000/api/analysis/`, {
       method: "POST",
       headers: {
@@ -902,7 +950,7 @@ const handleTileClick = (row, col) => {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        setInfoStateMatrix(data.infostate_matrix)
+        setInfoStateMatrix(data.infostate_matrix);
         setStrategy(data.strategy);
         setSampledChoice(data.sampled_action);
         setAnticipating(data.anticipating);
@@ -1143,10 +1191,10 @@ const handleTileClick = (row, col) => {
             ))}
         </div>
         <div className="sampled-action"></div>
-          <h3>Sampled Action:</h3>
-          <p>{sampledChoice ? sampledChoice : "No action sampled yet"}</p>
-        </div>
+        <h3>Sampled Action:</h3>
+        <p>{sampledChoice ? sampledChoice : "No action sampled yet"}</p>
       </div>
+    </div>
   );
 };
 
