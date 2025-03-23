@@ -369,7 +369,7 @@ const AnalysisTool = () => {
   const [toMove, setToMove] = useState("B");
   const [infostateMatrix, setInfoStateMatrix] = useState([]);
   const [anticipating, setAnticipating] = useState(false);
-  const [modelName, setModelName] = useState("fivelayer"); // Initialize with a default value
+  const [modelName, setModelName] = useState("csd10k"); // Initialize with a default value
   const [strategy, setStrategy] = useState({});
   const [action, setAction] = useState("");
   const [outcome, setOutcome] = useState("");
