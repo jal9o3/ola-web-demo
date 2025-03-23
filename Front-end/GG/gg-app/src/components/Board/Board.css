@@ -2,8 +2,8 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 20px;
-    padding: 20px;
+    gap: 10px;
+    padding: 10px;
 }
 
 .game-board {
@@ -15,6 +15,23 @@
     border: 5px solid #06a2a0; /* White outline around the board */
     border-radius: 5px; /* Optional: rounded corners */
     padding: 10px; /* Optional: space between the border and the tiles */
+}
+
+.play-button {
+    background-color: #28a745;
+    color: white;
+    margin-top: 25%;
+    font-size: 18px;
+    padding: 25px 50px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.play-button.disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
 }
 
 .randomize-button {
@@ -40,6 +57,24 @@
 .randomize-button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+}
+
+.button-container {
+    display: block; /* Change to block to stack elements vertically */
+    margin-bottom: 10px; /* Space below the button container */
+}
+
+.turn-indicator {
+    font-size: 1.5em; 
+    font-weight: bold; 
+    color: #04202a; 
+    text-align: center;
+    width: 150px; /* Set a fixed width */
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Ensure no overflow */
+    display: flex; 
+    justify-content: center; /* Center text horizontally */
+    align-items: center; /* Center text vertically */
 }
 
 .tile {
@@ -117,22 +152,6 @@
     z-index: 1000;
 }
 
-.play-button {
-    background-color: #28a745;
-    color: white;
-    margin-top: 25%;
-    font-size: 18px;
-    padding: 25px 50px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-
-.play-button.disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-}
 
 .opponent-placeholder {
     width: 40px; 
@@ -140,4 +159,5 @@
     background-color: rgb(12, 112, 116); 
     border-radius: 5px; 
 }
+
 
