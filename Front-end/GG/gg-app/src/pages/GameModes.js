@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './GameModes.css';
 
-const GameMode = () => {
+const GameModes = () => {
     const navigate = useNavigate();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [sessionName, setSessionName] = useState('');
@@ -88,4 +88,4 @@ const GameMode = () => {
     );
 };
 
-export default GameMode;
+export default GameModes;
