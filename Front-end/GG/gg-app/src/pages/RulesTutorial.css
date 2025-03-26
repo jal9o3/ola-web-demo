@@ -4,7 +4,7 @@ html, body {
     height: 100%;
     font-family: 'Arial', sans-serif;
     background-color: #e6eef2;
-    background: url('https://cdn.builder.io/api/v1/image/assets/TEMP/22f1b63660476b3583838e2006560d0eb1c4da0fa34c43f42de47994a2ea3c4a?placeholderIfAbsent=true&apiKey=495cfffe0c9a47b6b0144a560efce18c') no-repeat center center fixed;
+    background: url('../assets/background.png')no-repeat center center fixed;
     background-size: cover;
     display: flex; /* Make the body a flex container */
     align-items: center; /* Center content vertically */
