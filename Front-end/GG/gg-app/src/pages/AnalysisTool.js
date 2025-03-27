@@ -375,6 +375,10 @@ const AnalysisTool = () => {
   const [outcome, setOutcome] = useState("");
   const [sampledChoice, setSampledChoice] = useState(null);
   const [aiFormation, setAIFormation] = useState([]);
+  const [moveList, setMoveList] = useState([]);
+  const [moveListIndex, setMoveListIndex] = useState(-1);
+  const [infostateMatrixList, setInfoStateMatrixList] = useState([]);
+  const [pieceArrayList, setPieceArrayList] = useState([]);
 
   const BLUE_FLAG = 1;
   const BLUE_SPY = 15; // Rankings are 1 to 15
@@ -579,6 +583,10 @@ const AnalysisTool = () => {
           .then((data) => {
             console.log(data);
             setInfoStateMatrix(data.infostate_matrix);
+            setInfoStateMatrixList((prevList) => [
+              ...prevList,
+              data.infostate_matrix,
+            ]);
             setStrategy(data.strategy);
             setSampledChoice(data.sampled_action);
             setAnticipating(data.anticipating);
@@ -785,6 +793,7 @@ const AnalysisTool = () => {
     });
     console.log(boardMatrix);
     setInfoStateMatrix(boardMatrix);
+    setInfoStateMatrixList((prevList) => [...prevList, boardMatrix]);
   };
 
   const handleGetAIFormation = () => {
@@ -811,6 +820,21 @@ const AnalysisTool = () => {
         setAIFormation(data);
       })
       .catch((error) => console.error("Error updating game data:", error));
+  };
+
+  const handleUndo = () => {
+    // Reverse the toMove
+    setToMove((prevToMove) => (prevToMove === "B" ? "R" : "B"));
+    // Reverse the anticipating value
+    if (anticipating) {
+      setAnticipating(false);
+    }
+    // Move to the previous piece array
+    setPieces(pieceArrayList[pieceArrayList.length - 2]);
+    setPieceArrayList((prevList) => prevList.slice(0, -1));
+    // Move to the previous infostate matrix array
+    setInfoStateMatrix(infostateMatrixList[infostateMatrixList.length - 2]);
+    setInfoStateMatrixList((prevList) => prevList.slice(0, -1));
   };
 
   const Tooltip = ({ text, position }) => {
@@ -854,6 +878,7 @@ const AnalysisTool = () => {
       console.log("Model Name:");
       console.log(modelName);
       setPieces(newPieces);
+      setPieceArrayList((prevList) => [...prevList, newPieces]);
 
       fetch(`http://127.0.0.1:8000/api/analysis/`, {
         method: "POST",
@@ -951,6 +976,10 @@ const AnalysisTool = () => {
       .then((data) => {
         console.log(data);
         setInfoStateMatrix(data.infostate_matrix);
+        setInfoStateMatrixList((prevList) => [
+          ...prevList,
+          data.infostate_matrix,
+        ]);
         setStrategy(data.strategy);
         setSampledChoice(data.sampled_action);
         setAnticipating(data.anticipating);
@@ -1014,6 +1043,18 @@ const AnalysisTool = () => {
           <option value="R">Red</option>
         </select>
       </div>
+
+      {gameStarted &&
+        infostateMatrixList.length > 1 &&
+        pieceArrayList.length > 1 && (
+          <button
+            onClick={handleUndo}
+            className="undo-button"
+            disabled={!gameStarted}
+          >
+            Undo
+          </button>
+        )}
 
       {color === "R" && (
         <div className="game-board">
