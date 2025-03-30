@@ -1057,166 +1057,193 @@ const AnalysisTool = () => {
         )}
 
       {color === "R" && (
-        <div className="game-board">
-          {Array.from({ length: 8 }).map((_, row) =>
-            Array.from({ length: 9 }).map((_, col) => {
-              const piece = pieces.find(
-                (p) => p.position?.row === row && p.position?.col === col
-              );
-              return (
-                <div
-                  key={`${row}-${col}`}
-                  className={`tile ${
-                    selectedPiece?.position?.row === row &&
-                    selectedPiece?.position?.col === col
-                      ? "selected"
-                      : ""
-                  }`}
-                  onClick={() => handleTileClick(row, col)}
-                  onDrop={(e) => handleDrop(e, row, col)}
-                  onDragOver={allowDrop}
-                  onMouseEnter={(e) => {
-                    setTooltip({
-                      visible: true,
-                      text: `Row: ${row}, Col: ${col}`,
-                      position: { x: e.clientX, y: e.clientY },
-                    });
-                  }}
-                  onMouseLeave={() =>
-                    setTooltip({
-                      visible: false,
-                      text: "",
-                      position: { x: 0, y: 0 },
-                    })
-                  }
-                >
-                  {piece ? (
-                    (piece.team === "blue" && color === "R") ||
-                    (piece.team === "red" && color === "B") ? (
-                      <div
-                        className="opponent-placeholder"
-                        draggable={true}
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData("pieceId", piece.id);
-                        }}
-                      ></div>
-                    ) : (
-                      <img
-                        src={piece.src}
-                        alt={piece.name}
-                        className="piece-image"
-                        draggable={true}
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData("pieceId", piece.id);
-                        }}
-                        onMouseEnter={(e) => {
-                          setTooltip({
-                            visible: true,
-                            text: `${piece.name} (Row: ${row}, Col: ${col})`,
-                            position: { x: e.clientX, y: e.clientY },
-                          });
-                        }}
-                        onMouseLeave={() =>
-                          setTooltip({
-                            visible: false,
-                            text: "",
-                            position: { x: 0, y: 0 },
-                          })
-                        }
-                      />
-                    )
-                  ) : null}
-                </div>
-              );
-            })
-          )}
-          {tooltip.visible && (
-            <Tooltip text={tooltip.text} position={tooltip.position} />
-          )}
+        <div className="game-board-container">
+          <div className="row-numbers">
+            {Array.from({ length: 8 }).map((_, row) => (
+              <div key={row} className="row-number">
+                {row} {/* Zero-indexed row numbers */}
+              </div>
+            ))}
+          </div>
+          <div className="game-board">
+            {Array.from({ length: 8 }).map((_, row) =>
+              Array.from({ length: 9 }).map((_, col) => {
+                const piece = pieces.find(
+                  (p) => p.position?.row === row && p.position?.col === col
+                );
+                return (
+                  <div
+                    key={`${row}-${col}`}
+                    className={`tile ${
+                      selectedPiece?.position?.row === row &&
+                      selectedPiece?.position?.col === col
+                        ? "selected"
+                        : ""
+                    }`}
+                    onClick={() => handleTileClick(row, col)}
+                    onDrop={(e) => handleDrop(e, row, col)}
+                    onDragOver={allowDrop}
+                    onMouseEnter={(e) => {
+                      setTooltip({
+                        visible: true,
+                        text: `Row: ${row}, Col: ${col}`,
+                        position: { x: e.clientX, y: e.clientY },
+                      });
+                    }}
+                    onMouseLeave={() =>
+                      setTooltip({
+                        visible: false,
+                        text: "",
+                        position: { x: 0, y: 0 },
+                      })
+                    }
+                  >
+                    {piece ? (
+                      (piece.team === "blue" && color === "R") ||
+                      (piece.team === "red" && color === "B") ? (
+                        <div
+                          className="opponent-placeholder"
+                          draggable={true}
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData("pieceId", piece.id);
+                          }}
+                        ></div>
+                      ) : (
+                        <img
+                          src={piece.src}
+                          alt={piece.name}
+                          className="piece-image"
+                          draggable={true}
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData("pieceId", piece.id);
+                          }}
+                          onMouseEnter={(e) => {
+                            setTooltip({
+                              visible: true,
+                              text: `${piece.name} (Row: ${row}, Col: ${col})`,
+                              position: { x: e.clientX, y: e.clientY },
+                            });
+                          }}
+                          onMouseLeave={() =>
+                            setTooltip({
+                              visible: false,
+                              text: "",
+                              position: { x: 0, y: 0 },
+                            })
+                          }
+                        />
+                      )
+                    ) : null}
+                  </div>
+                );
+              })
+            )}
+          </div>
+          <div className="column-numbers">
+            {Array.from({ length: 9 }).map((_, col) => (
+              <div key={col} className="column-number">
+                {col} {/* Zero-indexed column numbers */}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       {color === "B" && (
-        <div className={`game-board flipped`}>
-          {Array.from({ length: 8 }).map((_, row) =>
-            Array.from({ length: 9 }).map((_, col) => {
-              const flippedRow = 7 - row;
-              const flippedCol = 8 - col;
-              const piece = pieces.find(
-                (p) =>
-                  p.position?.row === flippedRow &&
-                  p.position?.col === flippedCol
-              );
-              return (
-                <div
-                  key={`${flippedRow}-${flippedCol}`}
-                  className={`tile ${
-                    selectedPiece?.position?.row === flippedRow &&
-                    selectedPiece?.position?.col === flippedCol
-                      ? "selected"
-                      : ""
-                  }`}
-                  onClick={() => handleTileClick(flippedRow, flippedCol)}
-                  onDrop={(e) => handleDrop(e, flippedRow, flippedCol)}
-                  onDragOver={allowDrop}
-                  onMouseEnter={(e) => {
-                    setTooltip({
-                      visible: true,
-                      text: `Row: ${flippedRow}, Col: ${flippedCol}`,
-                      position: { x: e.clientX, y: e.clientY },
-                    });
-                  }}
-                  onMouseLeave={() =>
-                    setTooltip({
-                      visible: false,
-                      text: "",
-                      position: { x: 0, y: 0 },
-                    })
-                  }
-                >
-                  {piece ? (
-                    (piece.team === "blue" && color === "R") ||
-                    (piece.team === "red" && color === "B") ? (
-                      <div
-                        className="opponent-placeholder"
-                        draggable={true}
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData("pieceId", piece.id);
-                        }}
-                      ></div>
-                    ) : (
-                      <img
-                        src={piece.src}
-                        alt={piece.name}
-                        className="piece-image"
-                        draggable={true}
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData("pieceId", piece.id);
-                        }}
-                        onMouseEnter={(e) => {
-                          setTooltip({
-                            visible: true,
-                            text: `${piece.name} (Row: ${flippedRow}, Col: ${flippedCol})`,
-                            position: { x: e.clientX, y: e.clientY },
-                          });
-                        }}
-                        onMouseLeave={() =>
-                          setTooltip({
-                            visible: false,
-                            text: "",
-                            position: { x: 0, y: 0 },
-                          })
-                        }
-                      />
-                    )
-                  ) : null}
-                </div>
-              );
-            })
-          )}
-          {tooltip.visible && (
-            <Tooltip text={tooltip.text} position={tooltip.position} />
-          )}
+        <div className="game-board-container">
+          <div className="row-numbers">
+            {Array.from({ length: 8 }).map((_, row) => (
+              <div key={row} className="row-number">
+                {7 - row} {/* Row numbers are reversed for the flipped board */}
+              </div>
+            ))}
+          </div>
+          <div className={`game-board flipped`}>
+            {Array.from({ length: 8 }).map((_, row) =>
+              Array.from({ length: 9 }).map((_, col) => {
+                const flippedRow = 7 - row;
+                const flippedCol = 8 - col;
+                const piece = pieces.find(
+                  (p) =>
+                    p.position?.row === flippedRow &&
+                    p.position?.col === flippedCol
+                );
+                return (
+                  <div
+                    key={`${flippedRow}-${flippedCol}`}
+                    className={`tile ${
+                      selectedPiece?.position?.row === flippedRow &&
+                      selectedPiece?.position?.col === flippedCol
+                        ? "selected"
+                        : ""
+                    }`}
+                    onClick={() => handleTileClick(flippedRow, flippedCol)}
+                    onDrop={(e) => handleDrop(e, flippedRow, flippedCol)}
+                    onDragOver={allowDrop}
+                    onMouseEnter={(e) => {
+                      setTooltip({
+                        visible: true,
+                        text: `Row: ${flippedRow}, Col: ${flippedCol}`,
+                        position: { x: e.clientX, y: e.clientY },
+                      });
+                    }}
+                    onMouseLeave={() =>
+                      setTooltip({
+                        visible: false,
+                        text: "",
+                        position: { x: 0, y: 0 },
+                      })
+                    }
+                  >
+                    {piece ? (
+                      (piece.team === "blue" && color === "R") ||
+                      (piece.team === "red" && color === "B") ? (
+                        <div
+                          className="opponent-placeholder"
+                          draggable={true}
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData("pieceId", piece.id);
+                          }}
+                        ></div>
+                      ) : (
+                        <img
+                          src={piece.src}
+                          alt={piece.name}
+                          className="piece-image"
+                          draggable={true}
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData("pieceId", piece.id);
+                          }}
+                          onMouseEnter={(e) => {
+                            setTooltip({
+                              visible: true,
+                              text: `${piece.name} (Row: ${flippedRow}, Col: ${flippedCol})`,
+                              position: { x: e.clientX, y: e.clientY },
+                            });
+                          }}
+                          onMouseLeave={() =>
+                            setTooltip({
+                              visible: false,
+                              text: "",
+                              position: { x: 0, y: 0 },
+                            })
+                          }
+                        />
+                      )
+                    ) : null}
+                  </div>
+                );
+              })
+            )}
+          </div>
+          <div className="column-numbers">
+            {Array.from({ length: 9 }).map((_, col) => (
+              <div key={col} className="column-number">
+                {8 - col}{" "}
+                {/* Column numbers are reversed for the flipped board */}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
