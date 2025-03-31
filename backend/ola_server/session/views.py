@@ -37,6 +37,7 @@ from .serializers import VersusAISessionSerializer, VersusAISessionListSerialize
 INPUT_SIZE = 147
 OUTPUT_SIZE = 254
 
+
 class FiveLayer(nn.Module):
     def __init__(self):
         super(FiveLayer, self).__init__()
@@ -53,6 +54,7 @@ class FiveLayer(nn.Module):
         x = F.relu(self.fc4(x))
         x = self.fc5(x)
         return F.softmax(x, dim=1)
+
 
 def generate_access_key():
     """
@@ -293,11 +295,14 @@ class GameDataView(VersusAISessionView):
                 model.load_state_dict(torch.load(f"./{model_name}.pth"))
                 model.eval()
 
-                input_infostate = list(map(int, str(starting_infostate).split(" ")))
+                input_infostate = list(
+                    map(int, str(starting_infostate).split(" ")))
                 # Convert input_infostate to a PyTorch Tensor
-                input_infostate = torch.tensor(input_infostate, dtype=torch.float32)
+                input_infostate = torch.tensor(
+                    input_infostate, dtype=torch.float32)
                 # Reshape the input to have an extra dimension
-                input_infostate = input_infostate.unsqueeze(0)  # Add a batch dimension
+                input_infostate = input_infostate.unsqueeze(
+                    0)  # Add a batch dimension
                 full_strategy = model(input_infostate)
                 # Get the probabilities for each action from the model output
                 full_strategy = full_strategy.squeeze(0).tolist()
@@ -312,17 +317,29 @@ class GameDataView(VersusAISessionView):
                     if action not in valid_actions:
                         full_strategy[fullgame_actions.index(action)] = 0.0
                 if sum(full_strategy) > 0:
-                    full_strategy = [x / sum(full_strategy) for x in full_strategy]
+                    full_strategy = [x / sum(full_strategy)
+                                     for x in full_strategy]
 
                 for i, action in enumerate(fullgame_actions):
                     if action in valid_actions:
-                        strategy[valid_actions.index(action)] = full_strategy[i]
+                        strategy[valid_actions.index(
+                            action)] = full_strategy[i]
                 if sum(strategy) <= 0:
                     strategy = [1/len(valid_actions)
                                 for _ in range(len(valid_actions))]
 
-                ai_action = random.choices(valid_actions, weights=strategy, k=1)[0]
+                strategy_copy = copy.deepcopy(strategy)
+                # Filter out values below the maximum probability
+                max_prob = max(strategy_copy)
+                for i, value in enumerate(strategy_copy):
+                    if value < max_prob:
+                        strategy_copy[i] = 0
+                # Renormalize
+                normalizing_sum = sum(strategy_copy)
+                strategy_copy = [p/normalizing_sum for p in strategy_copy]
 
+                ai_action = random.choices(
+                    valid_actions, weights=strategy_copy, k=1)[0]
 
                 next_board = arbiter_board.transition(action=ai_action)
                 result = arbiter_board.classify_action_result(action=ai_action,
@@ -416,11 +433,14 @@ class GameDataView(VersusAISessionView):
                 model.load_state_dict(torch.load(f"./{model_name}.pth"))
                 model.eval()
 
-                input_infostate = list(map(int, str(next_infostate).split(" ")))
+                input_infostate = list(
+                    map(int, str(next_infostate).split(" ")))
                 # Convert input_infostate to a PyTorch Tensor
-                input_infostate = torch.tensor(input_infostate, dtype=torch.float32)
+                input_infostate = torch.tensor(
+                    input_infostate, dtype=torch.float32)
                 # Reshape the input to have an extra dimension
-                input_infostate = input_infostate.unsqueeze(0)  # Add a batch dimension
+                input_infostate = input_infostate.unsqueeze(
+                    0)  # Add a batch dimension
                 full_strategy = model(input_infostate)
                 # Get the probabilities for each action from the model output
                 full_strategy = full_strategy.squeeze(0).tolist()
@@ -435,18 +455,30 @@ class GameDataView(VersusAISessionView):
                     if action not in valid_actions:
                         full_strategy[fullgame_actions.index(action)] = 0.0
                 if sum(full_strategy) > 0:
-                    full_strategy = [x / sum(full_strategy) for x in full_strategy]
+                    full_strategy = [x / sum(full_strategy)
+                                     for x in full_strategy]
 
                 for i, action in enumerate(fullgame_actions):
                     if action in valid_actions:
-                        strategy[valid_actions.index(action)] = full_strategy[i]
+                        strategy[valid_actions.index(
+                            action)] = full_strategy[i]
                 if sum(strategy) <= 0:
                     strategy = [1/len(valid_actions)
                                 for _ in range(len(valid_actions))]
 
-                ai_action = random.choices(valid_actions, weights=strategy,
-                                                k=1)[0]
-                
+                strategy_copy = copy.deepcopy(strategy)
+                # Filter out values below the maximum probability
+                max_prob = max(strategy_copy)
+                for i, value in enumerate(strategy_copy):
+                    if value < max_prob:
+                        strategy_copy[i] = 0
+                # Renormalize
+                normalizing_sum = sum(strategy_copy)
+                strategy_copy = [p/normalizing_sum for p in strategy_copy]
+
+                ai_action = random.choices(
+                    valid_actions, weights=strategy_copy, k=1)[0]
+
                 previous_board = copy.deepcopy(next_board)
                 previous_infostate = copy.deepcopy(next_infostate)
                 next_board = previous_board.transition(action=ai_action)
@@ -488,6 +520,7 @@ class GameDataView(VersusAISessionView):
             return Response(game_data, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AIFormationView(APIView):
 
