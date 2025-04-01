@@ -489,6 +489,9 @@ const Board = () => {
 
   return (
   <div className="board-container">
+  <button className="back-button" onClick={handleBackButtonClick}>
+        ⬅ Back
+      </button>
     {gameStarted && (
       <div className="turn-indicator">
         <h3>Turn: {currentTurn}</h3>

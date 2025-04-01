@@ -33,7 +33,6 @@ import Sergeantb from "../assets/Sergeantb.png";
 import Lieucol from "../assets/Lieucol.png";
 import Lieucolb from "../assets/Lieucolb.png";
 
-// Define initial pieces using the same structure as the Board component
 const initialPieces = [
   { id: 1, name: "5-star General", src: Gen5b, rank: 14, team: "blue" },
   { id: 2, name: "4-star General", src: Gen4b, rank: 13, team: "blue" },
@@ -102,33 +101,28 @@ const Walkthrough = () => {
     position: { x: 0, y: 0 },
   });
   
-  // Initialize board state
   useEffect(() => {
     const initialBoard = initializeBoard();
     setBoardState(initialBoard);
   }, []);
 
   useEffect(() => {
-    // Example: You can use this for side effects like logging or API calls.
     console.log("Component mounted or updated");
-  }, []);  // Empty dependency array means it runs once after component mounts
+  }, []); 
 
   const handleBackButtonClick = () => {
-    navigate(-1);  // This function can still call navigate directly
+    navigate(-1); 
   };
 
-  // Function to initialize the board with pieces
   const initializeBoard = () => {
     const board = Array(8).fill().map(() => Array(9).fill(null));
     
-    // Place blue pieces (rows 0-2)
     for (let row = 0; row < 3; row++) {
       for (let col = 0; col < 9; col++) {
         const index = row * 9 + col;
         const pieceRank = blueFormation[index];
         
         if (pieceRank > 0) {
-          // Find a blue piece with this rank that hasn't been placed yet
           const piece = initialPieces.find(p => 
             p.team === "blue" && 
             p.rank === pieceRank && 
@@ -142,14 +136,12 @@ const Walkthrough = () => {
       }
     }
     
-    // Place red pieces (rows 5-7)
     for (let row = 5; row < 8; row++) {
       for (let col = 0; col < 9; col++) {
         const index = (row - 5) * 9 + col;
         const pieceRank = redFormation[index];
         
         if (pieceRank > 0) {
-          // Find a red piece with this rank that hasn't been placed yet
           const piece = initialPieces.find(p => 
             p.team === "red" && 
             p.rank === pieceRank && 
@@ -166,7 +158,6 @@ const Walkthrough = () => {
     return board;
   };
   
-  // Go forward one move
   const handleForward = () => {
     if (moveIndex < moveList.length) {
       const move = moveList[moveIndex];
@@ -175,25 +166,20 @@ const Walkthrough = () => {
       const toRow = parseInt(move[2]);
       const toCol = parseInt(move[3]);
       
-      // Apply the move to the board
       applyMove(fromRow, fromCol, toRow, toCol);
       
-      // Update move index and turn
       setMoveIndex(prevIndex => prevIndex + 1);
       setCurrentTurn(moveIndex % 2 === 0 ? "Red's Turn" : "Blue's Turn");
     }
   };
   
-  // Go backward one move
   const handleBackward = () => {
     if (moveIndex > 0) {
       setMoveIndex(prevIndex => prevIndex - 1);
       
-      // Reset the board and replay all moves up to the new index
       const initialBoard = initializeBoard();
       setBoardState(initialBoard);
       
-      // Replay all moves up to the new index
       for (let i = 0; i < moveIndex - 1; i++) {
         const move = moveList[i];
         const fromRow = parseInt(move[0]);
@@ -204,12 +190,10 @@ const Walkthrough = () => {
         applyMove(fromRow, fromCol, toRow, toCol);
       }
       
-      // Update turn
       setCurrentTurn((moveIndex - 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn");
     }
   };
   
-  // Apply a move to the board
   const applyMove = (fromRow, fromCol, toRow, toCol) => {
     setBoardState(prevBoard => {
       const newBoard = JSON.parse(JSON.stringify(prevBoard));
@@ -220,29 +204,21 @@ const Walkthrough = () => {
       const targetPiece = newBoard[toRow][toCol];
       
       if (targetPiece) {
-        // Combat logic
         if (targetPiece.team !== movingPiece.team) {
-          // Special case: Spy vs. General or regular combat
           if (
-            (movingPiece.rank === 15 && targetPiece.rank === 14) || // Spy defeats 5-star General
-            (movingPiece.rank === 2 && targetPiece.rank === 15) || // Private defeats Spy
-            (movingPiece.rank > targetPiece.rank) // Higher rank defeats lower rank
+            (movingPiece.rank === 15 && targetPiece.rank === 14) || 
+            (movingPiece.rank === 2 && targetPiece.rank === 15) || 
+            (movingPiece.rank > targetPiece.rank)
           ) {
-            // Attacker wins
             newBoard[toRow][toCol] = { ...movingPiece, position: { row: toRow, col: toCol } };
           } else if (movingPiece.rank === targetPiece.rank) {
-            // Both pieces are eliminated if same rank
             newBoard[toRow][toCol] = null;
           } else {
-            // Defender wins, attacker is eliminated
-            // The defender stays in place, no need to update
           }
           
-          // Remove the attacking piece from its original position
           newBoard[fromRow][fromCol] = null;
         }
       } else {
-        // Moving to an empty square
         newBoard[toRow][toCol] = { ...movingPiece, position: { row: toRow, col: toCol } };
         newBoard[fromRow][fromCol] = null;
       }
@@ -251,7 +227,6 @@ const Walkthrough = () => {
     });
   };
   
-  // Tooltip component
   const Tooltip = ({ text, position }) => {
     return (
       <div
@@ -346,7 +321,6 @@ const Walkthrough = () => {
               key={index} 
               className={`move-item ${index === moveIndex - 1 ? "active" : ""}`}
               onClick={() => {
-                // Reset board and replay moves up to this point
                 const initialBoard = initializeBoard();
                 setBoardState(initialBoard);
                 
