@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import "./MatchHistory.css";
 
 const MatchHistory = () => {
@@ -11,8 +11,15 @@ const MatchHistory = () => {
     winner: i % 2 === 0 ? "Red Team" : "Blue Team", // Alternate winners
   }));
 
+  const handleBackButtonClick = () => {
+    navigate(-1); 
+  };
+
   return (
     <div className="match-history-container">
+    <button className="back-button" onClick={handleBackButtonClick}>
+        ⬅ Back
+      </button>
       <h2>Match History</h2>
       <div className="match-list">
         {matches.map((match) => (

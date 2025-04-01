@@ -243,10 +243,11 @@ const Walkthrough = () => {
     <button className="back-button" onClick={handleBackButtonClick}>
         ⬅ Back
       </button>
+      
       <div className="walkthrough-header">
-        <h2>Game Walkthrough</h2>
+        <h1>GAME WALKTHROUGH</h1>
         <div className="turn-indicator">
-          <h3>Turn: {currentTurn}</h3>
+          <h5>Turn: {currentTurn}</h5>
         </div>
       </div>
       
@@ -268,14 +269,14 @@ const Walkthrough = () => {
         </button>
       </div>
       
-      <div className="game-board">
+      <div className="game-board-walkthrough">
         {Array.from({ length: 8 }).map((_, row) =>
           Array.from({ length: 9 }).map((_, col) => {
             const piece = boardState[row] && boardState[row][col];
             return (
               <div
                 key={`${row}-${col}`}
-                className={`tile ${piece ? piece.team : ""}`}
+                className={`tile-walkthrough ${piece ? piece.team : ""}`}
               >
                 {piece && (
                   <img

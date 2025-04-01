@@ -78,6 +78,14 @@ html, body {
     transition: background-color 0.3s ease;
 }
 
+.back-button{
+    margin-left: 2%;
+}
+
+.next-button{
+    margin-left: 92%;
+}
+
 .back-button:hover, .next-button:hover {
     background-color: #365d6b;
 }

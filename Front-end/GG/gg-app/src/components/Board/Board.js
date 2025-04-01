@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import "./Board.css";
 
 // Import images
@@ -119,6 +120,7 @@ const initialPieces = [
 // The pieces that belong to the AI will have their names and images set to null
 
 const Board = () => {
+  const navigate = useNavigate();
   const BLUE_FLAG = 1;
   const BLUE_SPY = 15; // Rankings are 1 to 15
   const RED_FLAG = 16;
@@ -186,6 +188,10 @@ const Board = () => {
     Sergeant: 3,
     Private: 2,
     Flag: 1, // Flag can be eliminated by any piece including the opponent's flag
+  };
+
+  const handleBackButtonClick = () => {
+    navigate(-1); 
   };
 
   const randomizePieces = () => {

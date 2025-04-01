@@ -45,7 +45,7 @@
   
   .turn-indicator {
     background-color: #e0e0e0;
-    padding: 5px 10px;
+    padding: 0% 0%;
     border-radius: 4px;
     border: 1px solid #ccc;
   }
@@ -83,18 +83,18 @@
     font-weight: bold;
   }
   
-  .game-board {
+  .game-board-walkthrough {
     display: grid;
     grid-template-columns: repeat(9, 50px);
     grid-template-rows: repeat(8, 50px);
     gap: 2px;
-    background-color: #ccc;
+    background-color: #06a2a0;
     padding: 5px;
     border-radius: 4px;
     margin-bottom: 20px;
   }
   
-  .tile {
+  .tile-walkthrough {
     width: 50px;
     height: 50px;
     background-color: #fff;

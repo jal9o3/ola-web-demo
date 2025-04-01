@@ -1,5 +1,6 @@
 // AnalysisTool.js
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import "./AnalysisTool.css"; // Ensure you create this CSS file
 
 // Import images (same as in Board.js)
@@ -354,6 +355,7 @@ const rankHierarchy = {
 };
 
 const AnalysisTool = () => {
+  const navigate = useNavigate();
   const [pieces, setPieces] = useState(initialPieces);
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedPiece, setSelectedPiece] = useState(null);
@@ -380,6 +382,7 @@ const AnalysisTool = () => {
   const [infostateMatrixList, setInfoStateMatrixList] = useState([]);
   const [pieceArrayList, setPieceArrayList] = useState([]);
 
+  
   const BLUE_FLAG = 1;
   const BLUE_SPY = 15; // Rankings are 1 to 15
   const RED_FLAG = 16;
@@ -608,6 +611,10 @@ const AnalysisTool = () => {
       );
       if (piece) setSelectedPiece(piece);
     }
+  };
+
+  const handleBackButtonClick = () => {
+    navigate(-1); 
   };
 
   const allowDrop = (e) => e.preventDefault();
@@ -990,6 +997,10 @@ const AnalysisTool = () => {
 
   return (
     <div className="analysis-tool-container">
+    <button className="back-button" onClick={handleBackButtonClick}>
+        ⬅ Back
+      </button>
+
       <button
         onClick={handlePlayClick}
         className="play-button"

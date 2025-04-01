@@ -54,8 +54,15 @@ const GameModes = () => {
         setCurrentIndex((prevIndex) => (prevIndex - 1 + modes.length) % modes.length);
     };
 
+    const handleBackButtonClick = () => {
+        navigate(-1); 
+      };
+
     return (
         <div className="game-mode-container">
+        <button className="back-button" onClick={handleBackButtonClick}>
+        ⬅ Back
+      </button>
             <h1 className="game-mode-title">GAME MODES</h1>
             <div className="carousel-container">
                 <div className="carousel">
