@@ -1,19 +1,29 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./MatchHistory.css";
 
 const MatchHistory = () => {
-  const matches = Array.from({ length: 20 }, (_, i) => `Match ${i + 1}`);
+  const navigate = useNavigate();
+  const matches = Array.from({ length: 20 }, (_, i) => ({
+    id: i + 1,
+    sessionName: `Session ${i + 1}`,
+    turnNumber: Math.floor(Math.random() * 50) + 10, // Random turn count
+    winner: i % 2 === 0 ? "Red Team" : "Blue Team", // Alternate winners
+  }));
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4 flex flex-col items-center">
-      {/* Match History Title */}
-      <h1 className="match-title">MATCH HISTORY</h1>
-
-      {/* Match Cards Container */}
-      <div className="match-container">
-        {matches.map((match, index) => (
-          <div key={index} className="match-card">
-            {match}
+    <div className="match-history-container">
+      <h2>Match History</h2>
+      <div className="match-list">
+        {matches.map((match) => (
+          <div
+            key={match.id}
+            className="match-item"
+            onClick={() => navigate(`/walkthrough/${match.id}`)} // Redirect on click
+          >
+            <p><strong>{match.sessionName}</strong></p>
+            <p>Turns: {match.turnNumber}</p>
+            <p>Winner: {match.winner}</p>
           </div>
         ))}
       </div>

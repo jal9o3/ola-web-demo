@@ -64,19 +64,6 @@
     margin-bottom: 10px; /* Space below the button container */
 }
 
-.turn-indicator {
-    font-size: 1.5em; 
-    font-weight: bold; 
-    color: #04202a; 
-    text-align: center;
-    width: 150px; /* Set a fixed width */
-    white-space: nowrap; /* Prevent text from wrapping */
-    overflow: hidden; /* Ensure no overflow */
-    display: flex; 
-    justify-content: center; /* Center text horizontally */
-    align-items: center; /* Center text vertically */
-}
-
 .tile {
     width: 80px;
     height: 80px;
@@ -160,4 +147,15 @@
     border-radius: 5px; 
 }
 
-
+.turn-indicator {
+    font-size: 1.5em; 
+    font-weight: bold; 
+    color: #04202a; 
+    text-align: center;
+    width: 200px; /* Set a fixed width */
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Ensure no overflow */
+    display: flex; 
+    justify-content: center; /* Center text horizontally */
+    align-items: center; /* Center text vertically */
+}

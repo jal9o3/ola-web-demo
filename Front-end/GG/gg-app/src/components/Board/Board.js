@@ -488,12 +488,12 @@ const Board = () => {
     .every((piece) => piece.position !== null);
 
   return (
-    <div className="board-container">
-      {gameStarted && (
-        <div className="turn-indicator">
-          <h3>{currentTurn}</h3>
-        </div>
-      )}
+  <div className="board-container">
+    {gameStarted && (
+      <div className="turn-indicator">
+        <h3>Turn: {currentTurn}</h3>
+      </div>
+    )}
 
       <div className="model-selector">
         <label htmlFor="model-select">Choose Model:</label>
