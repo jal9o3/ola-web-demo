@@ -1,78 +1,359 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import "./Walkthrough.css";
+// Import the same images as in the Board component
+import Gen5 from "../assets/Gen5.png";
+import Gen5b from "../assets/Gen5b.png";
+import Gen4 from "../assets/Gen4.png";
+import Gen4b from "../assets/Gen4b.png";
+import Gen3 from "../assets/Gen3.png";
+import Gen3b from "../assets/Gen3b.png";
+import Gen2 from "../assets/Gen2.png";
+import Gen2b from "../assets/Gen2b.png";
+import Gen1 from "../assets/Gen1.png";
+import Gen1b from "../assets/Gen1b.png";
+import Flag from "../assets/Flag.png";
+import Flagb from "../assets/Flagb.png";
+import Colonel from "../assets/Colonel.png";
+import Colonelb from "../assets/Colonelb.png";
+import Captain from "../assets/Captain.png";
+import Captainb from "../assets/Captainb.png";
+import Lieu1st from "../assets/Lieu1st.png";
+import Lieu1stb from "../assets/Lieu1stb.png";
+import Lieu2nd from "../assets/Lieu2nd.png";
+import Lieu2ndb from "../assets/Lieu2ndb.png";
+import Spy from "../assets/Spy.png";
+import Spyb from "../assets/Spyb.png";
+import Major from "../assets/Major.png";
+import Majorb from "../assets/Majorb.png";
+import Private from "../assets/Private.png";
+import Privateb from "../assets/Privateb.png";
+import Sergeant from "../assets/Sergeant.png";
+import Sergeantb from "../assets/Sergeantb.png";
+import Lieucol from "../assets/Lieucol.png";
+import Lieucolb from "../assets/Lieucolb.png";
+
+// Define initial pieces using the same structure as the Board component
+const initialPieces = [
+  { id: 1, name: "5-star General", src: Gen5b, rank: 14, team: "blue" },
+  { id: 2, name: "4-star General", src: Gen4b, rank: 13, team: "blue" },
+  { id: 3, name: "3-star General", src: Gen3b, rank: 12, team: "blue" },
+  { id: 4, name: "2-star General", src: Gen2b, rank: 11, team: "blue" },
+  { id: 5, name: "1-star General", src: Gen1b, rank: 10, team: "blue" },
+  { id: 6, name: "Flag", src: Flagb, rank: 1, team: "blue" },
+  { id: 7, name: "Colonel", src: Colonelb, rank: 9, team: "blue" },
+  { id: 8, name: "Captain", src: Captainb, rank: 6, team: "blue" },
+  { id: 9, name: "1st Lieutenant", src: Lieu1stb, rank: 5, team: "blue" },
+  { id: 10, name: "2nd Lieutenant", src: Lieu2ndb, rank: 4, team: "blue" },
+  { id: 11, name: "Spy", src: Spyb, rank: 15, team: "blue" },
+  { id: 12, name: "Spy", src: Spyb, rank: 15, team: "blue" },
+  { id: 13, name: "Major", src: Majorb, rank: 7, team: "blue" },
+  { id: 14, name: "Private", src: Privateb, rank: 2, team: "blue" },
+  { id: 15, name: "Private", src: Privateb, rank: 2, team: "blue" },
+  { id: 16, name: "Private", src: Privateb, rank: 2, team: "blue" },
+  { id: 17, name: "Private", src: Privateb, rank: 2, team: "blue" },
+  { id: 18, name: "Private", src: Privateb, rank: 2, team: "blue" },
+  { id: 19, name: "Private", src: Privateb, rank: 2, team: "blue" },
+  { id: 20, name: "Sergeant", src: Sergeantb, rank: 3, team: "blue" },
+  { id: 21, name: "Lieutenant Colonel", src: Lieucolb, rank: 8, team: "blue" },
+  { id: 22, name: "5-star General", src: Gen5, rank: 14, team: "red" },
+  { id: 23, name: "4-star General", src: Gen4, rank: 13, team: "red" },
+  { id: 24, name: "3-star General", src: Gen3, rank: 12, team: "red" },
+  { id: 25, name: "2-star General", src: Gen2, rank: 11, team: "red" },
+  { id: 26, name: "1-star General", src: Gen1, rank: 10, team: "red" },
+  { id: 27, name: "Flag", src: Flag, rank: 1, team: "red" },
+  { id: 28, name: "Colonel", src: Colonel, rank: 9, team: "red" },
+  { id: 29, name: "Captain", src: Captain, rank: 6, team: "red" },
+  { id: 30, name: "1st Lieutenant", src: Lieu1st, rank: 5, team: "red" },
+  { id: 31, name: "2nd Lieutenant", src: Lieu2nd, rank: 4, team: "red" },
+  { id: 32, name: "Spy", src: Spy, rank: 15, team: "red" },
+  { id: 33, name: "Spy", src: Spy, rank: 15, team: "red" },
+  { id: 34, name: "Major", src: Major, rank: 7, team: "red" },
+  { id: 35, name: "Private", src: Private, rank: 2, team: "red" },
+  { id: 36, name: "Private", src: Private, rank: 2, team: "red" },
+  { id: 37, name: "Private", src: Private, rank: 2, team: "red" },
+  { id: 38, name: "Private", src: Private, rank: 2, team: "red" },
+  { id: 39, name: "Private", src: Private, rank: 2, team: "red" },
+  { id: 40, name: "Private", src: Private, rank: 2, team: "red" },
+  { id: 41, name: "Sergeant", src: Sergeant, rank: 3, team: "red" },
+  { id: 42, name: "Lieutenant Colonel", src: Lieucol, rank: 8, team: "red" },
+];
 
 const Walkthrough = () => {
-  const { matchId } = useParams(); // Get match ID from URL (for future expansion)
+  // Sample formations (to be replaced with actual data)
+  const blueFormation = [0, 0, 14, 13, 12, 0, 0, 0, 0, // row 0
+                         0, 0, 11, 10, 9, 0, 0, 0, 0,  // row 1
+                         0, 0, 8, 7, 1, 0, 0, 0, 0];   // row 2
   
-  // Example formations (6 empty spaces, pieces range from 1-15)
-  const initialBlueFormation = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6];
-  const initialRedFormation = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6];
-
-  // Example move history (format: "startRow startCol destRow destCol")
-  const moveList = ["0001", "1202", "2503", "3604", "4705"];
-
+  const redFormation = [0, 0, 0, 0, 1, 7, 8, 0, 0,     // row 5
+                        0, 0, 0, 0, 9, 10, 11, 0, 0,   // row 6
+                        0, 0, 0, 0, 12, 13, 14, 0, 0];  // row 7
+  
+  // Sample move list - format: "fromRow fromCol toRow toCol"
+  const moveList = ["0203", "5251", "0304", "5150", "0405", "5049"];
+  
   const [moveIndex, setMoveIndex] = useState(0);
-  const [blueFormation, setBlueFormation] = useState([...initialBlueFormation]);
-  const [redFormation, setRedFormation] = useState([...initialRedFormation]);
+  const [boardState, setBoardState] = useState([]);
+  const [currentTurn, setCurrentTurn] = useState("Blue's Turn");
+  const [tooltip, setTooltip] = useState({
+    visible: false,
+    text: "",
+    position: { x: 0, y: 0 },
+  });
+  
+  // Initialize board state
+  useEffect(() => {
+    const initialBoard = initializeBoard();
+    setBoardState(initialBoard);
+  }, []);
 
-  // Function to apply a move
-  const applyMove = (index) => {
-    if (index < 0 || index >= moveList.length) return;
+  // Function to initialize the board with pieces
+  const initializeBoard = () => {
+    const board = Array(8).fill().map(() => Array(9).fill(null));
     
-    const move = moveList[index];
-    const startRow = parseInt(move[0]);
-    const startCol = parseInt(move[1]);
-    const destRow = parseInt(move[2]);
-    const destCol = parseInt(move[3]);
-
-    // Logic to update piece positions (only a basic swap for now)
-    let updatedBlue = [...blueFormation];
-    let updatedRed = [...redFormation];
-
-    // Determine if the piece is in Blue or Red formation
-    if (startRow <= 2) {
-      const piece = updatedBlue[startRow * 9 + startCol];
-      updatedBlue[startRow * 9 + startCol] = 0;
-      updatedBlue[destRow * 9 + destCol] = piece;
-      setBlueFormation(updatedBlue);
-    } else {
-      const piece = updatedRed[(startRow - 5) * 9 + startCol];
-      updatedRed[(startRow - 5) * 9 + startCol] = 0;
-      updatedRed[(destRow - 5) * 9 + destCol] = piece;
-      setRedFormation(updatedRed);
+    // Place blue pieces (rows 0-2)
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 9; col++) {
+        const index = row * 9 + col;
+        const pieceRank = blueFormation[index];
+        
+        if (pieceRank > 0) {
+          // Find a blue piece with this rank that hasn't been placed yet
+          const piece = initialPieces.find(p => 
+            p.team === "blue" && 
+            p.rank === pieceRank && 
+            !board.some(r => r.includes(p))
+          );
+          
+          if (piece) {
+            board[row][col] = { ...piece, position: { row, col } };
+          }
+        }
+      }
     }
-
-    setMoveIndex(index);
+    
+    // Place red pieces (rows 5-7)
+    for (let row = 5; row < 8; row++) {
+      for (let col = 0; col < 9; col++) {
+        const index = (row - 5) * 9 + col;
+        const pieceRank = redFormation[index];
+        
+        if (pieceRank > 0) {
+          // Find a red piece with this rank that hasn't been placed yet
+          const piece = initialPieces.find(p => 
+            p.team === "red" && 
+            p.rank === pieceRank && 
+            !board.some(r => r.includes(p))
+          );
+          
+          if (piece) {
+            board[row][col] = { ...piece, position: { row, col } };
+          }
+        }
+      }
+    }
+    
+    return board;
+  };
+  
+  // Go forward one move
+  const handleForward = () => {
+    if (moveIndex < moveList.length) {
+      const move = moveList[moveIndex];
+      const fromRow = parseInt(move[0]);
+      const fromCol = parseInt(move[1]);
+      const toRow = parseInt(move[2]);
+      const toCol = parseInt(move[3]);
+      
+      // Apply the move to the board
+      applyMove(fromRow, fromCol, toRow, toCol);
+      
+      // Update move index and turn
+      setMoveIndex(prevIndex => prevIndex + 1);
+      setCurrentTurn(moveIndex % 2 === 0 ? "Red's Turn" : "Blue's Turn");
+    }
+  };
+  
+  // Go backward one move
+  const handleBackward = () => {
+    if (moveIndex > 0) {
+      setMoveIndex(prevIndex => prevIndex - 1);
+      
+      // Reset the board and replay all moves up to the new index
+      const initialBoard = initializeBoard();
+      setBoardState(initialBoard);
+      
+      // Replay all moves up to the new index
+      for (let i = 0; i < moveIndex - 1; i++) {
+        const move = moveList[i];
+        const fromRow = parseInt(move[0]);
+        const fromCol = parseInt(move[1]);
+        const toRow = parseInt(move[2]);
+        const toCol = parseInt(move[3]);
+        
+        applyMove(fromRow, fromCol, toRow, toCol);
+      }
+      
+      // Update turn
+      setCurrentTurn((moveIndex - 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn");
+    }
+  };
+  
+  // Apply a move to the board
+  const applyMove = (fromRow, fromCol, toRow, toCol) => {
+    setBoardState(prevBoard => {
+      const newBoard = JSON.parse(JSON.stringify(prevBoard));
+      const movingPiece = newBoard[fromRow][fromCol];
+      
+      if (!movingPiece) return prevBoard;
+      
+      const targetPiece = newBoard[toRow][toCol];
+      
+      if (targetPiece) {
+        // Combat logic
+        if (targetPiece.team !== movingPiece.team) {
+          // Special case: Spy vs. General or regular combat
+          if (
+            (movingPiece.rank === 15 && targetPiece.rank === 14) || // Spy defeats 5-star General
+            (movingPiece.rank === 2 && targetPiece.rank === 15) || // Private defeats Spy
+            (movingPiece.rank > targetPiece.rank) // Higher rank defeats lower rank
+          ) {
+            // Attacker wins
+            newBoard[toRow][toCol] = { ...movingPiece, position: { row: toRow, col: toCol } };
+          } else if (movingPiece.rank === targetPiece.rank) {
+            // Both pieces are eliminated if same rank
+            newBoard[toRow][toCol] = null;
+          } else {
+            // Defender wins, attacker is eliminated
+            // The defender stays in place, no need to update
+          }
+          
+          // Remove the attacking piece from its original position
+          newBoard[fromRow][fromCol] = null;
+        }
+      } else {
+        // Moving to an empty square
+        newBoard[toRow][toCol] = { ...movingPiece, position: { row: toRow, col: toCol } };
+        newBoard[fromRow][fromCol] = null;
+      }
+      
+      return newBoard;
+    });
+  };
+  
+  // Tooltip component
+  const Tooltip = ({ text, position }) => {
+    return (
+      <div
+        className="piece-tooltip"
+        style={{ top: position.y, left: position.x }}
+      >
+        {text}
+      </div>
+    );
   };
 
   return (
     <div className="walkthrough-container">
-      <h2>Match Walkthrough (Match {matchId})</h2>
-      
-      {/* Board Display */}
-      <div className="board">
-        {blueFormation.map((piece, i) => (
-          <div key={i} className={`square ${piece ? "occupied" : "empty"}`}>
-            {piece !== 0 ? `B${piece}` : ""}
-          </div>
-        ))}
-        {redFormation.map((piece, i) => (
-          <div key={i + 27} className={`square ${piece ? "occupied" : "empty"}`}>
-            {piece !== 0 ? `R${piece}` : ""}
-          </div>
-        ))}
+      <div className="walkthrough-header">
+        <h2>Game Walkthrough</h2>
+        <div className="turn-indicator">
+          <h3>Turn: {currentTurn}</h3>
+        </div>
       </div>
-
-      {/* Navigation Buttons */}
-      <div className="controls">
-        <button onClick={() => applyMove(moveIndex - 1)} disabled={moveIndex === 0}>
-          ◀ Prev
+      
+      <div className="walkthrough-controls">
+        <button 
+          onClick={handleBackward} 
+          disabled={moveIndex === 0}
+          className="control-button"
+        >
+          ← Previous
         </button>
-        <span>Move {moveIndex + 1} / {moveList.length}</span>
-        <button onClick={() => applyMove(moveIndex + 1)} disabled={moveIndex === moveList.length - 1}>
-          Next ▶
+        <span className="move-counter">Move {moveIndex} of {moveList.length}</span>
+        <button 
+          onClick={handleForward} 
+          disabled={moveIndex >= moveList.length}
+          className="control-button"
+        >
+          Next →
         </button>
+      </div>
+      
+      <div className="game-board">
+        {Array.from({ length: 8 }).map((_, row) =>
+          Array.from({ length: 9 }).map((_, col) => {
+            const piece = boardState[row] && boardState[row][col];
+            return (
+              <div
+                key={`${row}-${col}`}
+                className={`tile ${piece ? piece.team : ""}`}
+              >
+                {piece && (
+                  <img
+                    src={piece.src}
+                    alt={piece.name}
+                    className="piece-image"
+                    onMouseEnter={(e) => {
+                      setTooltip({
+                        visible: true,
+                        text: piece.name,
+                        position: {
+                          x: e.clientX,
+                          y: e.clientY,
+                        },
+                      });
+                    }}
+                    onMouseLeave={() =>
+                      setTooltip({
+                        visible: false,
+                        text: "",
+                        position: {
+                          x: 0,
+                          y: 0,
+                        },
+                      })
+                    }
+                  />
+                )}
+              </div>
+            );
+          })
+        )}
+        {tooltip.visible && (
+          <Tooltip text={tooltip.text} position={tooltip.position} />
+        )}
+      </div>
+      
+      <div className="move-history">
+        <h3>Move History</h3>
+        <div className="move-list">
+          {moveList.map((move, index) => (
+            <div 
+              key={index} 
+              className={`move-item ${index === moveIndex - 1 ? "active" : ""}`}
+              onClick={() => {
+                // Reset board and replay moves up to this point
+                const initialBoard = initializeBoard();
+                setBoardState(initialBoard);
+                
+                for (let i = 0; i <= index; i++) {
+                  const currentMove = moveList[i];
+                  const fromRow = parseInt(currentMove[0]);
+                  const fromCol = parseInt(currentMove[1]);
+                  const toRow = parseInt(currentMove[2]);
+                  const toCol = parseInt(currentMove[3]);
+                  
+                  applyMove(fromRow, fromCol, toRow, toCol);
+                }
+                
+                setMoveIndex(index + 1);
+                setCurrentTurn((index + 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn");
+              }}
+            >
+              {index % 2 === 0 ? "Blue" : "Red"}: {`(${move[0]},${move[1]}) → (${move[2]},${move[3]})`}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
