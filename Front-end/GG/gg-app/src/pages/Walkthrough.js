@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import "./Walkthrough.css";
-// Import the same images as in the Board component
+
 import Gen5 from "../assets/Gen5.png";
 import Gen5b from "../assets/Gen5b.png";
 import Gen4 from "../assets/Gen4.png";
@@ -79,6 +80,7 @@ const initialPieces = [
 ];
 
 const Walkthrough = () => {
+    const navigate = useNavigate();
   // Sample formations (to be replaced with actual data)
   const blueFormation = [0, 0, 14, 13, 12, 0, 0, 0, 0, // row 0
                          0, 0, 11, 10, 9, 0, 0, 0, 0,  // row 1
@@ -105,6 +107,15 @@ const Walkthrough = () => {
     const initialBoard = initializeBoard();
     setBoardState(initialBoard);
   }, []);
+
+  useEffect(() => {
+    // Example: You can use this for side effects like logging or API calls.
+    console.log("Component mounted or updated");
+  }, []);  // Empty dependency array means it runs once after component mounts
+
+  const handleBackButtonClick = () => {
+    navigate(-1);  // This function can still call navigate directly
+  };
 
   // Function to initialize the board with pieces
   const initializeBoard = () => {
@@ -254,6 +265,9 @@ const Walkthrough = () => {
 
   return (
     <div className="walkthrough-container">
+    <button className="back-button" onClick={handleBackButtonClick}>
+        ⬅ Back
+      </button>
       <div className="walkthrough-header">
         <h2>Game Walkthrough</h2>
         <div className="turn-indicator">
@@ -350,7 +364,7 @@ const Walkthrough = () => {
                 setCurrentTurn((index + 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn");
               }}
             >
-              {index % 2 === 0 ? "Blue" : "Red"}: {`(${move[0]},${move[1]}) → (${move[2]},${move[3]})`}
+              {index % 2 === 0 ? "Blue" : "Red"}: {(`${move[0]},${move[1]}) → (${move[2]},${move[3]}`)}
             </div>
           ))}
         </div>
