@@ -46,6 +46,7 @@ class VersusAIGame(models.Model):
     human_color = models.CharField(max_length=1)
     ai_color = models.CharField(max_length=1)
     has_started = models.BooleanField(default=False)
+    has_ended = models.BooleanField(default=False)
     human_initial_formation = models.JSONField()
     ai_initial_formation = models.JSONField()
     move_list = models.JSONField()

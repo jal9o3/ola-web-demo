@@ -25,6 +25,7 @@ import torch.nn.functional as F
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 
 from OLA.core import Player, Board, Infostate, InfostatePiece
 from OLA.constants import Ranking, Result
@@ -32,7 +33,8 @@ from OLA.simulation import MatchSimulator
 from OLA.training import TimelessBoard
 
 from .models import VersusAISession, VersusAIGame
-from .serializers import VersusAISessionSerializer, VersusAISessionListSerializer
+from .serializers import (VersusAISessionSerializer, VersusAISessionListSerializer,
+                          VersusAIGameSerializer)
 
 INPUT_SIZE = 147
 OUTPUT_SIZE = 254
@@ -79,6 +81,16 @@ def generate_random_string(length=10):
     """
     alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     return ''.join(secrets.choice(alphabet) for _ in range(length))
+
+
+class VersusAIMatchHistoryView(APIView):
+    def get(self, request, *args, **kwargs):
+        paginator = PageNumberPagination()
+        paginator.page_size = 10  # Adjust page size as needed
+        games = VersusAIGame.objects.filter(has_ended=True)  # Filter games where has_ended is True
+        result_page = paginator.paginate_queryset(games, request)
+        serializer = VersusAIGameSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
 
 class VersusAISessionView(APIView):
@@ -425,6 +437,9 @@ class GameDataView(VersusAISessionView):
             game.turn_number += 1
             game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
 
+            if next_board.is_terminal():
+                game.has_ended = True
+
             if not next_board.is_terminal():
                 # The AI will now make a move
                 model = None
@@ -493,6 +508,9 @@ class GameDataView(VersusAISessionView):
                 game.move_list.append(ai_action)
                 game.turn_number += 1
                 game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
+
+                if next_board.is_terminal():
+                    game.has_ended = True
 
             game.save()
             game_data = {
