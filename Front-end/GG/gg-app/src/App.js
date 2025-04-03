@@ -26,7 +26,7 @@ function App() {
         <Route path="/rules-tutorial" element={<RulesTutorial />} />
         <Route path="/game-modes" element={<GameModes />} />
         <Route path="/analysis-tool" element={<AnalysisTool />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/leader-board" element={<Leaderboard />} />
         <Route path="/settings" element={<Settings audioRef={audioRef} />} /> {/* Pass the audio ref */}
         <Route path="/quit-game" element={<QuitGame />} />
         <Route path="/board/:mode" element={<Board />} /> 

@@ -3,29 +3,52 @@ import './Leaderboard.css';
 
 const Leaderboard = () => {
   const [scores, setScores] = useState([]);
+  const [difficulty, setDifficulty] = useState('Easy'); // Default difficulty
 
   useEffect(() => {
-    // Fetch leaderboard data from an API or use static data
     const fetchScores = async () => {
-      const response = await fetch('API_URL'); // Replace with your API URL
-      const data = await response.json();
-      setScores(data);
-    };
-
+      try {
+        const response = await fetch('http://localhost:3000/leaderboard');
+        const text = await response.text();  // Get raw response as text
+        console.log(text);  // Log the raw response to see what is returned
+    
+        // If the response is JSON, parse it
+        const data = JSON.parse(text);
+        setScores(data);
+      } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+      }
+    };    
     fetchScores();
-  }, []);
+  }, [difficulty]); // Re-fetch when difficulty changes
+  
 
   return (
     <div className="leaderboard-container">
       <h1 className="leaderboard-title">Leaderboard</h1>
+      
+      <div className="difficulty-select">
+        <label htmlFor="difficulty">Difficulty: </label>
+        <select id="difficulty" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
+          <option value="Fog">Fog</option>
+        </select>
+      </div>
+
       <div className="leaderboard-list">
-        {scores.map((user, index) => (
-          <div key={index} className="leaderboard-item">
-            <span className="rank">{index + 1}</span>
-            <span className="username">{user.name}</span>
-            <span className="score">{user.score}</span>
-          </div>
-        ))}
+        {scores.length > 0 ? (
+          scores.map((user, index) => (
+            <div key={index} className="leaderboard-item">
+              <span className="rank">{index + 1}</span>
+              <span className="username">{user.name}</span>
+              <span className="score">{user.score}</span>
+            </div>
+          ))
+        ) : (
+          <p className="no-scores">No scores available for {difficulty}.</p>
+        )}
       </div>
     </div>
   );

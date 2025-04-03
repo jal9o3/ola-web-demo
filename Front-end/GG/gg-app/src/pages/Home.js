@@ -60,8 +60,8 @@ function Home() {
             case 'ANALYSIS TOOL':
                 navigate('/analysis-tool');
                 break;
-            case 'LEADERBOARD':
-                navigate('/leaderboard');
+            case 'LEADER-BOARD':
+                navigate('/leader-board');
                 break;
             case 'SETTINGS':
                 navigate('/settings');
