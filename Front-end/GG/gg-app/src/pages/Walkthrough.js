@@ -184,21 +184,21 @@ const Walkthrough = () => {
 
     for (let row = 2; row >= 0; row--) {
       for (let col = 8; col >= 0; col--) {
-      const index = (2 - row) * 9 + (8 - col);
-      const pieceRank = blueFormation[index];
+        const index = (2 - row) * 9 + (8 - col);
+        const pieceRank = blueFormation[index];
 
-      if (pieceRank > 0) {
-        const piece = initialPieces.find(
-        (p) =>
-          p.team === "blue" &&
-          p.rank === pieceRank &&
-          !board.some((r) => r.includes(p))
-        );
+        if (pieceRank > 0) {
+          const piece = initialPieces.find(
+            (p) =>
+              p.team === "blue" &&
+              p.rank === pieceRank &&
+              !board.some((r) => r.includes(p))
+          );
 
-        if (piece) {
-        board[row][col] = { ...piece, position: { row, col } };
+          if (piece) {
+            board[row][col] = { ...piece, position: { row, col } };
+          }
         }
-      }
       }
     }
 
@@ -273,20 +273,21 @@ const Walkthrough = () => {
       if (targetPiece) {
         if (targetPiece.team !== movingPiece.team) {
           if (
-            (movingPiece.rank === 15 && targetPiece.rank === 14) ||
             (movingPiece.rank === 2 && targetPiece.rank === 15) ||
-            movingPiece.rank > targetPiece.rank
+            (movingPiece.rank > targetPiece.rank &&
+              !(movingPiece.rank === 15 && targetPiece.rank === 2))
           ) {
             newBoard[toRow][toCol] = {
               ...movingPiece,
               position: { row: toRow, col: toCol },
             };
+            newBoard[fromRow][fromCol] = null;
           } else if (movingPiece.rank === targetPiece.rank) {
             newBoard[toRow][toCol] = null;
+            newBoard[fromRow][fromCol] = null;
           } else {
+            newBoard[fromRow][fromCol] = null;
           }
-
-          newBoard[fromRow][fromCol] = null;
         }
       } else {
         newBoard[toRow][toCol] = {
