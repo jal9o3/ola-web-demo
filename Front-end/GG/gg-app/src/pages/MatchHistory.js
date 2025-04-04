@@ -45,7 +45,7 @@ const MatchHistory = () => {
           <div
             key={match.id}
             className="match-item"
-            onClick={() => navigate(`/walkthrough/${match.id}`)} // Redirect on click
+            onClick={() => navigate(`/walkthrough?id=${match.id}`)} // Pass match.id as a URL parameter
           >
             <p>
               <strong>Game {match.id}</strong>

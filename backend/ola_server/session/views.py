@@ -91,6 +91,30 @@ class VersusAIMatchHistoryView(APIView):
         result_page = paginator.paginate_queryset(games, request)
         serializer = VersusAIGameSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
+    
+    def post(self, request, *args, **kwargs):
+        game_id = request.data.get('id')
+        if not game_id:
+            return Response({'error': 'Game ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            game = VersusAIGame.objects.get(id=game_id)
+            return Response({'game_data': {
+                'id': game.id,
+                'human_color': game.human_color,
+                'ai_color': game.ai_color,
+                'has_started': game.has_started,
+                'has_ended': game.has_ended,
+                'human_initial_formation': game.human_initial_formation,
+                'ai_initial_formation': game.ai_initial_formation,
+                'move_list': game.move_list,
+                'current_infostate': game.current_infostate,
+                'turn_number': game.turn_number,
+                'player_to_move': game.player_to_move,
+            }}, status=status.HTTP_200_OK)
+        except VersusAIGame.DoesNotExist:
+            return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
+
 
 
 class VersusAISessionView(APIView):

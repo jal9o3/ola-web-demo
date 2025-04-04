@@ -22,7 +22,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/match-history" element={<MatchHistory />} />
-        <Route path="/walkthrough/:matchId" element={<Walkthrough />} />
+        <Route path="/walkthrough/" element={<Walkthrough />} />
         <Route path="/rules-tutorial" element={<RulesTutorial />} />
         <Route path="/game-modes" element={<GameModes />} />
         <Route path="/analysis-tool" element={<AnalysisTool />} />
