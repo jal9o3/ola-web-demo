@@ -9,7 +9,7 @@ const menuItems = [
     { label: 'RULES & TUTORIAL', position: 'left1' },
     { label: 'GAME MODES', position: 'left2' },
     { label: 'ANALYSIS TOOL', position: 'right2' },
-    { label: 'LEADERBOARD', position: 'center' },
+    { label: 'LEADER-BOARD', position: 'center' },
     { label: 'SETTINGS', position: 'top' }
 ];
 
