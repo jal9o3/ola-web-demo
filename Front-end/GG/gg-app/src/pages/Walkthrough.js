@@ -87,68 +87,15 @@ const Walkthrough = () => {
   console.log("Match ID:", matchId);
 
   // Sample formations (to be replaced with actual data)
-  const blueFormation = [
-    0,
-    0,
-    14,
-    13,
-    12,
-    0,
-    0,
-    0,
-    0, // row 0
-    0,
-    0,
-    11,
-    10,
-    9,
-    0,
-    0,
-    0,
-    0, // row 1
-    0,
-    0,
-    8,
-    7,
-    1,
-    0,
-    0,
-    0,
-    0,
-  ]; // row 2
+  const [blueFormation, setBlueFormation] = useState([]);
 
-  const redFormation = [
-    0,
-    0,
-    0,
-    0,
-    1,
-    7,
-    8,
-    0,
-    0, // row 5
-    0,
-    0,
-    0,
-    0,
-    9,
-    10,
-    11,
-    0,
-    0, // row 6
-    0,
-    0,
-    0,
-    0,
-    12,
-    13,
-    14,
-    0,
-    0,
-  ]; // row 7
+  const [redFormation, setRedFormation] = useState([]);
 
   // Sample move list - format: "fromRow fromCol toRow toCol"
-  const moveList = ["0203", "5251", "0304", "5150", "0405", "5049"];
+  const [moveList, setMoveList] = useState([]);
+
+  const redOffset = 15;
+  const blank = 0;
 
   useEffect(() => {
     if (matchId) {
@@ -167,6 +114,23 @@ const Walkthrough = () => {
         })
         .then((data) => {
           console.log("Match ID sent successfully:", data);
+
+          if (data.game_data.human_color === "B") {
+            setBlueFormation(data.game_data.human_initial_formation);
+            const adjustedRedFormation =
+              data.game_data.ai_initial_formation.map((rank) =>
+                rank !== blank ? rank - redOffset : rank
+              );
+            setRedFormation(adjustedRedFormation);
+          } else {
+            const adjustedRedFormation =
+              data.game_data.human_initial_formation.map((rank) =>
+                rank !== blank ? rank - redOffset : rank
+              );
+            setBlueFormation(data.game_data.ai_initial_formation);
+            setRedFormation(adjustedRedFormation);
+          }
+          setMoveList(data.game_data.move_list);
         })
         .catch((error) => {
           console.error("Error sending match ID:", error);
@@ -191,6 +155,23 @@ const Walkthrough = () => {
   useEffect(() => {
     console.log("Component mounted or updated");
   }, []);
+
+  useEffect(() => {
+    if (
+      blueFormation.length > 0 &&
+      redFormation.length > 0 &&
+      moveList.length >= 0
+    ) {
+      const initialBoard = initializeBoard();
+      setBoardState(initialBoard);
+    }
+    console.log("Blue Formation:");
+    console.log(blueFormation);
+    console.log("Red Formation:");
+    console.log(redFormation);
+    console.log("Move List:");
+    console.log(moveList);
+  }, [blueFormation, redFormation, moveList]);
 
   const handleBackButtonClick = () => {
     navigate(-1);
