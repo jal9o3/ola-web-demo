@@ -12,6 +12,10 @@ const RulesTutorial = () => {
         { illustration: 'Step 3 Illustration', instruction: 'Step 3 Instruction and Rules' }
     ];
 
+    const handleBackButtonClick = () => {
+        navigate(-1); // Go back to the previous page
+      };
+
     const handleNext = () => {
         if (currentIndex < steps.length - 1) {
             setCurrentIndex(currentIndex + 1);
@@ -28,6 +32,9 @@ const RulesTutorial = () => {
 
     return (
         <div className="rules-tutorial-container">
+            <button className="back-button" onClick={handleBackButtonClick}>
+                ⬅ Back
+            </button>
             <h1 className="rules-tutorial-title">RULES AND TUTORIAL</h1>
             <div className="illustration-box">
                 <p>{steps[currentIndex].illustration}</p>
