@@ -13,11 +13,12 @@ Imports:
 from django.urls import path
 
 from .views import (VersusAISessionView, GameDataView, AnalysisView, 
-                    AIFormationView)
+                    AIFormationView, VersusAIMatchHistoryView)
 
 urlpatterns = [
     path('sessions/', VersusAISessionView.as_view(), name='versus_ai_sessions'),
     path('sessions/game-data/', GameDataView.as_view(), name='game_data'),
     path('analysis/', AnalysisView.as_view(), name='analysis'),
-    path('aiformation/', AIFormationView.as_view(), name='ai_formation')
+    path('aiformation/', AIFormationView.as_view(), name='ai_formation'),
+    path('history/ai/', VersusAIMatchHistoryView.as_view(), name='VsAIHistory')
 ]

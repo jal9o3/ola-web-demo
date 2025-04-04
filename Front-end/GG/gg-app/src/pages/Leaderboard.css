@@ -1,50 +1,69 @@
-.leaderboard-container {
-    background-color: #1e1e2f;
-    color: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-}
+/* Leaderboard.css */
 
-.leaderboard-title {
+/* Container for the leaderboard */
+.leaderboard-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f4f4f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Title of the leaderboard */
+  .leaderboard-title {
     text-align: center;
     font-size: 2rem;
+    font-weight: bold;
     margin-bottom: 20px;
-    font-family: 'UnifrakturCook', cursive;
-}
-
-.leaderboard-list {
-    max-height: 400px;
-    overflow-y: auto;
+    color: #333;
+  }
+  
+  /* Styling the leaderboard list */
+  .leaderboard-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
-
-.leaderboard-item {
+  }
+  
+  /* Individual leaderboard item */
+  .leaderboard-item {
     display: flex;
     justify-content: space-between;
-    padding: 10px;
-    background-color: #3b82f6;
-    border-radius: 8px;
-    transition: background-color 0.3s;
-}
-
-.leaderboard-item:hover {
-    background-color: #2563eb;
-}
-
-.rank {
-    width: 30px;
+    align-items: center;
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  /* Rank number */
+  .rank {
     font-weight: bold;
-}
-
-.username {
+    color: #4caf50;
+  }
+  
+  /* Player name */
+  .username {
     flex: 1;
     text-align: center;
-}
-
-.score {
-    width: 50px;
-    text-align: right;
-}
+    color: #3f51b5;
+  }
+  
+  /* Score */
+  .score {
+    font-weight: bold;
+    color: #e91e63;
+  }
+  
+  /* Add hover effect to leaderboard items */
+  .leaderboard-item:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transform: scale(1.02);
+    transition: all 0.2s ease-in-out;
+  }
+  

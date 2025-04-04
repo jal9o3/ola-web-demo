@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Walkthrough.css";
 
 import Gen5 from "../assets/Gen5.png";
@@ -79,19 +79,65 @@ const initialPieces = [
 ];
 
 const Walkthrough = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const matchId = queryParams.get("id");
+
+  console.log("Match ID:", matchId);
+
   // Sample formations (to be replaced with actual data)
-  const blueFormation = [0, 0, 14, 13, 12, 0, 0, 0, 0, // row 0
-                         0, 0, 11, 10, 9, 0, 0, 0, 0,  // row 1
-                         0, 0, 8, 7, 1, 0, 0, 0, 0];   // row 2
-  
-  const redFormation = [0, 0, 0, 0, 1, 7, 8, 0, 0,     // row 5
-                        0, 0, 0, 0, 9, 10, 11, 0, 0,   // row 6
-                        0, 0, 0, 0, 12, 13, 14, 0, 0];  // row 7
-  
+  const [blueFormation, setBlueFormation] = useState([]);
+
+  const [redFormation, setRedFormation] = useState([]);
+
   // Sample move list - format: "fromRow fromCol toRow toCol"
-  const moveList = ["0203", "5251", "0304", "5150", "0405", "5049"];
-  
+  const [moveList, setMoveList] = useState([]);
+
+  const redOffset = 15;
+  const blank = 0;
+
+  useEffect(() => {
+    if (matchId) {
+      fetch("http://localhost:8000/api/history/ai/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: matchId }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to send match ID");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Match ID sent successfully:", data);
+
+          if (data.game_data.human_color === "B") {
+            setBlueFormation(data.game_data.human_initial_formation);
+            const adjustedRedFormation =
+              data.game_data.ai_initial_formation.map((rank) =>
+                rank !== blank ? rank - redOffset : rank
+              );
+            setRedFormation(adjustedRedFormation);
+          } else {
+            const adjustedRedFormation =
+              data.game_data.human_initial_formation.map((rank) =>
+                rank !== blank ? rank - redOffset : rank
+              );
+            setBlueFormation(data.game_data.ai_initial_formation);
+            setRedFormation(adjustedRedFormation);
+          }
+          setMoveList(data.game_data.move_list);
+        })
+        .catch((error) => {
+          console.error("Error sending match ID:", error);
+        });
+    }
+  }, [matchId]);
+
   const [moveIndex, setMoveIndex] = useState(0);
   const [boardState, setBoardState] = useState([]);
   const [currentTurn, setCurrentTurn] = useState("Blue's Turn");
@@ -100,7 +146,7 @@ const Walkthrough = () => {
     text: "",
     position: { x: 0, y: 0 },
   });
-  
+
   useEffect(() => {
     const initialBoard = initializeBoard();
     setBoardState(initialBoard);
@@ -108,56 +154,77 @@ const Walkthrough = () => {
 
   useEffect(() => {
     console.log("Component mounted or updated");
-  }, []); 
+  }, []);
+
+  useEffect(() => {
+    if (
+      blueFormation.length > 0 &&
+      redFormation.length > 0 &&
+      moveList.length >= 0
+    ) {
+      const initialBoard = initializeBoard();
+      setBoardState(initialBoard);
+    }
+    console.log("Blue Formation:");
+    console.log(blueFormation);
+    console.log("Red Formation:");
+    console.log(redFormation);
+    console.log("Move List:");
+    console.log(moveList);
+  }, [blueFormation, redFormation, moveList]);
 
   const handleBackButtonClick = () => {
-    navigate(-1); 
+    navigate(-1);
   };
 
   const initializeBoard = () => {
-    const board = Array(8).fill().map(() => Array(9).fill(null));
-    
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 9; col++) {
-        const index = row * 9 + col;
+    const board = Array(8)
+      .fill()
+      .map(() => Array(9).fill(null));
+
+    for (let row = 2; row >= 0; row--) {
+      for (let col = 8; col >= 0; col--) {
+        const index = (2 - row) * 9 + (8 - col);
         const pieceRank = blueFormation[index];
-        
+
         if (pieceRank > 0) {
-          const piece = initialPieces.find(p => 
-            p.team === "blue" && 
-            p.rank === pieceRank && 
-            !board.some(r => r.includes(p))
+          const piece = initialPieces.find(
+            (p) =>
+              p.team === "blue" &&
+              p.rank === pieceRank &&
+              !board.some((r) => r.includes(p))
           );
-          
+
           if (piece) {
             board[row][col] = { ...piece, position: { row, col } };
           }
         }
       }
     }
-    
+
     for (let row = 5; row < 8; row++) {
       for (let col = 0; col < 9; col++) {
         const index = (row - 5) * 9 + col;
         const pieceRank = redFormation[index];
-        
+
         if (pieceRank > 0) {
-          const piece = initialPieces.find(p => 
-            p.team === "red" && 
-            p.rank === pieceRank && 
-            !board.some(r => r.includes(p))
+          const piece = initialPieces.find(
+            (p) =>
+              p.team === "red" &&
+              p.rank === pieceRank &&
+              !board.some((r) => r.includes(p))
           );
-          
+
           if (piece) {
             board[row][col] = { ...piece, position: { row, col } };
           }
         }
       }
     }
-    
+
     return board;
   };
-  
+
   const handleForward = () => {
     if (moveIndex < moveList.length) {
       const move = moveList[moveIndex];
@@ -165,68 +232,75 @@ const Walkthrough = () => {
       const fromCol = parseInt(move[1]);
       const toRow = parseInt(move[2]);
       const toCol = parseInt(move[3]);
-      
+
       applyMove(fromRow, fromCol, toRow, toCol);
-      
-      setMoveIndex(prevIndex => prevIndex + 1);
+
+      setMoveIndex((prevIndex) => prevIndex + 1);
       setCurrentTurn(moveIndex % 2 === 0 ? "Red's Turn" : "Blue's Turn");
     }
   };
-  
+
   const handleBackward = () => {
     if (moveIndex > 0) {
-      setMoveIndex(prevIndex => prevIndex - 1);
-      
+      setMoveIndex((prevIndex) => prevIndex - 1);
+
       const initialBoard = initializeBoard();
       setBoardState(initialBoard);
-      
+
       for (let i = 0; i < moveIndex - 1; i++) {
         const move = moveList[i];
         const fromRow = parseInt(move[0]);
         const fromCol = parseInt(move[1]);
         const toRow = parseInt(move[2]);
         const toCol = parseInt(move[3]);
-        
+
         applyMove(fromRow, fromCol, toRow, toCol);
       }
-      
+
       setCurrentTurn((moveIndex - 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn");
     }
   };
-  
+
   const applyMove = (fromRow, fromCol, toRow, toCol) => {
-    setBoardState(prevBoard => {
+    setBoardState((prevBoard) => {
       const newBoard = JSON.parse(JSON.stringify(prevBoard));
       const movingPiece = newBoard[fromRow][fromCol];
-      
+
       if (!movingPiece) return prevBoard;
-      
+
       const targetPiece = newBoard[toRow][toCol];
-      
+
       if (targetPiece) {
         if (targetPiece.team !== movingPiece.team) {
           if (
-            (movingPiece.rank === 15 && targetPiece.rank === 14) || 
-            (movingPiece.rank === 2 && targetPiece.rank === 15) || 
-            (movingPiece.rank > targetPiece.rank)
+            (movingPiece.rank === 2 && targetPiece.rank === 15) ||
+            (movingPiece.rank > targetPiece.rank &&
+              !(movingPiece.rank === 15 && targetPiece.rank === 2))
           ) {
-            newBoard[toRow][toCol] = { ...movingPiece, position: { row: toRow, col: toCol } };
+            newBoard[toRow][toCol] = {
+              ...movingPiece,
+              position: { row: toRow, col: toCol },
+            };
+            newBoard[fromRow][fromCol] = null;
           } else if (movingPiece.rank === targetPiece.rank) {
             newBoard[toRow][toCol] = null;
+            newBoard[fromRow][fromCol] = null;
           } else {
+            newBoard[fromRow][fromCol] = null;
           }
-          
-          newBoard[fromRow][fromCol] = null;
         }
       } else {
-        newBoard[toRow][toCol] = { ...movingPiece, position: { row: toRow, col: toCol } };
+        newBoard[toRow][toCol] = {
+          ...movingPiece,
+          position: { row: toRow, col: toCol },
+        };
         newBoard[fromRow][fromCol] = null;
       }
-      
+
       return newBoard;
     });
   };
-  
+
   const Tooltip = ({ text, position }) => {
     return (
       <div
@@ -240,35 +314,37 @@ const Walkthrough = () => {
 
   return (
     <div className="walkthrough-container">
-    <button className="back-button" onClick={handleBackButtonClick}>
+      <button className="back-button" onClick={handleBackButtonClick}>
         ⬅ Back
       </button>
-      
+
       <div className="walkthrough-header">
         <h1>GAME WALKTHROUGH</h1>
         <div className="turn-indicator">
           <h5>Turn: {currentTurn}</h5>
         </div>
       </div>
-      
+
       <div className="walkthrough-controls">
-        <button 
-          onClick={handleBackward} 
+        <button
+          onClick={handleBackward}
           disabled={moveIndex === 0}
           className="control-button"
         >
           ← Previous
         </button>
-        <span className="move-counter">Move {moveIndex} of {moveList.length}</span>
-        <button 
-          onClick={handleForward} 
+        <span className="move-counter">
+          Move {moveIndex} of {moveList.length}
+        </span>
+        <button
+          onClick={handleForward}
           disabled={moveIndex >= moveList.length}
           className="control-button"
         >
           Next →
         </button>
       </div>
-      
+
       <div className="game-board-walkthrough">
         {Array.from({ length: 8 }).map((_, row) =>
           Array.from({ length: 9 }).map((_, col) => {
@@ -313,33 +389,36 @@ const Walkthrough = () => {
           <Tooltip text={tooltip.text} position={tooltip.position} />
         )}
       </div>
-      
+
       <div className="move-history">
         <h3>Move History</h3>
         <div className="move-list">
           {moveList.map((move, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className={`move-item ${index === moveIndex - 1 ? "active" : ""}`}
               onClick={() => {
                 const initialBoard = initializeBoard();
                 setBoardState(initialBoard);
-                
+
                 for (let i = 0; i <= index; i++) {
                   const currentMove = moveList[i];
                   const fromRow = parseInt(currentMove[0]);
                   const fromCol = parseInt(currentMove[1]);
                   const toRow = parseInt(currentMove[2]);
                   const toCol = parseInt(currentMove[3]);
-                  
+
                   applyMove(fromRow, fromCol, toRow, toCol);
                 }
-                
+
                 setMoveIndex(index + 1);
-                setCurrentTurn((index + 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn");
+                setCurrentTurn(
+                  (index + 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn"
+                );
               }}
             >
-              {index % 2 === 0 ? "Blue" : "Red"}: {(`${move[0]},${move[1]}) → (${move[2]},${move[3]}`)}
+              {index % 2 === 0 ? "Blue" : "Red"}:{" "}
+              {`${move[0]},${move[1]}) → (${move[2]},${move[3]}`}
             </div>
           ))}
         </div>
