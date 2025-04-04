@@ -9,7 +9,11 @@ const Leaderboard = () => {
     navigate(-1); // Go back to the previous page
   };
 
-  const [scores, setScores] = useState([]);
+  const [scores, setScores] = useState([
+    {name: 'Carlos Magsen', score: 4},
+    {name: 'Hikaru Nagasaki', score: 12},
+    {name: 'Anonymous', score: 20}
+  ]);
   const [difficulty, setDifficulty] = useState('Easy'); // Default difficulty
 
   useEffect(() => {
