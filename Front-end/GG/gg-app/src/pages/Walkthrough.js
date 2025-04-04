@@ -182,23 +182,23 @@ const Walkthrough = () => {
       .fill()
       .map(() => Array(9).fill(null));
 
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 9; col++) {
-        const index = row * 9 + col;
-        const pieceRank = blueFormation[index];
+    for (let row = 2; row >= 0; row--) {
+      for (let col = 8; col >= 0; col--) {
+      const index = (2 - row) * 9 + (8 - col);
+      const pieceRank = blueFormation[index];
 
-        if (pieceRank > 0) {
-          const piece = initialPieces.find(
-            (p) =>
-              p.team === "blue" &&
-              p.rank === pieceRank &&
-              !board.some((r) => r.includes(p))
-          );
+      if (pieceRank > 0) {
+        const piece = initialPieces.find(
+        (p) =>
+          p.team === "blue" &&
+          p.rank === pieceRank &&
+          !board.some((r) => r.includes(p))
+        );
 
-          if (piece) {
-            board[row][col] = { ...piece, position: { row, col } };
-          }
+        if (piece) {
+        board[row][col] = { ...piece, position: { row, col } };
         }
+      }
       }
     }
 
