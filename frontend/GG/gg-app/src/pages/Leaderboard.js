@@ -1,8 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Leaderboard.css';
 
 const Leaderboard = () => {
-  const [scores, setScores] = useState([]);
+  const navigate = useNavigate();
+  
+  const handleBackButtonClick = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
+  const [scores, setScores] = useState([
+    {name: 'Carlos Magsen', score: 4},
+    {name: 'Hikaru Nagasaki', score: 12},
+    {name: 'Anonymous', score: 20}
+  ]);
   const [difficulty, setDifficulty] = useState('Easy'); // Default difficulty
 
   useEffect(() => {
@@ -25,6 +36,9 @@ const Leaderboard = () => {
 
   return (
     <div className="leaderboard-container">
+      <button className="back-button" onClick={handleBackButtonClick}>
+        ⬅ Back
+      </button>
       <h1 className="leaderboard-title">Leaderboard</h1>
       
       <div className="difficulty-select">
