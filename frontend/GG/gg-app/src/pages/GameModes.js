@@ -7,15 +7,23 @@ const GameModes = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [sessionName, setSessionName] = useState('');
     const [accessKey, setAccessKey] = useState('');
+    const [showPvpModal, setShowPvpModal] = useState(false);
+    const [joinSessionId, setJoinSessionId] = useState('');
 
     const modes = [
+        { label: 'Easy Mode', key: 'easy' },
+        { label: 'Average Mode', key: 'average' },
         { label: 'Hard Mode', key: 'hard' },
         { label: 'Fog Mode', key: 'fog' },
-        { label: 'Easy Mode', key: 'easy' },
-        { label: 'Average Mode', key: 'average' }
+        { label: 'PVP Mode', key: 'pvp' }
     ];
 
     const handleModeClick = (mode) => {
+        if (mode === 'pvp') {
+            setShowPvpModal(true); // Show the PvP modal
+            return;
+        }
+
         fetch('http://127.0.0.1:8000/api/sessions/', {
             method: 'POST', // Specify the HTTP method
             headers: {
@@ -23,6 +31,7 @@ const GameModes = () => {
                 // Include other headers as needed
             },
             body: JSON.stringify({
+                mode
                 // Add more key-value pairs as needed
             }), // Convert the data to a JSON string
         })
@@ -42,6 +51,56 @@ const GameModes = () => {
             })
             .catch(error => {
                 // Handle errors
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    };
+
+    const handleCreatePvpSession = () => {
+        fetch('http://127.0.0.1:8000/api/sessions/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ mode: 'pvp' }), // Specify PvP mode
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                setSessionName(data.name);
+                setAccessKey(data.access_key);
+                navigate(`/board/pvp?sessionName=${data.name}&accessKey=${data.access_key}`);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    };
+
+    const handleJoinPvpSession = () => {
+        fetch(`http://127.0.0.1:8000/api/sessions/join/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ session_name: joinSessionId }), // Pass the session ID to join
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                setSessionName(data.name);
+                setAccessKey(data.access_key);
+                navigate(`/board/pvp?sessionName=${data.name}&accessKey=${data.access_key}`);
+            })
+            .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
             });
     };
@@ -91,6 +150,23 @@ const GameModes = () => {
                 <button className="nav-button" onClick={handlePrev}>&lt;</button>
                 <button className="nav-button" onClick={handleNext}>&gt;</button>
             </div>
+
+            {showPvpModal && (
+                <div className="pvp-modal">
+                    <h2>PvP Mode</h2>
+                    <button onClick={handleCreatePvpSession}>Create New Session</button>
+                    <div>
+                        <input
+                            type="text"
+                            placeholder="Enter Session ID"
+                            value={joinSessionId}
+                            onChange={(e) => setJoinSessionId(e.target.value)}
+                        />
+                        <button onClick={handleJoinPvpSession}>Join Session</button>
+                    </div>
+                    <button onClick={() => setShowPvpModal(false)}>Cancel</button>
+                </div>
+            )}
         </div>
     );
 };
