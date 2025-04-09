@@ -87,11 +87,12 @@ class VersusAIMatchHistoryView(APIView):
     def get(self, request, *args, **kwargs):
         paginator = PageNumberPagination()
         paginator.page_size = 10  # Adjust page size as needed
-        games = VersusAIGame.objects.filter(has_ended=True)  # Filter games where has_ended is True
+        # Filter games where has_ended is True
+        games = VersusAIGame.objects.filter(has_ended=True)
         result_page = paginator.paginate_queryset(games, request)
         serializer = VersusAIGameSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
-    
+
     def post(self, request, *args, **kwargs):
         game_id = request.data.get('id')
         if not game_id:
@@ -114,7 +115,6 @@ class VersusAIMatchHistoryView(APIView):
             }}, status=status.HTTP_200_OK)
         except VersusAIGame.DoesNotExist:
             return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
-
 
 
 class VersusAISessionView(APIView):
@@ -384,11 +384,21 @@ class GameDataView(VersusAISessionView):
                                                                result=result)
                 next_infostate_matrix = Infostate.to_matrix(
                     infostate_board=next_infostate.abstracted_board)
+
+                attack_location = ()
+                if result in [Result.WIN, Result.LOSS]:
+                    attack_location = (int(action[2]), int(action[3]))
+                else:
+                    attack_location = ()
+
                 game.current_state = next_board.matrix
                 game.current_infostate = next_infostate_matrix
                 game.move_list.append(ai_action)
                 game.turn_number += 1
                 game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
+                game.previous_result = result
+                game.previous_action = ai_action
+                game.attack_location = attack_location
             else:
                 game.current_state = arbiter_board.matrix
                 game.current_infostate = starting_infostate.matrix
@@ -456,10 +466,20 @@ class GameDataView(VersusAISessionView):
             next_infostate_matrix = Infostate.to_matrix(
                 infostate_board=next_infostate.abstracted_board)
 
+            attack_location = ()
+            if result in [Result.WIN, Result.LOSS]:
+                attack_location = (int(action[2]), int(action[3]))
+            else:
+                attack_location = ()
+
             game.move_list.append(input_move)
 
             game.turn_number += 1
             game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
+            game.previous_result = result
+            game.previous_action = input_move
+            game.attack_location = attack_location
+            game.save()
 
             if next_board.is_terminal():
                 game.has_ended = True
@@ -527,6 +547,16 @@ class GameDataView(VersusAISessionView):
                                                                result=result)
                 next_infostate_matrix = Infostate.to_matrix(
                     infostate_board=next_infostate.abstracted_board)
+
+                attack_location = ()
+                if result in [Result.WIN, Result.LOSS]:
+                    attack_location = (int(action[2]), int(action[3]))
+                else:
+                    attack_location = ()
+
+                game.previous_result = result
+                game_previous_action = ai_action
+                game.attack_location = attack_location
                 game.current_state = next_board.matrix
                 game.current_infostate = next_infostate_matrix
                 game.move_list.append(ai_action)
