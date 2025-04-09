@@ -87,8 +87,8 @@ class VersusAIMatchHistoryView(APIView):
     def get(self, request, *args, **kwargs):
         paginator = PageNumberPagination()
         paginator.page_size = 10  # Adjust page size as needed
-        # Filter games where has_ended is True
-        games = VersusAIGame.objects.filter(has_ended=True)
+        # Filter games where has_ended is True and order them in descending order
+        games = VersusAIGame.objects.filter(has_ended=True).order_by('-id')  # Replace 'id' with your desired field
         result_page = paginator.paginate_queryset(games, request)
         serializer = VersusAIGameSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
