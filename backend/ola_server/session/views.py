@@ -205,7 +205,7 @@ def get_actions_filter(arbiter_board: Board, previous_action: str, previous_resu
         radius += 1
         if previous_result in [Result.WIN, Result.LOSS]:
             center = attack_location
-        elif attack_location is None:
+        elif len(attack_location) == 0:
             center = (int(previous_action[0]), int(previous_action[1]))
         else:
             return None
@@ -546,6 +546,16 @@ class GameDataView(VersusAISessionView):
                 # Filter the actions
                 actions_filter = get_actions_filter(next_board, game.previous_action,
                                                     game.previous_result, game.attack_location)
+                filtered_actions = actions_filter.filter()
+                filtered_strategy = []
+                for a, action in enumerate(valid_actions):
+                    if action in filtered_actions:
+                        filtered_strategy.append(strategy[a])
+                normalizing_sum = sum(filtered_strategy)
+                if normalizing_sum > 0:
+                    filtered_strategy = [
+                        p/normalizing_sum for p in filtered_strategy]
+                strategy = filtered_strategy
 
                 strategy_copy = copy.deepcopy(strategy)
                 # Filter out values below the maximum probability
@@ -558,7 +568,7 @@ class GameDataView(VersusAISessionView):
                 strategy_copy = [p/normalizing_sum for p in strategy_copy]
 
                 ai_action = random.choices(
-                    valid_actions, weights=strategy_copy, k=1)[0]
+                    filtered_actions, weights=strategy_copy, k=1)[0]
 
                 previous_board = copy.deepcopy(next_board)
                 previous_infostate = copy.deepcopy(next_infostate)
