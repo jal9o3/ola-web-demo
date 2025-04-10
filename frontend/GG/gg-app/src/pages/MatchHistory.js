@@ -7,7 +7,7 @@ const MatchHistory = () => {
   const [matches, setMatches] = useState([]);
 
   const handleBackButtonClick = () => {
-    navigate(-1);
+    navigate(`/`);
   };
 
   useEffect(() => {
