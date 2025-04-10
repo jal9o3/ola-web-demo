@@ -12,7 +12,10 @@ const Leaderboard = () => {
   const [scores, setScores] = useState([
     {name: 'Carlos Magsen', score: 4},
     {name: 'Hikaru Nagasaki', score: 12},
-    {name: 'Anonymous', score: 20}
+    {name: 'Anonymous', score: 20},
+    {name: 'Park Bo Gum', score: 29},
+    {name: 'Anonymous', score: 31},
+    {name: 'Zhong Xi Na', score: 35},
   ]);
   const [difficulty, setDifficulty] = useState('Easy'); // Default difficulty
 
