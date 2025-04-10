@@ -131,6 +131,7 @@ const Board = () => {
   const [current_infostate, setCurrentInfostate] = useState([]);
   const [currentTurn, setCurrentTurn] = useState("Your turn"); // Default to player's turn
   const [modelName, setModelName] = useState("csd10k");
+  const [hasEnded, setHasEnded] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -281,6 +282,7 @@ const Board = () => {
           .then((data) => {
             console.log(data);
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
+            setHasEnded(data.has_ended);
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -322,6 +324,7 @@ const Board = () => {
           .then((data) => {
             console.log(data);
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
+            setHasEnded(data.has_ended);
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -447,6 +450,12 @@ const Board = () => {
       setPieces(newPieces);
     }
   }, [current_infostate]);
+
+  useEffect(() => {
+    if (hasEnded) {
+      console.log("Game has ended");
+    }
+  }, [hasEnded]);
 
   const Tooltip = ({ text, position }) => {
     return (
