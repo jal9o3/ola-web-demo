@@ -494,16 +494,19 @@ const Board = () => {
     .every((piece) => piece.position !== null);
 
   return (
-  <div className="board-container">
-  <button className="back-button" onClick={handleBackButtonClick}>
-        ⬅ Back
-      </button>
+    <div className="board-wrapper"> {/* New wrapper for the board and indicator */}
+    <button className="back-button" onClick={handleBackButtonClick}>
+      ⬅ Back
+    </button>
+
+    {/* Turn Indicator outside the board container */}
     {gameStarted && (
       <div className="turn-indicator">
-        <h3>Turn: {currentTurn}</h3>
+      {currentTurn}
       </div>
     )}
 
+  <div className="board-container">
       <div className="model-selector">
         <label htmlFor="model-select">Choose Model:</label>
         <select
@@ -517,6 +520,7 @@ const Board = () => {
         </select>
       </div>
 
+      {!gameStarted && (
       <div className="button-container">
         <button
           onClick={handlePlayClick}
@@ -536,6 +540,7 @@ const Board = () => {
           Randomize
         </button>
       </div>
+    )}
 
       <div className="game-board">
         {/* For every row */}
@@ -652,6 +657,7 @@ const Board = () => {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 };

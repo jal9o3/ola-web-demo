@@ -30,7 +30,7 @@ from rest_framework.pagination import PageNumberPagination
 from OLA.core import Player, Board, Infostate, InfostatePiece
 from OLA.constants import Ranking, Result
 from OLA.simulation import MatchSimulator
-from OLA.training import TimelessBoard
+from OLA.training import TimelessBoard, ActionsFilter, DirectionFilter
 
 from .models import VersusAISession, VersusAIGame
 from .serializers import (VersusAISessionSerializer, VersusAISessionListSerializer,
@@ -87,11 +87,12 @@ class VersusAIMatchHistoryView(APIView):
     def get(self, request, *args, **kwargs):
         paginator = PageNumberPagination()
         paginator.page_size = 10  # Adjust page size as needed
-        games = VersusAIGame.objects.filter(has_ended=True)  # Filter games where has_ended is True
+        # Filter games where has_ended is True and order them in descending order
+        games = VersusAIGame.objects.filter(has_ended=True).order_by('-id')  # Replace 'id' with your desired field
         result_page = paginator.paginate_queryset(games, request)
         serializer = VersusAIGameSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
-    
+
     def post(self, request, *args, **kwargs):
         game_id = request.data.get('id')
         if not game_id:
@@ -114,7 +115,6 @@ class VersusAIMatchHistoryView(APIView):
             }}, status=status.HTTP_200_OK)
         except VersusAIGame.DoesNotExist:
             return Response({'error': 'Game not found'}, status=status.HTTP_404_NOT_FOUND)
-
 
 
 class VersusAISessionView(APIView):
@@ -198,6 +198,24 @@ class VersusAISessionView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+def get_actions_filter(arbiter_board: Board, previous_action: str, previous_result: str,
+                            attack_location: tuple[int, int]):
+    reduced_branching, radius = 0, 1
+    while reduced_branching <= 0:
+        radius += 1
+        if previous_result in [Result.WIN, Result.LOSS]:
+            center = attack_location
+        elif len(attack_location) == 0:
+            center = (int(previous_action[0]), int(previous_action[1]))
+        else:
+            return None
+
+        whitelist = arbiter_board.get_squares_within_radius(
+            center=center, radius=radius)
+        actions_filter = ActionsFilter(
+            state=arbiter_board, directions=DirectionFilter(), square_whitelist=whitelist)
+        reduced_branching = len(actions_filter.filter())
+    return actions_filter
 
 class GameDataView(VersusAISessionView):
     """
@@ -384,11 +402,21 @@ class GameDataView(VersusAISessionView):
                                                                result=result)
                 next_infostate_matrix = Infostate.to_matrix(
                     infostate_board=next_infostate.abstracted_board)
+
+                attack_location = ()
+                if result in [Result.WIN, Result.LOSS]:
+                    attack_location = (int(ai_action[2]), int(ai_action[3]))
+                else:
+                    attack_location = ()
+
                 game.current_state = next_board.matrix
                 game.current_infostate = next_infostate_matrix
                 game.move_list.append(ai_action)
                 game.turn_number += 1
                 game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
+                game.previous_result = result
+                game.previous_action = ai_action
+                game.attack_location = attack_location
             else:
                 game.current_state = arbiter_board.matrix
                 game.current_infostate = starting_infostate.matrix
@@ -456,10 +484,20 @@ class GameDataView(VersusAISessionView):
             next_infostate_matrix = Infostate.to_matrix(
                 infostate_board=next_infostate.abstracted_board)
 
+            attack_location = ()
+            if result in [Result.WIN, Result.LOSS]:
+                attack_location = (int(input_move[2]), int(input_move[3]))
+            else:
+                attack_location = ()
+
             game.move_list.append(input_move)
 
             game.turn_number += 1
             game.player_to_move = 'R' if game.player_to_move == 'B' else 'B'
+            game.previous_result = result
+            game.previous_action = input_move
+            game.attack_location = attack_location
+            game.save()
 
             if next_board.is_terminal():
                 game.has_ended = True
@@ -505,6 +543,20 @@ class GameDataView(VersusAISessionView):
                     strategy = [1/len(valid_actions)
                                 for _ in range(len(valid_actions))]
 
+                # Filter the actions
+                actions_filter = get_actions_filter(next_board, game.previous_action,
+                                                    game.previous_result, game.attack_location)
+                filtered_actions = actions_filter.filter()
+                filtered_strategy = []
+                for a, action in enumerate(valid_actions):
+                    if action in filtered_actions:
+                        filtered_strategy.append(strategy[a])
+                normalizing_sum = sum(filtered_strategy)
+                if normalizing_sum > 0:
+                    filtered_strategy = [
+                        p/normalizing_sum for p in filtered_strategy]
+                strategy = filtered_strategy
+
                 strategy_copy = copy.deepcopy(strategy)
                 # Filter out values below the maximum probability
                 max_prob = max(strategy_copy)
@@ -516,7 +568,7 @@ class GameDataView(VersusAISessionView):
                 strategy_copy = [p/normalizing_sum for p in strategy_copy]
 
                 ai_action = random.choices(
-                    valid_actions, weights=strategy_copy, k=1)[0]
+                    filtered_actions, weights=strategy_copy, k=1)[0]
 
                 previous_board = copy.deepcopy(next_board)
                 previous_infostate = copy.deepcopy(next_infostate)
@@ -527,6 +579,16 @@ class GameDataView(VersusAISessionView):
                                                                result=result)
                 next_infostate_matrix = Infostate.to_matrix(
                     infostate_board=next_infostate.abstracted_board)
+
+                attack_location = ()
+                if result in [Result.WIN, Result.LOSS]:
+                    attack_location = (int(ai_action[2]), int(ai_action[3]))
+                else:
+                    attack_location = ()
+
+                game_previous_action = ai_action
+                game.previous_result = result
+                game.attack_location = attack_location
                 game.current_state = next_board.matrix
                 game.current_infostate = next_infostate_matrix
                 game.move_list.append(ai_action)
