@@ -135,6 +135,7 @@ const Board = () => {
   const [modelName, setModelName] = useState("csd10k");
   const [hasEnded, setHasEnded] = useState(false);
   const [showPopUp, setShowPopUp] = useState(false);
+  const [gameId, setGameId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -286,6 +287,7 @@ const Board = () => {
             console.log(data);
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
             setHasEnded(data.has_ended);
+            setGameId(data.id);
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -328,6 +330,7 @@ const Board = () => {
             console.log(data);
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
             setHasEnded(data.has_ended);
+            setGameId(data.id);
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -460,6 +463,12 @@ const Board = () => {
       setShowPopUp(true);
     }
   }, [hasEnded]);
+
+  useEffect(() => {
+    if (gameId) {
+      console.log(gameId);
+    }
+  }, [gameId]);
 
   const Tooltip = ({ text, position }) => {
     return (
@@ -671,6 +680,12 @@ const Board = () => {
       <Popup visible={showPopUp} onClose={() => setShowPopUp(false)}>
         <h2>Game Over</h2>
         <p>The game has ended. Thank you for playing!</p>
+        <button
+          onClick={() => navigate(`/walkthrough?id=${gameId}`)}
+          className="popup-button"
+        >
+          View Walkthrough
+        </button>
       </Popup>
     </div>
   );
