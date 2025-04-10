@@ -60,7 +60,7 @@ function Home() {
             case 'ANALYSIS TOOL':
                 navigate('/analysis-tool');
                 break;
-            case 'LEADER-BOARD':
+            case 'LEADER BOARD':
                 navigate('/leader-board');
                 break;
             case 'SETTINGS':
