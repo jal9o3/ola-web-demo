@@ -7,8 +7,7 @@ const GameModes = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [sessionName, setSessionName] = useState('');
     const [accessKey, setAccessKey] = useState('');
-    const [showPvpModal, setShowPvpModal] = useState(false);
-    const [joinSessionId, setJoinSessionId] = useState('');
+
 
     const modes = [
         { label: 'Easy Mode', key: 'easy' },
@@ -20,7 +19,8 @@ const GameModes = () => {
 
     const handleModeClick = (mode) => {
         if (mode === 'pvp') {
-            setShowPvpModal(true); // Show the PvP modal
+            // Directly navigate to the waiting room
+            navigate('/pvp-waiting-room');
             return;
         }
 
@@ -55,56 +55,6 @@ const GameModes = () => {
             });
     };
 
-    const handleCreatePvpSession = () => {
-        fetch('http://127.0.0.1:8000/api/sessions/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ mode: 'pvp' }), // Specify PvP mode
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                setSessionName(data.name);
-                setAccessKey(data.access_key);
-                navigate(`/board/pvp?sessionName=${data.name}&accessKey=${data.access_key}`);
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-    };
-
-    const handleJoinPvpSession = () => {
-        fetch(`http://127.0.0.1:8000/api/sessions/join/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ session_name: joinSessionId }), // Pass the session ID to join
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                setSessionName(data.name);
-                setAccessKey(data.access_key);
-                navigate(`/board/pvp?sessionName=${data.name}&accessKey=${data.access_key}`);
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-            });
-    };
-
     const handleNext = () => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % modes.length);
     };
@@ -121,7 +71,7 @@ const GameModes = () => {
         <div className="game-mode-container">
         <button className="back-button" onClick={handleBackButtonClick}>
         ⬅ Back
-      </button>
+        </button>
             <h1 className="game-mode-title">GAME MODES</h1>
             <div className="carousel-container">
                 <div className="carousel">
@@ -150,23 +100,6 @@ const GameModes = () => {
                 <button className="nav-button" onClick={handlePrev}>&lt;</button>
                 <button className="nav-button" onClick={handleNext}>&gt;</button>
             </div>
-
-            {showPvpModal && (
-                <div className="pvp-modal">
-                    <h2>PvP Mode</h2>
-                    <button onClick={handleCreatePvpSession}>Create New Session</button>
-                    <div>
-                        <input
-                            type="text"
-                            placeholder="Enter Session ID"
-                            value={joinSessionId}
-                            onChange={(e) => setJoinSessionId(e.target.value)}
-                        />
-                        <button onClick={handleJoinPvpSession}>Join Session</button>
-                    </div>
-                    <button onClick={() => setShowPvpModal(false)}>Cancel</button>
-                </div>
-            )}
         </div>
     );
 };
