@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import "./Board.css";
-
 // Import images
 import Gen5 from "../../assets/Gen5.png";
 import Gen5b from "../../assets/Gen5b.png";
@@ -35,9 +34,7 @@ import Sergeant from "../../assets/Sergeant.png";
 import Sergeantb from "../../assets/Sergeantb.png";
 import Lieucol from "../../assets/Lieucol.png";
 import Lieucolb from "../../assets/Lieucolb.png";
-
 import { processInfostate } from "../../utils/processInfostate";
-
 // Initial Pieces with 6 Privates and 2 Spies
 const initialPieces = [
   { id: 1, name: "5-star General", src: Gen5b, position: null, team: "blue" },
@@ -120,14 +117,12 @@ const initialPieces = [
   },
 ];
 // The pieces that belong to the AI will have their names and images set to null
-
 const Board = () => {
   const navigate = useNavigate();
   const BLUE_FLAG = 1;
   const BLUE_SPY = 15; // Rankings are 1 to 15
   const RED_FLAG = 16;
   const RED_SPY = 30; // Red pieces are denoted as ranking + 15
-
   const [aiColor, setAiColor] = useState("");
   const [humanColor, setHumanColor] = useState("");
   const [current_infostate, setCurrentInfostate] = useState([]);
@@ -136,36 +131,33 @@ const Board = () => {
   const [hasEnded, setHasEnded] = useState(false);
   const [showPopUp, setShowPopUp] = useState(false);
   const [gameId, setGameId] = useState(null);
-
+  const [winner, setWinner] = useState(null);
+  const [playerName, setPlayerName] = useState("");
+  
   useEffect(() => {
     const fetchData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const accessKey = urlParams.get("accessKey");
       const sessionName = urlParams.get("sessionName");
-
       try {
         const response = await fetch(
           `http://127.0.0.1:8000/api/sessions/game-data/?session_name=${sessionName}&access_key=${accessKey}`
         );
         const data = await response.json();
         console.log(data);
-
         const setColor = (color) => {
           if (color === "R") return "red";
           if (color === "B") return "blue";
           return color;
         };
-
         setAiColor(setColor(data.ai_color));
         setHumanColor(setColor(data.human_color));
       } catch (error) {
         console.error("Error fetching game data:", error);
       }
     };
-
     fetchData();
   }, []);
-
   const [pieces, setPieces] = useState(initialPieces);
   const [gameStarted, setGameStarted] = useState(false);
   const [playClicked, setPlayClicked] = useState(false);
@@ -176,7 +168,6 @@ const Board = () => {
     text: "",
     position: { x: 0, y: 0 },
   });
-
   const rankHierarchy = {
     Spy: 15, // Spy can eliminate all officers except privates
     "5-star General": 14,
@@ -194,21 +185,19 @@ const Board = () => {
     Private: 2,
     Flag: 1, // Flag can be eliminated by any piece including the opponent's flag
   };
-
+  
   const handleBackButtonClick = () => {
     navigate(-1);
   };
-
+  
   const randomizePieces = () => {
     if (!humanColor) return; // Ensure humanColor is set before proceeding
-
     const availablePositions = [];
     for (let row = 5; row <= 7; row++) {
       for (let col = 0; col < 9; col++) {
         availablePositions.push({ row, col });
       }
     }
-
     // Shuffle the available positions
     for (let i = availablePositions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -217,18 +206,15 @@ const Board = () => {
         availablePositions[i],
       ];
     }
-
     // Get the pieces that belong to the human player
     const playerPieces = pieces.filter(
       (piece) => piece.team === humanColor && piece.position === null
     );
-
     // Assign random positions to the player pieces
     const newPieces = playerPieces.map((piece, index) => {
       const position = availablePositions[index];
       return { ...piece, position };
     });
-
     // Update the pieces state
     setPieces((prevPieces) => {
       const updatedPieces = prevPieces.map((piece) =>
@@ -239,24 +225,20 @@ const Board = () => {
       return updatedPieces;
     });
   };
-
+  
   const handleTileClick = (row, col) => {
     if (!gameStarted) return;
-
     const urlParams = new URLSearchParams(window.location.search);
     const sessionName = urlParams.get("sessionName");
     const accessKey = urlParams.get("accessKey");
-
     if (selectedPiece) {
       const { position, team, name } = selectedPiece;
-
       // Allow moves in all directions (one tile)
       const isValidMove =
         (row === position.row - 1 && col === position.col) || // Up
         (row === position.row && col === position.col - 1) || // Left
         (row === position.row && col === position.col + 1) || // Right
         (row === position.row + 1 && col === position.col); // Down
-
       // Check for opponent and allied pieces
       const opponentPiece = pieces.find(
         (p) =>
@@ -266,7 +248,6 @@ const Board = () => {
         (p) =>
           p.position?.row === row && p.position?.col === col && p.team === team
       );
-
       if (isValidMove && opponentPiece) {
         const move = `${position.row}${position.col}${row}${col}`;
         // Submit the move to the backend using PATCH
@@ -288,10 +269,16 @@ const Board = () => {
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
             setHasEnded(data.has_ended);
             setGameId(data.id);
+            
+            // Check for winner if game has ended
+            if (data.has_ended) {
+              if (data.winner) {
+                setWinner(data.winner);
+              }
+            }
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
-
         // Move the selected piece if no opponent piece is present
         setPieces((prevPieces) =>
           prevPieces.map((p) =>
@@ -300,7 +287,6 @@ const Board = () => {
         );
         // Switch turn to AI after player's move
         setCurrentTurn("AI's turn");
-
         // Simulate AI's move (this is just a placeholder for actual AI logic)
         setTimeout(() => {
           // Here you would implement the AI's logic to make a move
@@ -331,6 +317,13 @@ const Board = () => {
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
             setHasEnded(data.has_ended);
             setGameId(data.id);
+            
+            // Check for winner if game has ended
+            if (data.has_ended) {
+              if (data.winner) {
+                setWinner(data.winner);
+              }
+            }
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -349,14 +342,12 @@ const Board = () => {
       if (piece) setSelectedPiece(piece);
     }
   };
-
+  
   const handleDrop = (e, row, col) => {
     e.preventDefault();
     if (gameStarted) return;
-
     const pieceId = e.dataTransfer.getData("pieceId");
     if (!pieceId) return;
-
     // Ensure placement is within rows 5, 6, and 7
     if (!gameStarted && (row < 5 || row > 7)) {
       alert(
@@ -364,7 +355,6 @@ const Board = () => {
       );
       return;
     }
-
     // Prevent placing pieces on top of each other
     const isOccupied = pieces.some(
       (p) => p.position?.row === row && p.position?.col === col
@@ -373,7 +363,6 @@ const Board = () => {
       //alert("This tile is already occupied! Choose another spot.");
       return;
     }
-
     setPieces((prevPieces) =>
       prevPieces.map((piece) =>
         piece.id.toString() === pieceId
@@ -382,17 +371,14 @@ const Board = () => {
       )
     );
   };
-
+  
   const handlePlayClick = () => {
     setGameStarted(true);
     setPlayClicked(true);
     setOpponentVisible(true);
-
     // Remove highlight after 1 second for better UI feedback
     setTimeout(() => setPlayClicked(false), 10000);
-
     const lastThreeRows = [];
-
     for (let row = 5; row < 8; row++) {
       for (let col = 0; col < 9; col++) {
         const piece = pieces.find(
@@ -401,7 +387,6 @@ const Board = () => {
         lastThreeRows.push({ row, col, piece });
       }
     }
-
     // Sort the array from left to right, top to bottom
     lastThreeRows.sort((a, b) => {
       if (a.row === b.row) {
@@ -409,7 +394,6 @@ const Board = () => {
       }
       return a.row - b.row;
     });
-
     const formationValues = lastThreeRows.map((tile) =>
       tile.piece ? rankHierarchy[tile.piece.name] : 0
     );
@@ -418,7 +402,6 @@ const Board = () => {
     const accessKey = urlParams.get("accessKey");
     console.log(sessionName);
     console.log(accessKey);
-
     // Send the formation values to the backend using PATCH
     fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
       method: "PATCH",
@@ -440,7 +423,42 @@ const Board = () => {
       })
       .catch((error) => console.error("Error updating game data:", error));
   };
-
+  
+  // Submit player name to leaderboard
+  const submitToLeaderboard = () => {
+    if (!playerName.trim()) {
+      alert("Please enter your name");
+      return;
+    }
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionName = urlParams.get("sessionName");
+    const accessKey = urlParams.get("accessKey");
+    
+    fetch(`http://127.0.0.1:8000/api/leaderboard/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        player_name: playerName,
+        game_id: gameId,
+        session_name: sessionName,
+        access_key: accessKey
+      }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Leaderboard submission:", data);
+        setShowPopUp(false);
+        navigate(`/walkthrough?id=${gameId}`);
+      })
+      .catch(error => {
+        console.error("Error submitting to leaderboard:", error);
+        alert("Failed to submit to leaderboard. Please try again.");
+      });
+  };
+  
   useEffect(() => {
     if (current_infostate.length > 0) {
       const newPieces = processInfostate(
@@ -456,20 +474,31 @@ const Board = () => {
       setPieces(newPieces);
     }
   }, [current_infostate]);
-
+  
   useEffect(() => {
     if (hasEnded) {
       console.log("Game has ended");
+      // If there's no winner set from API response, determine it based on remaining pieces
+      if (!winner) {
+        const blueFlag = pieces.find(p => p.team === "blue" && p.name === "Flag");
+        const redFlag = pieces.find(p => p.team === "red" && p.name === "Flag");
+        
+        if (!blueFlag && redFlag) {
+          setWinner("red");
+        } else if (blueFlag && !redFlag) {
+          setWinner("blue");
+        }
+      }
       setShowPopUp(true);
     }
-  }, [hasEnded]);
-
+  }, [hasEnded, pieces, winner]);
+  
   useEffect(() => {
     if (gameId) {
       console.log(gameId);
     }
   }, [gameId]);
-
+  
   const Tooltip = ({ text, position }) => {
     return (
       <div
@@ -480,11 +509,10 @@ const Board = () => {
       </div>
     );
   };
-
+  
   const handleHelpClick = () => {
     const hierarchy = `
             Rank Hierarchy:
-
             Spy: 15 (Can only be defeated by privates)
             5-star General: 14
             4-star General: 13
@@ -503,18 +531,18 @@ const Board = () => {
         `;
     alert(hierarchy);
   };
-
+  
   const handleDragStart = (e, pieceId) => {
     e.dataTransfer.setData("pieceId", pieceId);
   };
-
+  
   const allowDrop = (e) => e.preventDefault();
-
+  
   const allPiecesPlaced = pieces.every((piece) => piece.position !== null);
   const allHumanPiecesPlaced = pieces
     .filter((piece) => piece.team === humanColor)
     .every((piece) => piece.position !== null);
-
+    
   return (
     <div className="board-wrapper">
       {" "}
@@ -537,7 +565,6 @@ const Board = () => {
             <option value="csd10k">csd10k</option>
           </select>
         </div>
-
         {!gameStarted && (
           <div className="button-container">
             <button
@@ -549,7 +576,6 @@ const Board = () => {
             >
               Play
             </button>
-
             <button
               onClick={randomizePieces}
               className="randomize-button"
@@ -559,7 +585,6 @@ const Board = () => {
             </button>
           </div>
         )}
-
         <div className="game-board">
           {/* For every row */}
           {Array.from({ length: 8 }).map(
@@ -630,7 +655,6 @@ const Board = () => {
             <Tooltip text={tooltip.text} position={tooltip.position} />
           )}
         </div>
-
         <div className="piece-selection">
           <div className="above-content">
             {!allPiecesPlaced && <h3>Available Pieces</h3>}
@@ -638,7 +662,6 @@ const Board = () => {
               ?
             </button>
           </div>
-
           <div className="pieces-list">
             {!allPiecesPlaced ? (
               pieces
@@ -677,23 +700,66 @@ const Board = () => {
           </div>
         </div>
       </div>
-      <Popup visible={showPopUp} onClose={() => setShowPopUp(false)}>
+      <GameOverPopup 
+        visible={showPopUp} 
+        onClose={() => setShowPopUp(false)}
+        winner={winner}
+        humanColor={humanColor}
+        gameId={gameId}
+        navigate={navigate}
+        playerName={playerName}
+        setPlayerName={setPlayerName}
+        submitToLeaderboard={submitToLeaderboard}
+      />
+    </div>
+  );
+};
+
+const GameOverPopup = ({ visible, onClose, winner, humanColor, gameId, navigate, playerName, setPlayerName, submitToLeaderboard }) => {
+  if (!visible) return null;
+  
+  const isPlayerWinner = winner === humanColor;
+  const winnerText = winner ? `${winner.toUpperCase()} wins!` : "Game Over";
+  
+  return ReactDOM.createPortal(
+    <div className="popup-overlay">
+      <div className="popup-content">
+        <button className="popup-close-button" onClick={onClose}>
+          ✖
+        </button>
         <h2>Game Over</h2>
-        <p>The game has ended. Thank you for playing!</p>
+        <h3>{winnerText}</h3>
+        
+        {isPlayerWinner && (
+          <div className="leaderboard-form">
+            <p>Add your name to the leaderboard:</p>
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              className="name-input"
+            />
+            <button onClick={submitToLeaderboard} className="popup-button">
+              Submit
+            </button>
+            </div>
+        )}
+        
         <button
           onClick={() => navigate(`/walkthrough?id=${gameId}`)}
           className="popup-button"
         >
           View Walkthrough
         </button>
-      </Popup>
-    </div>
+      </div>
+    </div>,
+    document.body
   );
 };
 
 const Popup = ({ visible, onClose, children }) => {
   if (!visible) return null;
-
   return ReactDOM.createPortal(
     <div className="popup-overlay">
       <div className="popup-content">
