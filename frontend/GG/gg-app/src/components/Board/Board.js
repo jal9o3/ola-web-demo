@@ -1,5 +1,7 @@
+import ReactDOM from "react-dom";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 import "./Board.css";
 
 // Import images
@@ -131,6 +133,9 @@ const Board = () => {
   const [current_infostate, setCurrentInfostate] = useState([]);
   const [currentTurn, setCurrentTurn] = useState("Your turn"); // Default to player's turn
   const [modelName, setModelName] = useState("csd10k");
+  const [hasEnded, setHasEnded] = useState(false);
+  const [showPopUp, setShowPopUp] = useState(false);
+  const [gameId, setGameId] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -191,7 +196,7 @@ const Board = () => {
   };
 
   const handleBackButtonClick = () => {
-    navigate(-1); 
+    navigate(-1);
   };
 
   const randomizePieces = () => {
@@ -281,6 +286,8 @@ const Board = () => {
           .then((data) => {
             console.log(data);
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
+            setHasEnded(data.has_ended);
+            setGameId(data.id);
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -322,6 +329,8 @@ const Board = () => {
           .then((data) => {
             console.log(data);
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
+            setHasEnded(data.has_ended);
+            setGameId(data.id);
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -448,6 +457,19 @@ const Board = () => {
     }
   }, [current_infostate]);
 
+  useEffect(() => {
+    if (hasEnded) {
+      console.log("Game has ended");
+      setShowPopUp(true);
+    }
+  }, [hasEnded]);
+
+  useEffect(() => {
+    if (gameId) {
+      console.log(gameId);
+    }
+  }, [gameId]);
+
   const Tooltip = ({ text, position }) => {
     return (
       <div
@@ -494,171 +516,194 @@ const Board = () => {
     .every((piece) => piece.position !== null);
 
   return (
-    <div className="board-wrapper"> {/* New wrapper for the board and indicator */}
-    <button className="back-button" onClick={handleBackButtonClick}>
-      ⬅ Back
-    </button>
-
-    {/* Turn Indicator outside the board container */}
-    {gameStarted && (
-      <div className="turn-indicator">
-      {currentTurn}
-      </div>
-    )}
-
-  <div className="board-container">
-      <div className="model-selector">
-        <label htmlFor="model-select">Choose Model:</label>
-        <select
-          id="model-select"
-          value={modelName}
-          onChange={(e) => setModelName(e.target.value)}
-        >
-          <option value="fivelayer">fivelayer</option>
-          <option value="fivelayer10k">fivelayer10k</option>
-          <option value="csd10k">csd10k</option>
-        </select>
-      </div>
-
-      {!gameStarted && (
-      <div className="button-container">
-        <button
-          onClick={handlePlayClick}
-          className={`play-button ${allHumanPiecesPlaced ? "" : "disabled"} ${
-            playClicked ? "clicked" : ""
-          }`}
-          disabled={!allHumanPiecesPlaced}
-        >
-          Play
-        </button>
-
-        <button
-          onClick={randomizePieces}
-          className="randomize-button"
-          disabled={gameStarted} // Disable if the game has started
-        >
-          Randomize
-        </button>
-      </div>
-    )}
-
-      <div className="game-board">
-        {/* For every row */}
-        {Array.from({ length: 8 }).map(
-          (
-            _, // Current element
-            row // Current index
-          ) =>
-            // For every column
-            Array.from({ length: 9 }).map((_, col) => {
-              const piece = pieces.find(
-                (p) => p.position?.row === row && p.position?.col === col
-              ); // Find the piece at the current position if any
-              return (
-                <div
-                  key={`${row}-${col}`}
-                  className={`tile ${
-                    selectedPiece?.position?.row === row &&
-                    selectedPiece?.position?.col === col
-                      ? "selected"
-                      : ""
-                  }`} // If piece's location matches selected piece, add to 'selected' class
-                  onClick={() => handleTileClick(row, col)}
-                  onDrop={(e) => handleDrop(e, row, col)}
-                  onDragOver={allowDrop}
-                >
-                  {piece ? (
-                    piece.team === humanColor ? (
-                      // Set the image of a visible piece
-                      <img
-                        src={piece.src}
-                        alt={piece.name}
-                        className="piece-image"
-                        draggable={!gameStarted}
-                        onDragStart={(e) => handleDragStart(e, piece.id)}
-                        onMouseEnter={(e) => {
-                          setTooltip({
-                            visible: true,
-                            text: piece.name,
-                            position: {
-                              x: e.clientX,
-                              y: e.clientY,
-                            },
-                          });
-                        }}
-                        onMouseLeave={() =>
-                          setTooltip({
-                            visible: false,
-                            text: "",
-                            position: {
-                              x: 0,
-                              y: 0,
-                            },
-                          })
-                        }
-                      />
-                    ) : gameStarted ? (
-                      // Display the placeholder for a hidden piece only when the game has started
-                      <div className="opponent-placeholder"></div>
-                    ) : // Otherwise, display an empty tile
-                    null
-                  ) : // Otherwise, display an empty tile
-                  null}
-                </div>
-              );
-            })
-        )}
-        {tooltip.visible && (
-          <Tooltip text={tooltip.text} position={tooltip.position} />
-        )}
-      </div>
-
-      <div className="piece-selection">
-        <div className="above-content">
-          {!allPiecesPlaced && <h3>Available Pieces</h3>}
-          <button onClick={handleHelpClick} className="help-button">
-            ?
-          </button>
+    <div className="board-wrapper">
+      {" "}
+      {/* New wrapper for the board and indicator */}
+      <button className="back-button" onClick={handleBackButtonClick}>
+        ⬅ Back
+      </button>
+      {/* Turn Indicator outside the board container */}
+      {gameStarted && <div className="turn-indicator">{currentTurn}</div>}
+      <div className="board-container">
+        <div className="model-selector">
+          <label htmlFor="model-select">Choose Model:</label>
+          <select
+            id="model-select"
+            value={modelName}
+            onChange={(e) => setModelName(e.target.value)}
+          >
+            <option value="fivelayer">fivelayer</option>
+            <option value="fivelayer10k">fivelayer10k</option>
+            <option value="csd10k">csd10k</option>
+          </select>
         </div>
 
-        <div className="pieces-list">
-          {!allPiecesPlaced ? (
-            pieces
-              .filter(
-                (piece) => piece.position === null && piece.team === humanColor
-              )
-              .map((piece) => (
-                <div key={piece.id} className="piece-container">
-                  <img
-                    src={piece.src}
-                    alt={piece.name}
-                    className="piece-image"
-                    draggable={!gameStarted}
-                    onDragStart={(e) => handleDragStart(e, piece.id)}
-                    onMouseEnter={(e) => {
-                      setTooltip({
-                        visible: true,
-                        text: piece.name,
-                        position: { x: e.clientX, y: e.clientY },
-                      });
-                    }}
-                    onMouseLeave={() =>
-                      setTooltip({
-                        visible: false,
-                        text: "",
-                        position: { x: 0, y: 0 },
-                      })
-                    }
-                  />
-                </div>
-              ))
-          ) : (
-            <p></p> // Optional message when all pieces are placed
+        {!gameStarted && (
+          <div className="button-container">
+            <button
+              onClick={handlePlayClick}
+              className={`play-button ${
+                allHumanPiecesPlaced ? "" : "disabled"
+              } ${playClicked ? "clicked" : ""}`}
+              disabled={!allHumanPiecesPlaced}
+            >
+              Play
+            </button>
+
+            <button
+              onClick={randomizePieces}
+              className="randomize-button"
+              disabled={gameStarted} // Disable if the game has started
+            >
+              Randomize
+            </button>
+          </div>
+        )}
+
+        <div className="game-board">
+          {/* For every row */}
+          {Array.from({ length: 8 }).map(
+            (
+              _, // Current element
+              row // Current index
+            ) =>
+              // For every column
+              Array.from({ length: 9 }).map((_, col) => {
+                const piece = pieces.find(
+                  (p) => p.position?.row === row && p.position?.col === col
+                ); // Find the piece at the current position if any
+                return (
+                  <div
+                    key={`${row}-${col}`}
+                    className={`tile ${
+                      selectedPiece?.position?.row === row &&
+                      selectedPiece?.position?.col === col
+                        ? "selected"
+                        : ""
+                    }`} // If piece's location matches selected piece, add to 'selected' class
+                    onClick={() => handleTileClick(row, col)}
+                    onDrop={(e) => handleDrop(e, row, col)}
+                    onDragOver={allowDrop}
+                  >
+                    {piece ? (
+                      piece.team === humanColor ? (
+                        // Set the image of a visible piece
+                        <img
+                          src={piece.src}
+                          alt={piece.name}
+                          className="piece-image"
+                          draggable={!gameStarted}
+                          onDragStart={(e) => handleDragStart(e, piece.id)}
+                          onMouseEnter={(e) => {
+                            setTooltip({
+                              visible: true,
+                              text: piece.name,
+                              position: {
+                                x: e.clientX,
+                                y: e.clientY,
+                              },
+                            });
+                          }}
+                          onMouseLeave={() =>
+                            setTooltip({
+                              visible: false,
+                              text: "",
+                              position: {
+                                x: 0,
+                                y: 0,
+                              },
+                            })
+                          }
+                        />
+                      ) : gameStarted ? (
+                        // Display the placeholder for a hidden piece only when the game has started
+                        <div className="opponent-placeholder"></div>
+                      ) : // Otherwise, display an empty tile
+                      null
+                    ) : // Otherwise, display an empty tile
+                    null}
+                  </div>
+                );
+              })
+          )}
+          {tooltip.visible && (
+            <Tooltip text={tooltip.text} position={tooltip.position} />
           )}
         </div>
+
+        <div className="piece-selection">
+          <div className="above-content">
+            {!allPiecesPlaced && <h3>Available Pieces</h3>}
+            <button onClick={handleHelpClick} className="help-button">
+              ?
+            </button>
+          </div>
+
+          <div className="pieces-list">
+            {!allPiecesPlaced ? (
+              pieces
+                .filter(
+                  (piece) =>
+                    piece.position === null && piece.team === humanColor
+                )
+                .map((piece) => (
+                  <div key={piece.id} className="piece-container">
+                    <img
+                      src={piece.src}
+                      alt={piece.name}
+                      className="piece-image"
+                      draggable={!gameStarted}
+                      onDragStart={(e) => handleDragStart(e, piece.id)}
+                      onMouseEnter={(e) => {
+                        setTooltip({
+                          visible: true,
+                          text: piece.name,
+                          position: { x: e.clientX, y: e.clientY },
+                        });
+                      }}
+                      onMouseLeave={() =>
+                        setTooltip({
+                          visible: false,
+                          text: "",
+                          position: { x: 0, y: 0 },
+                        })
+                      }
+                    />
+                  </div>
+                ))
+            ) : (
+              <p></p> // Optional message when all pieces are placed
+            )}
+          </div>
+        </div>
       </div>
+      <Popup visible={showPopUp} onClose={() => setShowPopUp(false)}>
+        <h2>Game Over</h2>
+        <p>The game has ended. Thank you for playing!</p>
+        <button
+          onClick={() => navigate(`/walkthrough?id=${gameId}`)}
+          className="popup-button"
+        >
+          View Walkthrough
+        </button>
+      </Popup>
     </div>
-    </div>
+  );
+};
+
+const Popup = ({ visible, onClose, children }) => {
+  if (!visible) return null;
+
+  return ReactDOM.createPortal(
+    <div className="popup-overlay">
+      <div className="popup-content">
+        <button className="popup-close-button" onClick={onClose}>
+          ✖
+        </button>
+        {children}
+      </div>
+    </div>,
+    document.body
   );
 };
 

@@ -9,7 +9,7 @@ const menuItems = [
     { label: 'RULES & TUTORIAL', position: 'left1' },
     { label: 'GAME MODES', position: 'left2' },
     { label: 'ANALYSIS TOOL', position: 'right2' },
-    { label: 'LEADER-BOARD', position: 'center' },
+    { label: 'LEADER BOARD', position: 'center' },
     { label: 'SETTINGS', position: 'top' }
 ];
 
@@ -60,7 +60,7 @@ function Home() {
             case 'ANALYSIS TOOL':
                 navigate('/analysis-tool');
                 break;
-            case 'LEADER-BOARD':
+            case 'LEADER BOARD':
                 navigate('/leader-board');
                 break;
             case 'SETTINGS':
@@ -87,13 +87,13 @@ function Home() {
                     <h1 className="gameTitle">
                         GAME OF THE
                     <div className="generalsText">GENERALS</div></h1>
-                    <div className="ggText">GG</div>
-                    <img
+                    {/* <div className="ggText">GG</div> */}
+                    {/* <img
                         loading="lazy"
                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/a6962d0b2951eba34838f254230d6d8916bd67a1e341b31461db955573b98c2c?placeholderIfAbsent=true&apiKey=495cfffe0c9a47b6b0144a560efce18c"
                         className="logo"
                         alt="Game of Generals Logo"
-                    />
+                    /> */}
                 </header>
 
                 <nav className="rightMenu1">

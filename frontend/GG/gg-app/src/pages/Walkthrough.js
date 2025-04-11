@@ -174,7 +174,7 @@ const Walkthrough = () => {
   }, [blueFormation, redFormation, moveList]);
 
   const handleBackButtonClick = () => {
-    navigate(-1);
+    navigate(`/match-history`);
   };
 
   const initializeBoard = () => {

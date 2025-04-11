@@ -603,11 +603,13 @@ class GameDataView(VersusAISessionView):
                 'human_color': game.human_color,
                 'ai_color': game.ai_color,
                 'has_started': game.has_started,
+                'has_ended': game.has_ended,
                 'human_initial_formation': game.human_initial_formation,
                 'move_list': game.move_list,
                 'current_infostate': game.current_infostate,
                 'turn_number': game.turn_number,
                 'player_to_move': game.player_to_move,
+                'id': game.id,
             }
             return Response(game_data, status=status.HTTP_200_OK)
         else:
@@ -615,11 +617,13 @@ class GameDataView(VersusAISessionView):
                 'human_color': game.human_color,
                 'ai_color': game.ai_color,
                 'has_started': game.has_started,
+                'has_ended': game.has_ended,
                 'human_initial_formation': game.human_initial_formation,
                 'move_list': game.move_list,
                 'current_infostate': game.current_infostate,
                 'turn_number': game.turn_number,
                 'player_to_move': game.player_to_move,
+                'id': game.id,
             }
             return Response(game_data, status=status.HTTP_400_BAD_REQUEST)
 
