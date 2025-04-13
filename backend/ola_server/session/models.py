@@ -26,6 +26,14 @@ Classes:
 """
 from django.db import models
 
+class ScoreRecord(models.Model):
+    player_name = models.CharField(max_length=20, default='Anonymous')
+    turns_taken = models.IntegerField(default=999)
+    model_name = models.CharField(max_length=20, default='fivelayer')
+    is_fog_mode = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"ScoreRecord {self.id}"
 
 class VersusAIGame(models.Model):
     """

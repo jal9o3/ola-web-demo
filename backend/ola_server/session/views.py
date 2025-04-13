@@ -32,9 +32,9 @@ from OLA.constants import Ranking, Result
 from OLA.simulation import MatchSimulator
 from OLA.training import TimelessBoard, ActionsFilter, DirectionFilter
 
-from .models import VersusAISession, VersusAIGame
+from .models import VersusAISession, VersusAIGame, ScoreRecord
 from .serializers import (VersusAISessionSerializer, VersusAISessionListSerializer,
-                          VersusAIGameSerializer)
+                          VersusAIGameSerializer, ScoreRecordSerializer)
 
 INPUT_SIZE = 147
 OUTPUT_SIZE = 254
@@ -81,6 +81,37 @@ def generate_random_string(length=10):
     """
     alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     return ''.join(secrets.choice(alphabet) for _ in range(length))
+
+
+class LeaderboardView(APIView):
+    def post(self, request, *args, **kwargs):
+        player_name = request.data.get('player_name')
+        turns_taken = request.data.get('turns_taken')
+        model_name = request.data.get('model_name')
+        is_fog_mode = request.data.get('is_fog_mode')
+
+        if player_name == "":
+            player_name = "Anonymous"
+
+        new_record = ScoreRecord.objects.create(
+            player_name=player_name,
+            turns_taken=turns_taken,
+            model_name=model_name,
+            is_fog_mode=is_fog_mode,
+        )
+
+        record_data = {
+            'player_name': new_record.player_name,
+            'turns_taken': new_record.turns_taken,
+            'model_name': new_record.model_name,
+            'is_fog_mode': new_record.is_fog_mode,
+        }
+
+        serializer = ScoreRecordSerializer(data=record_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VersusAIMatchHistoryView(APIView):

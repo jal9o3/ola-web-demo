@@ -9,8 +9,12 @@ Classes:
 
 from rest_framework import serializers
 
-from .models import VersusAIGame, VersusAISession
+from .models import VersusAIGame, VersusAISession, ScoreRecord
 
+class ScoreRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ScoreRecord
+        fields = '__all__'
 
 class VersusAIGameSerializer(serializers.ModelSerializer):
     """

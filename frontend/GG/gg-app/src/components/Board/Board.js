@@ -416,16 +416,7 @@ const Board = () => {
   };
   
   // Submit player name to leaderboard
-  const submitToLeaderboard = () => {
-    if (!playerName.trim()) {
-      alert("Please enter your name");
-      return;
-    }
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    const sessionName = urlParams.get("sessionName");
-    const accessKey = urlParams.get("accessKey");
-    
+  const submitToLeaderboard = () => {    
     fetch(`http://127.0.0.1:8000/api/leaderboard/`, {
       method: "POST",
       headers: {
@@ -433,9 +424,9 @@ const Board = () => {
       },
       body: JSON.stringify({
         player_name: playerName,
-        game_id: gameId,
-        session_name: sessionName,
-        access_key: accessKey
+        turns_taken: turnNumber,
+        model_name: modelName,
+        is_fog_mode: false,
       }),
     })
       .then(response => response.json())
