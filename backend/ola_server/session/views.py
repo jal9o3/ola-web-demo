@@ -84,6 +84,19 @@ def generate_random_string(length=10):
 
 
 class LeaderboardView(APIView):
+    def get(self, request, *args, **kwargs):
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+
+        # Obtain the model name from the URL
+        model_name = kwargs.get('model_name')
+
+        records = ScoreRecord.objects.filter(model_name=model_name).order_by(
+            'turns_taken')
+        result_page = paginator.paginate_queryset(records, request)
+        serializer = ScoreRecordSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
     def post(self, request, *args, **kwargs):
         player_name = request.data.get('player_name')
         turns_taken = request.data.get('turns_taken')

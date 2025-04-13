@@ -22,4 +22,5 @@ urlpatterns = [
     path('aiformation/', AIFormationView.as_view(), name='ai_formation'),
     path('history/ai/', VersusAIMatchHistoryView.as_view(), name='VsAIHistory'),
     path('leaderboard/', LeaderboardView.as_view(), name='leaderboard'),
+    path('leaderboard/<str:model_name>/', LeaderboardView.as_view(), name='leaderboard_model_name'),
 ]
