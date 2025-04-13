@@ -5,6 +5,11 @@ import "./MatchHistory.css";
 const MatchHistory = () => {
   const navigate = useNavigate();
   const [matches, setMatches] = useState([]);
+  const longColor = (color) => {
+    if (color === "R") return "Red";
+    if (color === "B") return "Blue";
+    return color;
+  };
 
   const handleBackButtonClick = () => {
     navigate(`/`);
@@ -41,8 +46,7 @@ const MatchHistory = () => {
       <h2>Match History</h2>
       <div className="match-list">
         {matches.map((match) => {
-          const winner = match.player_to_move === "B" ? "Red" : "Blue";
-          const playerWon = winner === "Blue";
+          const playerWon = match.winner === match.human_color;;
           
           return (
             <div
@@ -54,7 +58,7 @@ const MatchHistory = () => {
                 <strong>Game {match.id}</strong>
               </p>
               <p>Turns: {match.turn_number}</p>
-              <p>Winner: {winner}</p>
+              <p>Winner: {longColor(match.winner)}</p>
               <p className="result-tag">{playerWon ? "You Won" : "You Lost"}</p>
             </div>
           );
