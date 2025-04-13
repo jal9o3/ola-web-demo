@@ -131,7 +131,7 @@ const Board = () => {
   const [hasEnded, setHasEnded] = useState(false);
   const [showPopUp, setShowPopUp] = useState(false);
   const [gameId, setGameId] = useState(null);
-  const [winner, setWinner] = useState(null);
+  const [winner, setWinner] = useState('A');
   const [playerName, setPlayerName] = useState("");
   const [turnNumber, setTurnNumber] = useState(0);
   
@@ -271,14 +271,7 @@ const Board = () => {
             setHasEnded(data.has_ended);
             setGameId(data.id);
             setTurnNumber(data.turn_number);
-            
-            // TODO: this might have to be moved to a useEffect block
-            // Check for winner if game has ended
-            if (data.has_ended) {
-              if (data.winner) {
-                setWinner(data.winner);
-              }
-            }
+            setWinner(data.winner);
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -321,14 +314,7 @@ const Board = () => {
             setHasEnded(data.has_ended);
             setGameId(data.id);
             setTurnNumber(data.turn_number);
-            
-            // TODO: might have to move this to a useEffect block
-            // Check for winner if game has ended
-            if (data.has_ended) {
-              if (data.winner) {
-                setWinner(data.winner);
-              }
-            }
+            setWinner(data.winner);
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -507,6 +493,10 @@ const Board = () => {
   useEffect(() => {
     console.log("Turn number:", turnNumber);
   }, [turnNumber]);
+
+  useEffect(() => {
+    console.log("Winner:", winner);
+  }, [winner]);
   
   const Tooltip = ({ text, position }) => {
     return (

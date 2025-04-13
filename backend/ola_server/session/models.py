@@ -59,6 +59,7 @@ class VersusAIGame(models.Model):
     previous_result = models.IntegerField(default=-1)
     previous_action = models.CharField(max_length=4, default='')
     attack_location = models.JSONField(default=list)
+    winner = models.CharField(max_length=1, default='A')
 
     def __str__(self):
         return f"Versus AI Game {self.id}"

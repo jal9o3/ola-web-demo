@@ -88,7 +88,8 @@ class VersusAIMatchHistoryView(APIView):
         paginator = PageNumberPagination()
         paginator.page_size = 10  # Adjust page size as needed
         # Filter games where has_ended is True and order them in descending order
-        games = VersusAIGame.objects.filter(has_ended=True).order_by('-id')  # Replace 'id' with your desired field
+        games = VersusAIGame.objects.filter(has_ended=True).order_by(
+            '-id')  # Replace 'id' with your desired field
         result_page = paginator.paginate_queryset(games, request)
         serializer = VersusAIGameSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
@@ -198,8 +199,9 @@ class VersusAISessionView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 def get_actions_filter(arbiter_board: Board, previous_action: str, previous_result: str,
-                            attack_location: tuple[int, int]):
+                       attack_location: tuple[int, int]):
     reduced_branching, radius = 0, 1
     while reduced_branching <= 0:
         radius += 1
@@ -216,6 +218,26 @@ def get_actions_filter(arbiter_board: Board, previous_action: str, previous_resu
             state=arbiter_board, directions=DirectionFilter(), square_whitelist=whitelist)
         reduced_branching = len(actions_filter.filter())
     return actions_filter
+
+
+def get_match_result(arbiter_board: Board):
+    win_value = 1000000
+    result = None  # Initialize return value
+    if ((arbiter_board.reward() == win_value
+            and arbiter_board.player_to_move == Player.BLUE)
+            or (arbiter_board.reward() == -win_value
+                and arbiter_board.player_to_move == Player.RED)):
+        result = Player.BLUE
+    elif ((arbiter_board.reward() == win_value
+            and arbiter_board.player_to_move == Player.RED)
+            or (arbiter_board.reward() == -win_value
+                and arbiter_board.player_to_move == Player.BLUE)):
+        result = Player.RED
+    elif arbiter_board.reward() == 0:
+        result = Player.ARBITER
+
+    return result
+
 
 class GameDataView(VersusAISessionView):
     """
@@ -501,6 +523,12 @@ class GameDataView(VersusAISessionView):
 
             if next_board.is_terminal():
                 game.has_ended = True
+                # Determine the winner
+                result = get_match_result(next_board)
+                if result == Player.BLUE:
+                    game.winner = 'B'
+                elif result == Player.RED:
+                    game.winner = 'R'
 
             if not next_board.is_terminal():
                 # The AI will now make a move
@@ -597,6 +625,12 @@ class GameDataView(VersusAISessionView):
 
                 if next_board.is_terminal():
                     game.has_ended = True
+                    # Determine the winner
+                    result = get_match_result(next_board)
+                    if result == Player.BLUE:
+                        game.winner = 'B'
+                    elif result == Player.RED:
+                        game.winner = 'R'
 
             game.save()
             game_data = {
@@ -610,7 +644,7 @@ class GameDataView(VersusAISessionView):
                 'turn_number': game.turn_number,
                 'player_to_move': game.player_to_move,
                 'id': game.id,
-                'turn_number': game.turn_number,
+                'winner': game.winner,
             }
             return Response(game_data, status=status.HTTP_200_OK)
         else:
@@ -625,7 +659,7 @@ class GameDataView(VersusAISessionView):
                 'turn_number': game.turn_number,
                 'player_to_move': game.player_to_move,
                 'id': game.id,
-                'turn_number': game.turn_number,
+                'winner': game.winner,
             }
             return Response(game_data, status=status.HTTP_400_BAD_REQUEST)
 
