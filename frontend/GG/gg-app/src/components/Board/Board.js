@@ -446,7 +446,7 @@ const Board = () => {
         player_name: playerName,
         turns_taken: turnNumber,
         model_name: modelName,
-        is_fog_mode: false,
+        is_fog_mode: fogMode,
       }),
     })
       .then((response) => response.json())

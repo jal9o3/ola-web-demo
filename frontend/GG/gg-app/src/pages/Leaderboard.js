@@ -45,7 +45,7 @@ const Leaderboard = () => {
           <option value="fivelayer">Easy</option>
           <option value="fivelayer10k">Medium</option>
           <option value="csd10k">Hard</option>
-          {/* <option value="Fog">Fog</option> */}
+          <option value="fog-mode">Fog</option>
         </select>
       </div>
 

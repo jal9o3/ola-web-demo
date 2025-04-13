@@ -91,8 +91,18 @@ class LeaderboardView(APIView):
         # Obtain the model name from the URL
         model_name = kwargs.get('model_name')
 
-        records = ScoreRecord.objects.filter(model_name=model_name).order_by(
-            'turns_taken')
+        if model_name == "fog-mode":
+            records = ScoreRecord.objects.filter(is_fog_mode=True).order_by(
+                'turns_taken')
+        elif model_name == "csd10k":
+            records = ScoreRecord.objects.filter(
+                model_name=model_name,
+                is_fog_mode=False
+            ).order_by('turns_taken')
+        else:
+            records = ScoreRecord.objects.filter(model_name=model_name).order_by(
+                'turns_taken')
+
         result_page = paginator.paginate_queryset(records, request)
         serializer = ScoreRecordSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
