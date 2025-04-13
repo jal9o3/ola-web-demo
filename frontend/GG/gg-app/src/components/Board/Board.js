@@ -135,6 +135,23 @@ const Board = () => {
   const [playerName, setPlayerName] = useState("");
   const [turnNumber, setTurnNumber] = useState(0);
   const [fogMode, setFogMode] = useState(false);
+  const initialFogMatrix = () => {
+    const matrix = Array.from({ length: 8 }, () =>
+      Array.from({ length: 9 }, () => (Math.random() < 0.25 ? 1 : 0))
+    );
+    return matrix;
+  };
+  const [fogMatrix, setFogMatrix] = useState(initialFogMatrix());
+
+  const shiftFogMatrix = (matrix) => {
+    return matrix.map((row) => {
+      // Remove the last column and shift contents to the right
+      const newRow = row.slice(0, -1);
+      // Add a new first column with a 25% chance of being 1
+      newRow.unshift(Math.random() < 0.25 ? 1 : 0);
+      return newRow;
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -273,7 +290,8 @@ const Board = () => {
             setGameId(data.id);
             setTurnNumber(data.turn_number);
             setWinner(data.winner);
-          })
+            setFogMatrix(shiftFogMatrix(fogMatrix)); // Shift the fog
+          })  
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
         // Move the selected piece if no opponent piece is present
@@ -316,6 +334,7 @@ const Board = () => {
             setGameId(data.id);
             setTurnNumber(data.turn_number);
             setWinner(data.winner);
+            setFogMatrix(shiftFogMatrix(fogMatrix)); // Shift the fog
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -482,6 +501,10 @@ const Board = () => {
   useEffect(() => {
     console.log("Turn number:", turnNumber);
   }, [turnNumber]);
+
+  useEffect(() => {
+    console.log("Fog Matrix:", fogMatrix);
+  }, [fogMatrix]);
 
   useEffect(() => {
     console.log("Winner:", winner);
