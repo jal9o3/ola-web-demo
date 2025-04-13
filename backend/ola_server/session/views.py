@@ -610,6 +610,7 @@ class GameDataView(VersusAISessionView):
                 'turn_number': game.turn_number,
                 'player_to_move': game.player_to_move,
                 'id': game.id,
+                'turn_number': game.turn_number,
             }
             return Response(game_data, status=status.HTTP_200_OK)
         else:
@@ -624,6 +625,7 @@ class GameDataView(VersusAISessionView):
                 'turn_number': game.turn_number,
                 'player_to_move': game.player_to_move,
                 'id': game.id,
+                'turn_number': game.turn_number,
             }
             return Response(game_data, status=status.HTTP_400_BAD_REQUEST)
 

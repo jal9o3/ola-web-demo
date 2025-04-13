@@ -133,6 +133,7 @@ const Board = () => {
   const [gameId, setGameId] = useState(null);
   const [winner, setWinner] = useState(null);
   const [playerName, setPlayerName] = useState("");
+  const [turnNumber, setTurnNumber] = useState(0);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -269,7 +270,9 @@ const Board = () => {
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
             setHasEnded(data.has_ended);
             setGameId(data.id);
+            setTurnNumber(data.turn_number);
             
+            // TODO: this might have to be moved to a useEffect block
             // Check for winner if game has ended
             if (data.has_ended) {
               if (data.winner) {
@@ -317,7 +320,9 @@ const Board = () => {
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
             setHasEnded(data.has_ended);
             setGameId(data.id);
+            setTurnNumber(data.turn_number);
             
+            // TODO: might have to move this to a useEffect block
             // Check for winner if game has ended
             if (data.has_ended) {
               if (data.winner) {
@@ -498,6 +503,10 @@ const Board = () => {
       console.log(gameId);
     }
   }, [gameId]);
+
+  useEffect(() => {
+    console.log("Turn number:", turnNumber);
+  }, [turnNumber]);
   
   const Tooltip = ({ text, position }) => {
     return (
