@@ -137,7 +137,7 @@ const Board = () => {
   const [fogMode, setFogMode] = useState(false);
   const initialFogMatrix = () => {
     const matrix = Array.from({ length: 8 }, () =>
-      Array.from({ length: 9 }, () => (Math.random() < 0.25 ? 1 : 0))
+      Array.from({ length: 9 }, () => (Math.random() < 0.40 ? 1 : 0))
     );
     return matrix;
   };
@@ -148,7 +148,7 @@ const Board = () => {
       // Remove the last column and shift contents to the right
       const newRow = row.slice(0, -1);
       // Add a new first column with a 25% chance of being 1
-      newRow.unshift(Math.random() < 0.25 ? 1 : 0);
+      newRow.unshift(Math.random() < 0.40 ? 1 : 0);
       return newRow;
     });
   };
