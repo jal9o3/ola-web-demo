@@ -131,10 +131,11 @@ const Board = () => {
   const [hasEnded, setHasEnded] = useState(false);
   const [showPopUp, setShowPopUp] = useState(false);
   const [gameId, setGameId] = useState(null);
-  const [winner, setWinner] = useState('A');
+  const [winner, setWinner] = useState("A");
   const [playerName, setPlayerName] = useState("");
   const [turnNumber, setTurnNumber] = useState(0);
-  
+  const [fogMode, setFogMode] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -186,11 +187,11 @@ const Board = () => {
     Private: 2,
     Flag: 1, // Flag can be eliminated by any piece including the opponent's flag
   };
-  
+
   const handleBackButtonClick = () => {
     navigate(-1);
   };
-  
+
   const randomizePieces = () => {
     if (!humanColor) return; // Ensure humanColor is set before proceeding
     const availablePositions = [];
@@ -226,7 +227,7 @@ const Board = () => {
       return updatedPieces;
     });
   };
-  
+
   const handleTileClick = (row, col) => {
     if (!gameStarted) return;
     const urlParams = new URLSearchParams(window.location.search);
@@ -267,7 +268,7 @@ const Board = () => {
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
-            setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
+            setCurrentInfostate(data.current_infostate);
             setHasEnded(data.has_ended);
             setGameId(data.id);
             setTurnNumber(data.turn_number);
@@ -333,7 +334,7 @@ const Board = () => {
       if (piece) setSelectedPiece(piece);
     }
   };
-  
+
   const handleDrop = (e, row, col) => {
     e.preventDefault();
     if (gameStarted) return;
@@ -362,7 +363,7 @@ const Board = () => {
       )
     );
   };
-  
+
   const handlePlayClick = () => {
     setGameStarted(true);
     setPlayClicked(true);
@@ -414,9 +415,9 @@ const Board = () => {
       })
       .catch((error) => console.error("Error updating game data:", error));
   };
-  
+
   // Submit player name to leaderboard
-  const submitToLeaderboard = () => {    
+  const submitToLeaderboard = () => {
     fetch(`http://127.0.0.1:8000/api/leaderboard/`, {
       method: "POST",
       headers: {
@@ -429,18 +430,18 @@ const Board = () => {
         is_fog_mode: false,
       }),
     })
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         console.log("Leaderboard submission:", data);
         setShowPopUp(false);
         navigate(`/walkthrough?id=${gameId}`);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("Error submitting to leaderboard:", error);
         alert("Failed to submit to leaderboard. Please try again.");
       });
   };
-  
+
   useEffect(() => {
     if (current_infostate.length > 0) {
       const newPieces = processInfostate(
@@ -456,14 +457,14 @@ const Board = () => {
       setPieces(newPieces);
     }
   }, [current_infostate]);
-  
+
   useEffect(() => {
     if (hasEnded) {
       console.log("Game has ended");
       setShowPopUp(true);
     }
   }, [hasEnded]);
-  
+
   useEffect(() => {
     if (gameId) {
       console.log(gameId);
@@ -475,13 +476,17 @@ const Board = () => {
   }, [humanColor]);
 
   useEffect(() => {
+    console.log("Fog Mode:", fogMode);
+  }, [fogMode]);
+
+  useEffect(() => {
     console.log("Turn number:", turnNumber);
   }, [turnNumber]);
 
   useEffect(() => {
     console.log("Winner:", winner);
   }, [winner]);
-  
+
   const Tooltip = ({ text, position }) => {
     return (
       <div
@@ -492,7 +497,7 @@ const Board = () => {
       </div>
     );
   };
-  
+
   const handleHelpClick = () => {
     const hierarchy = `
             Rank Hierarchy:
@@ -514,18 +519,18 @@ const Board = () => {
         `;
     alert(hierarchy);
   };
-  
+
   const handleDragStart = (e, pieceId) => {
     e.dataTransfer.setData("pieceId", pieceId);
   };
-  
+
   const allowDrop = (e) => e.preventDefault();
-  
+
   const allPiecesPlaced = pieces.every((piece) => piece.position !== null);
   const allHumanPiecesPlaced = pieces
     .filter((piece) => piece.team === humanColor)
     .every((piece) => piece.position !== null);
-    
+
   return (
     <div className="board-wrapper">
       {" "}
@@ -541,6 +546,7 @@ const Board = () => {
           <select
             id="model-select"
             value={modelName}
+            disabled={fogMode || gameStarted}
             onChange={(e) => setModelName(e.target.value)}
           >
             <option value="fivelayer">fivelayer</option>
@@ -683,8 +689,8 @@ const Board = () => {
           </div>
         </div>
       </div>
-      <GameOverPopup 
-        visible={showPopUp} 
+      <GameOverPopup
+        visible={showPopUp}
         onClose={() => setShowPopUp(false)}
         winner={winner}
         humanColor={humanColor}
@@ -694,13 +700,38 @@ const Board = () => {
         setPlayerName={setPlayerName}
         submitToLeaderboard={submitToLeaderboard}
       />
+      <div className="fog-mode-toggle">
+        <label htmlFor="fog-mode">Fog Mode:</label>
+        <input
+          type="checkbox"
+          id="fog-mode"
+          checked={fogMode}
+          disabled={gameStarted}
+          onChange={(e) => {
+            setFogMode(e.target.checked);
+            if (e.target.checked) {
+              setModelName("csd10k");
+            }
+          }}
+        />
+      </div>
     </div>
   );
 };
 
-const GameOverPopup = ({ visible, onClose, winner, humanColor, gameId, navigate, playerName, setPlayerName, submitToLeaderboard }) => {
+const GameOverPopup = ({
+  visible,
+  onClose,
+  winner,
+  humanColor,
+  gameId,
+  navigate,
+  playerName,
+  setPlayerName,
+  submitToLeaderboard,
+}) => {
   if (!visible) return null;
-  
+
   const shortColor = (color) => {
     if (color === "red") return "R";
     if (color === "blue") return "B";
@@ -714,7 +745,7 @@ const GameOverPopup = ({ visible, onClose, winner, humanColor, gameId, navigate,
   const isPlayerWinner = winner === shortColor(humanColor);
   const winnerText = winner ? `${longColor(winner)} wins!` : "Game Over";
   console.log("Winner:", winner, "Human Color:", humanColor);
-  
+
   return ReactDOM.createPortal(
     <div className="popup-overlay">
       <div className="popup-content">
@@ -723,7 +754,7 @@ const GameOverPopup = ({ visible, onClose, winner, humanColor, gameId, navigate,
         </button>
         <h2>Game Over</h2>
         <h3>{winnerText}</h3>
-        
+
         {isPlayerWinner && (
           <div className="leaderboard-form">
             <p>Add your name to the leaderboard:</p>
@@ -737,9 +768,9 @@ const GameOverPopup = ({ visible, onClose, winner, humanColor, gameId, navigate,
             <button onClick={submitToLeaderboard} className="popup-button">
               Submit
             </button>
-            </div>
+          </div>
         )}
-        
+
         <button
           onClick={() => navigate(`/walkthrough?id=${gameId}`)}
           className="popup-button"
