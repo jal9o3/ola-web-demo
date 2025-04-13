@@ -469,26 +469,19 @@ const Board = () => {
   useEffect(() => {
     if (hasEnded) {
       console.log("Game has ended");
-      // If there's no winner set from API response, determine it based on remaining pieces
-      if (!winner) {
-        const blueFlag = pieces.find(p => p.team === "blue" && p.name === "Flag");
-        const redFlag = pieces.find(p => p.team === "red" && p.name === "Flag");
-        
-        if (!blueFlag && redFlag) {
-          setWinner("red");
-        } else if (blueFlag && !redFlag) {
-          setWinner("blue");
-        }
-      }
       setShowPopUp(true);
     }
-  }, [hasEnded, pieces, winner]);
+  }, [hasEnded]);
   
   useEffect(() => {
     if (gameId) {
       console.log(gameId);
     }
   }, [gameId]);
+
+  useEffect(() => {
+    console.log("Human Color:", humanColor);
+  }, [humanColor]);
 
   useEffect(() => {
     console.log("Turn number:", turnNumber);
@@ -717,8 +710,19 @@ const Board = () => {
 const GameOverPopup = ({ visible, onClose, winner, humanColor, gameId, navigate, playerName, setPlayerName, submitToLeaderboard }) => {
   if (!visible) return null;
   
-  const isPlayerWinner = winner === humanColor;
-  const winnerText = winner ? `${winner.toUpperCase()} wins!` : "Game Over";
+  const shortColor = (color) => {
+    if (color === "red") return "R";
+    if (color === "blue") return "B";
+    return color;
+  };
+  const longColor = (color) => {
+    if (color === "R") return "Red";
+    if (color === "B") return "Blue";
+    return color;
+  };
+  const isPlayerWinner = winner === shortColor(humanColor);
+  const winnerText = winner ? `${longColor(winner)} wins!` : "Game Over";
+  console.log("Winner:", winner, "Human Color:", humanColor);
   
   return ReactDOM.createPortal(
     <div className="popup-overlay">
