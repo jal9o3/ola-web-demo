@@ -89,6 +89,10 @@
     border: 1px solid black;
 }
 
+.tile.fogged {
+  background-color: grey; /* Grey out the tile */
+  pointer-events: none; /* Disable interactions */
+}
 
 .piece-selection {
     position: relative;

@@ -598,70 +598,64 @@ const Board = () => {
           </div>
         )}
         <div className="game-board">
-          {/* For every row */}
-          {Array.from({ length: 8 }).map(
-            (
-              _, // Current element
-              row // Current index
-            ) =>
-              // For every column
-              Array.from({ length: 9 }).map((_, col) => {
-                const piece = pieces.find(
-                  (p) => p.position?.row === row && p.position?.col === col
-                ); // Find the piece at the current position if any
-                return (
-                  <div
-                    key={`${row}-${col}`}
-                    className={`tile ${
-                      selectedPiece?.position?.row === row &&
-                      selectedPiece?.position?.col === col
-                        ? "selected"
-                        : ""
-                    }`} // If piece's location matches selected piece, add to 'selected' class
-                    onClick={() => handleTileClick(row, col)}
-                    onDrop={(e) => handleDrop(e, row, col)}
-                    onDragOver={allowDrop}
-                  >
-                    {piece ? (
-                      piece.team === humanColor ? (
-                        // Set the image of a visible piece
-                        <img
-                          src={piece.src}
-                          alt={piece.name}
-                          className="piece-image"
-                          draggable={!gameStarted}
-                          onDragStart={(e) => handleDragStart(e, piece.id)}
-                          onMouseEnter={(e) => {
-                            setTooltip({
-                              visible: true,
-                              text: piece.name,
-                              position: {
-                                x: e.clientX,
-                                y: e.clientY,
-                              },
-                            });
-                          }}
-                          onMouseLeave={() =>
-                            setTooltip({
-                              visible: false,
-                              text: "",
-                              position: {
-                                x: 0,
-                                y: 0,
-                              },
-                            })
-                          }
-                        />
-                      ) : gameStarted ? (
-                        // Display the placeholder for a hidden piece only when the game has started
-                        <div className="opponent-placeholder"></div>
-                      ) : // Otherwise, display an empty tile
-                      null
-                    ) : // Otherwise, display an empty tile
-                    null}
-                  </div>
-                );
-              })
+          {Array.from({ length: 8 }).map((_, row) =>
+            Array.from({ length: 9 }).map((_, col) => {
+              const piece = pieces.find(
+                (p) => p.position?.row === row && p.position?.col === col
+              ); // Find the piece at the current position if any
+              const isFogged = fogMode && fogMatrix[row][col] === 1; // Check if fogMode is enabled and the cell is fogged
+
+              return (
+                <div
+                  key={`${row}-${col}`}
+                  className={`tile ${
+                    selectedPiece?.position?.row === row &&
+                    selectedPiece?.position?.col === col
+                      ? "selected"
+                      : ""
+                  } ${isFogged ? "fogged" : ""}`} // Add a 'fogged' class if the tile is fogged
+                  onClick={() => !isFogged && handleTileClick(row, col)} // Disable clicks on fogged tiles
+                  onDrop={(e) => !isFogged && handleDrop(e, row, col)} // Disable drops on fogged tiles
+                  onDragOver={!isFogged ? allowDrop : undefined} // Disable drag-over on fogged tiles
+                >
+                  {isFogged ? null : piece ? (
+                    piece.team === humanColor ? (
+                      // Set the image of a visible piece
+                      <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className="piece-image"
+                        draggable={!gameStarted}
+                        onDragStart={(e) => handleDragStart(e, piece.id)}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: {
+                              x: e.clientX,
+                              y: e.clientY,
+                            },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: {
+                              x: 0,
+                              y: 0,
+                            },
+                          })
+                        }
+                      />
+                    ) : gameStarted ? (
+                      // Display the placeholder for a hidden piece only when the game has started
+                      <div className="opponent-placeholder"></div>
+                    ) : null
+                  ) : null}
+                </div>
+              );
+            })
           )}
           {tooltip.visible && (
             <Tooltip text={tooltip.text} position={tooltip.position} />
