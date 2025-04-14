@@ -153,6 +153,8 @@ const Board = () => {
     });
   };
 
+  const [hostname, setHostname] = useState(window.location.hostname);
+
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -169,13 +171,23 @@ const Board = () => {
   }, []);
 
   useEffect(() => {
+    console.log("Hostname:", hostname)
+
+    if (hostname === 'localhost') {
+        setHostname('127.0.0.1');
+    }
+
+    console.log("Hostname:", hostname)
+  }, [hostname]);
+
+  useEffect(() => {
     const fetchData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const accessKey = urlParams.get("accessKey");
       const sessionName = urlParams.get("sessionName");
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/sessions/game-data/?session_name=${sessionName}&access_key=${accessKey}`
+          `http://${hostname}:8000/api/sessions/game-data/?session_name=${sessionName}&access_key=${accessKey}`
         );
         const data = await response.json();
         console.log(data);
@@ -285,7 +297,7 @@ const Board = () => {
       if (isValidMove && opponentPiece) {
         const move = `${position.row}${position.col}${row}${col}`;
         // Submit the move to the backend using PATCH
-        fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
+        fetch(`http://${hostname}:8000/api/sessions/game-data/`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -329,7 +341,7 @@ const Board = () => {
       } else if (isValidMove) {
         const move = `${position.row}${position.col}${row}${col}`;
         // Submit the move to the backend using PATCH
-        fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
+        fetch(`http://${hostname}:8000/api/sessions/game-data/`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -429,7 +441,7 @@ const Board = () => {
     console.log(sessionName);
     console.log(accessKey);
     // Send the formation values to the backend using PATCH
-    fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
+    fetch(`http://${hostname}:8000/api/sessions/game-data/`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -452,7 +464,7 @@ const Board = () => {
 
   // Submit player name to leaderboard
   const submitToLeaderboard = () => {
-    fetch(`http://127.0.0.1:8000/api/leaderboard/`, {
+    fetch(`http://${hostname}:8000/api/leaderboard/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

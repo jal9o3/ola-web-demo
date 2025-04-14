@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './GameModes.css';
 
@@ -7,6 +7,17 @@ const GameModes = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [sessionName, setSessionName] = useState('');
     const [accessKey, setAccessKey] = useState('');
+    const [hostname, setHostname] = useState(window.location.hostname);
+
+    useEffect(() => {
+        console.log("Hostname:", hostname)
+
+        if (hostname === 'localhost') {
+            setHostname('127.0.0.1');
+        }
+
+        console.log("Hostname:", hostname)
+    }, [hostname]);
 
 
     const modes = [
@@ -24,7 +35,7 @@ const GameModes = () => {
             return;
         }
 
-        fetch('http://127.0.0.1:8000/api/sessions/', {
+        fetch(`http://${hostname}:8000/api/sessions/`, {
             method: 'POST', // Specify the HTTP method
             headers: {
                 'Content-Type': 'application/json', // Set the content type to JSON
