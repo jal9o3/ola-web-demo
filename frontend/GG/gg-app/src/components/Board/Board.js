@@ -153,6 +153,21 @@ const Board = () => {
     });
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768); // Adjust breakpoint as needed
+    };
+
+    checkIfMobile(); // Initial check
+    window.addEventListener("resize", checkIfMobile); // Listen for window resize
+
+    return () => {
+      window.removeEventListener("resize", checkIfMobile); // Cleanup listener
+    };
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -668,42 +683,48 @@ const Board = () => {
               ?
             </button>
           </div>
-          <div className="pieces-list">
-            {!allPiecesPlaced ? (
-              pieces
-                .filter(
-                  (piece) =>
-                    piece.position === null && piece.team === humanColor
-                )
-                .map((piece) => (
-                  <div key={piece.id} className="piece-container">
-                    <img
-                      src={piece.src}
-                      alt={piece.name}
-                      className="piece-image"
-                      draggable={!gameStarted}
-                      onDragStart={(e) => handleDragStart(e, piece.id)}
-                      onMouseEnter={(e) => {
-                        setTooltip({
-                          visible: true,
-                          text: piece.name,
-                          position: { x: e.clientX, y: e.clientY },
-                        });
-                      }}
-                      onMouseLeave={() =>
-                        setTooltip({
-                          visible: false,
-                          text: "",
-                          position: { x: 0, y: 0 },
-                        })
-                      }
-                    />
-                  </div>
-                ))
-            ) : (
-              <p></p> // Optional message when all pieces are placed
-            )}
-          </div>
+          {isMobile ? (
+            <div className="mobile-human-color">
+              <p>Your Team: {humanColor}</p>
+            </div>
+          ) : (
+            <div className="pieces-list">
+              {!allPiecesPlaced ? (
+                pieces
+                  .filter(
+                    (piece) =>
+                      piece.position === null && piece.team === humanColor
+                  )
+                  .map((piece) => (
+                    <div key={piece.id} className="piece-container">
+                      <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className="piece-image"
+                        draggable={!gameStarted}
+                        onDragStart={(e) => handleDragStart(e, piece.id)}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: { x: e.clientX, y: e.clientY },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: { x: 0, y: 0 },
+                          })
+                        }
+                      />
+                    </div>
+                  ))
+              ) : (
+                <p></p> // Optional message when all pieces are placed
+              )}
+            </div>
+          )}
         </div>
       </div>
       <GameOverPopup
