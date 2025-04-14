@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import "./Board.css";
-
 // Import images
 import Gen5 from "../../assets/Gen5.png";
 import Gen5b from "../../assets/Gen5b.png";
@@ -35,9 +34,7 @@ import Sergeant from "../../assets/Sergeant.png";
 import Sergeantb from "../../assets/Sergeantb.png";
 import Lieucol from "../../assets/Lieucol.png";
 import Lieucolb from "../../assets/Lieucolb.png";
-
 import { processInfostate } from "../../utils/processInfostate";
-
 // Initial Pieces with 6 Privates and 2 Spies
 const initialPieces = [
   { id: 1, name: "5-star General", src: Gen5b, position: null, team: "blue" },
@@ -120,14 +117,12 @@ const initialPieces = [
   },
 ];
 // The pieces that belong to the AI will have their names and images set to null
-
 const Board = () => {
   const navigate = useNavigate();
   const BLUE_FLAG = 1;
   const BLUE_SPY = 15; // Rankings are 1 to 15
   const RED_FLAG = 16;
   const RED_SPY = 30; // Red pieces are denoted as ranking + 15
-
   const [aiColor, setAiColor] = useState("");
   const [humanColor, setHumanColor] = useState("");
   const [current_infostate, setCurrentInfostate] = useState([]);
@@ -136,36 +131,52 @@ const Board = () => {
   const [hasEnded, setHasEnded] = useState(false);
   const [showPopUp, setShowPopUp] = useState(false);
   const [gameId, setGameId] = useState(null);
+  const [winner, setWinner] = useState("A");
+  const [playerName, setPlayerName] = useState("");
+  const [turnNumber, setTurnNumber] = useState(0);
+  const [fogMode, setFogMode] = useState(false);
+  const initialFogMatrix = () => {
+    const matrix = Array.from({ length: 8 }, () =>
+      Array.from({ length: 9 }, () => (Math.random() < 0.40 ? 1 : 0))
+    );
+    return matrix;
+  };
+  const [fogMatrix, setFogMatrix] = useState(initialFogMatrix());
+
+  const shiftFogMatrix = (matrix) => {
+    return matrix.map((row) => {
+      // Remove the last column and shift contents to the right
+      const newRow = row.slice(0, -1);
+      // Add a new first column with a 25% chance of being 1
+      newRow.unshift(Math.random() < 0.40 ? 1 : 0);
+      return newRow;
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const accessKey = urlParams.get("accessKey");
       const sessionName = urlParams.get("sessionName");
-
       try {
         const response = await fetch(
           `http://127.0.0.1:8000/api/sessions/game-data/?session_name=${sessionName}&access_key=${accessKey}`
         );
         const data = await response.json();
         console.log(data);
-
         const setColor = (color) => {
           if (color === "R") return "red";
           if (color === "B") return "blue";
           return color;
         };
-
         setAiColor(setColor(data.ai_color));
         setHumanColor(setColor(data.human_color));
       } catch (error) {
         console.error("Error fetching game data:", error);
       }
     };
-
     fetchData();
   }, []);
-
   const [pieces, setPieces] = useState(initialPieces);
   const [gameStarted, setGameStarted] = useState(false);
   const [playClicked, setPlayClicked] = useState(false);
@@ -176,7 +187,6 @@ const Board = () => {
     text: "",
     position: { x: 0, y: 0 },
   });
-
   const rankHierarchy = {
     Spy: 15, // Spy can eliminate all officers except privates
     "5-star General": 14,
@@ -201,14 +211,12 @@ const Board = () => {
 
   const randomizePieces = () => {
     if (!humanColor) return; // Ensure humanColor is set before proceeding
-
     const availablePositions = [];
     for (let row = 5; row <= 7; row++) {
       for (let col = 0; col < 9; col++) {
         availablePositions.push({ row, col });
       }
     }
-
     // Shuffle the available positions
     for (let i = availablePositions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -217,18 +225,15 @@ const Board = () => {
         availablePositions[i],
       ];
     }
-
     // Get the pieces that belong to the human player
     const playerPieces = pieces.filter(
       (piece) => piece.team === humanColor && piece.position === null
     );
-
     // Assign random positions to the player pieces
     const newPieces = playerPieces.map((piece, index) => {
       const position = availablePositions[index];
       return { ...piece, position };
     });
-
     // Update the pieces state
     setPieces((prevPieces) => {
       const updatedPieces = prevPieces.map((piece) =>
@@ -242,21 +247,17 @@ const Board = () => {
 
   const handleTileClick = (row, col) => {
     if (!gameStarted) return;
-
     const urlParams = new URLSearchParams(window.location.search);
     const sessionName = urlParams.get("sessionName");
     const accessKey = urlParams.get("accessKey");
-
     if (selectedPiece) {
       const { position, team, name } = selectedPiece;
-
       // Allow moves in all directions (one tile)
       const isValidMove =
         (row === position.row - 1 && col === position.col) || // Up
         (row === position.row && col === position.col - 1) || // Left
         (row === position.row && col === position.col + 1) || // Right
         (row === position.row + 1 && col === position.col); // Down
-
       // Check for opponent and allied pieces
       const opponentPiece = pieces.find(
         (p) =>
@@ -266,7 +267,6 @@ const Board = () => {
         (p) =>
           p.position?.row === row && p.position?.col === col && p.team === team
       );
-
       if (isValidMove && opponentPiece) {
         const move = `${position.row}${position.col}${row}${col}`;
         // Submit the move to the backend using PATCH
@@ -285,13 +285,15 @@ const Board = () => {
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
-            setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
+            setCurrentInfostate(data.current_infostate);
             setHasEnded(data.has_ended);
             setGameId(data.id);
-          })
+            setTurnNumber(data.turn_number);
+            setWinner(data.winner);
+            setFogMatrix(shiftFogMatrix(fogMatrix)); // Shift the fog
+          })  
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
-
         // Move the selected piece if no opponent piece is present
         setPieces((prevPieces) =>
           prevPieces.map((p) =>
@@ -300,7 +302,6 @@ const Board = () => {
         );
         // Switch turn to AI after player's move
         setCurrentTurn("AI's turn");
-
         // Simulate AI's move (this is just a placeholder for actual AI logic)
         setTimeout(() => {
           // Here you would implement the AI's logic to make a move
@@ -331,6 +332,9 @@ const Board = () => {
             setCurrentInfostate(data.current_infostate); // This will trigger the top-level useEffect
             setHasEnded(data.has_ended);
             setGameId(data.id);
+            setTurnNumber(data.turn_number);
+            setWinner(data.winner);
+            setFogMatrix(shiftFogMatrix(fogMatrix)); // Shift the fog
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -353,10 +357,8 @@ const Board = () => {
   const handleDrop = (e, row, col) => {
     e.preventDefault();
     if (gameStarted) return;
-
     const pieceId = e.dataTransfer.getData("pieceId");
     if (!pieceId) return;
-
     // Ensure placement is within rows 5, 6, and 7
     if (!gameStarted && (row < 5 || row > 7)) {
       alert(
@@ -364,7 +366,6 @@ const Board = () => {
       );
       return;
     }
-
     // Prevent placing pieces on top of each other
     const isOccupied = pieces.some(
       (p) => p.position?.row === row && p.position?.col === col
@@ -373,7 +374,6 @@ const Board = () => {
       //alert("This tile is already occupied! Choose another spot.");
       return;
     }
-
     setPieces((prevPieces) =>
       prevPieces.map((piece) =>
         piece.id.toString() === pieceId
@@ -387,12 +387,9 @@ const Board = () => {
     setGameStarted(true);
     setPlayClicked(true);
     setOpponentVisible(true);
-
     // Remove highlight after 1 second for better UI feedback
     setTimeout(() => setPlayClicked(false), 10000);
-
     const lastThreeRows = [];
-
     for (let row = 5; row < 8; row++) {
       for (let col = 0; col < 9; col++) {
         const piece = pieces.find(
@@ -401,7 +398,6 @@ const Board = () => {
         lastThreeRows.push({ row, col, piece });
       }
     }
-
     // Sort the array from left to right, top to bottom
     lastThreeRows.sort((a, b) => {
       if (a.row === b.row) {
@@ -409,7 +405,6 @@ const Board = () => {
       }
       return a.row - b.row;
     });
-
     const formationValues = lastThreeRows.map((tile) =>
       tile.piece ? rankHierarchy[tile.piece.name] : 0
     );
@@ -418,7 +413,6 @@ const Board = () => {
     const accessKey = urlParams.get("accessKey");
     console.log(sessionName);
     console.log(accessKey);
-
     // Send the formation values to the backend using PATCH
     fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
       method: "PATCH",
@@ -439,6 +433,32 @@ const Board = () => {
         setCurrentInfostate(data.current_infostate);
       })
       .catch((error) => console.error("Error updating game data:", error));
+  };
+
+  // Submit player name to leaderboard
+  const submitToLeaderboard = () => {
+    fetch(`http://127.0.0.1:8000/api/leaderboard/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        player_name: playerName,
+        turns_taken: turnNumber,
+        model_name: modelName,
+        is_fog_mode: fogMode,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Leaderboard submission:", data);
+        setShowPopUp(false);
+        navigate(`/walkthrough?id=${gameId}`);
+      })
+      .catch((error) => {
+        console.error("Error submitting to leaderboard:", error);
+        alert("Failed to submit to leaderboard. Please try again.");
+      });
   };
 
   useEffect(() => {
@@ -470,6 +490,26 @@ const Board = () => {
     }
   }, [gameId]);
 
+  useEffect(() => {
+    console.log("Human Color:", humanColor);
+  }, [humanColor]);
+
+  useEffect(() => {
+    console.log("Fog Mode:", fogMode);
+  }, [fogMode]);
+
+  useEffect(() => {
+    console.log("Turn number:", turnNumber);
+  }, [turnNumber]);
+
+  useEffect(() => {
+    console.log("Fog Matrix:", fogMatrix);
+  }, [fogMatrix]);
+
+  useEffect(() => {
+    console.log("Winner:", winner);
+  }, [winner]);
+
   const Tooltip = ({ text, position }) => {
     return (
       <div
@@ -484,7 +524,6 @@ const Board = () => {
   const handleHelpClick = () => {
     const hierarchy = `
             Rank Hierarchy:
-
             Spy: 15 (Can only be defeated by privates)
             5-star General: 14
             4-star General: 13
@@ -530,6 +569,7 @@ const Board = () => {
           <select
             id="model-select"
             value={modelName}
+            disabled={fogMode || gameStarted}
             onChange={(e) => setModelName(e.target.value)}
           >
             <option value="fivelayer">fivelayer</option>
@@ -537,7 +577,6 @@ const Board = () => {
             <option value="csd10k">csd10k</option>
           </select>
         </div>
-
         {!gameStarted && (
           <div className="button-container">
             <button
@@ -549,7 +588,6 @@ const Board = () => {
             >
               Play
             </button>
-
             <button
               onClick={randomizePieces}
               className="randomize-button"
@@ -559,78 +597,70 @@ const Board = () => {
             </button>
           </div>
         )}
-
         <div className="game-board">
-          {/* For every row */}
-          {Array.from({ length: 8 }).map(
-            (
-              _, // Current element
-              row // Current index
-            ) =>
-              // For every column
-              Array.from({ length: 9 }).map((_, col) => {
-                const piece = pieces.find(
-                  (p) => p.position?.row === row && p.position?.col === col
-                ); // Find the piece at the current position if any
-                return (
-                  <div
-                    key={`${row}-${col}`}
-                    className={`tile ${
-                      selectedPiece?.position?.row === row &&
-                      selectedPiece?.position?.col === col
-                        ? "selected"
-                        : ""
-                    }`} // If piece's location matches selected piece, add to 'selected' class
-                    onClick={() => handleTileClick(row, col)}
-                    onDrop={(e) => handleDrop(e, row, col)}
-                    onDragOver={allowDrop}
-                  >
-                    {piece ? (
-                      piece.team === humanColor ? (
-                        // Set the image of a visible piece
-                        <img
-                          src={piece.src}
-                          alt={piece.name}
-                          className="piece-image"
-                          draggable={!gameStarted}
-                          onDragStart={(e) => handleDragStart(e, piece.id)}
-                          onMouseEnter={(e) => {
-                            setTooltip({
-                              visible: true,
-                              text: piece.name,
-                              position: {
-                                x: e.clientX,
-                                y: e.clientY,
-                              },
-                            });
-                          }}
-                          onMouseLeave={() =>
-                            setTooltip({
-                              visible: false,
-                              text: "",
-                              position: {
-                                x: 0,
-                                y: 0,
-                              },
-                            })
-                          }
-                        />
-                      ) : gameStarted ? (
-                        // Display the placeholder for a hidden piece only when the game has started
-                        <div className="opponent-placeholder"></div>
-                      ) : // Otherwise, display an empty tile
-                      null
-                    ) : // Otherwise, display an empty tile
-                    null}
-                  </div>
-                );
-              })
+          {Array.from({ length: 8 }).map((_, row) =>
+            Array.from({ length: 9 }).map((_, col) => {
+              const piece = pieces.find(
+                (p) => p.position?.row === row && p.position?.col === col
+              ); // Find the piece at the current position if any
+              const isFogged = fogMode && fogMatrix[row][col] === 1; // Check if fogMode is enabled and the cell is fogged
+
+              return (
+                <div
+                  key={`${row}-${col}`}
+                  className={`tile ${
+                    selectedPiece?.position?.row === row &&
+                    selectedPiece?.position?.col === col
+                      ? "selected"
+                      : ""
+                  } ${isFogged ? "fogged" : ""}`} // Add a 'fogged' class if the tile is fogged
+                  onClick={() => !isFogged && handleTileClick(row, col)} // Disable clicks on fogged tiles
+                  onDrop={(e) => !isFogged && handleDrop(e, row, col)} // Disable drops on fogged tiles
+                  onDragOver={!isFogged ? allowDrop : undefined} // Disable drag-over on fogged tiles
+                >
+                  {isFogged ? null : piece ? (
+                    piece.team === humanColor ? (
+                      // Set the image of a visible piece
+                      <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className="piece-image"
+                        draggable={!gameStarted}
+                        onDragStart={(e) => handleDragStart(e, piece.id)}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: {
+                              x: e.clientX,
+                              y: e.clientY,
+                            },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: {
+                              x: 0,
+                              y: 0,
+                            },
+                          })
+                        }
+                      />
+                    ) : gameStarted ? (
+                      // Display the placeholder for a hidden piece only when the game has started
+                      <div className="opponent-placeholder"></div>
+                    ) : null
+                  ) : null}
+                </div>
+              );
+            })
           )}
           {tooltip.visible && (
             <Tooltip text={tooltip.text} position={tooltip.position} />
           )}
         </div>
-
         <div className="piece-selection">
           <div className="above-content">
             {!allPiecesPlaced && <h3>Available Pieces</h3>}
@@ -638,7 +668,6 @@ const Board = () => {
               ?
             </button>
           </div>
-
           <div className="pieces-list">
             {!allPiecesPlaced ? (
               pieces
@@ -677,23 +706,102 @@ const Board = () => {
           </div>
         </div>
       </div>
-      <Popup visible={showPopUp} onClose={() => setShowPopUp(false)}>
+      <GameOverPopup
+        visible={showPopUp}
+        onClose={() => setShowPopUp(false)}
+        winner={winner}
+        humanColor={humanColor}
+        gameId={gameId}
+        navigate={navigate}
+        playerName={playerName}
+        setPlayerName={setPlayerName}
+        submitToLeaderboard={submitToLeaderboard}
+      />
+      <div className="fog-mode-toggle">
+        <label htmlFor="fog-mode">Fog Mode:</label>
+        <input
+          type="checkbox"
+          id="fog-mode"
+          checked={fogMode}
+          disabled={gameStarted}
+          onChange={(e) => {
+            setFogMode(e.target.checked);
+            if (e.target.checked) {
+              setModelName("csd10k");
+            }
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+const GameOverPopup = ({
+  visible,
+  onClose,
+  winner,
+  humanColor,
+  gameId,
+  navigate,
+  playerName,
+  setPlayerName,
+  submitToLeaderboard,
+}) => {
+  if (!visible) return null;
+
+  const shortColor = (color) => {
+    if (color === "red") return "R";
+    if (color === "blue") return "B";
+    return color;
+  };
+  const longColor = (color) => {
+    if (color === "R") return "Red";
+    if (color === "B") return "Blue";
+    return color;
+  };
+  const isPlayerWinner = winner === shortColor(humanColor);
+  const winnerText = winner ? `${longColor(winner)} wins!` : "Game Over";
+  console.log("Winner:", winner, "Human Color:", humanColor);
+
+  return ReactDOM.createPortal(
+    <div className="popup-overlay">
+      <div className="popup-content">
+        <button className="popup-close-button" onClick={onClose}>
+          ✖
+        </button>
         <h2>Game Over</h2>
-        <p>The game has ended. Thank you for playing!</p>
+        <h3>{winnerText}</h3>
+
+        {isPlayerWinner && (
+          <div className="leaderboard-form">
+            <p>Add your name to the leaderboard:</p>
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              className="name-input"
+            />
+            <button onClick={submitToLeaderboard} className="popup-button">
+              Submit
+            </button>
+          </div>
+        )}
+
         <button
           onClick={() => navigate(`/walkthrough?id=${gameId}`)}
           className="popup-button"
         >
           View Walkthrough
         </button>
-      </Popup>
-    </div>
+      </div>
+    </div>,
+    document.body
   );
 };
 
 const Popup = ({ visible, onClose, children }) => {
   if (!visible) return null;
-
   return ReactDOM.createPortal(
     <div className="popup-overlay">
       <div className="popup-content">

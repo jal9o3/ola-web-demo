@@ -32,9 +32,9 @@ from OLA.constants import Ranking, Result
 from OLA.simulation import MatchSimulator
 from OLA.training import TimelessBoard, ActionsFilter, DirectionFilter
 
-from .models import VersusAISession, VersusAIGame
+from .models import VersusAISession, VersusAIGame, ScoreRecord
 from .serializers import (VersusAISessionSerializer, VersusAISessionListSerializer,
-                          VersusAIGameSerializer)
+                          VersusAIGameSerializer, ScoreRecordSerializer)
 
 INPUT_SIZE = 147
 OUTPUT_SIZE = 254
@@ -83,12 +83,67 @@ def generate_random_string(length=10):
     return ''.join(secrets.choice(alphabet) for _ in range(length))
 
 
+class LeaderboardView(APIView):
+    def get(self, request, *args, **kwargs):
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+
+        # Obtain the model name from the URL
+        model_name = kwargs.get('model_name')
+
+        if model_name == "fog-mode":
+            records = ScoreRecord.objects.filter(is_fog_mode=True).order_by(
+                'turns_taken')
+        elif model_name == "csd10k":
+            records = ScoreRecord.objects.filter(
+                model_name=model_name,
+                is_fog_mode=False
+            ).order_by('turns_taken')
+        else:
+            records = ScoreRecord.objects.filter(model_name=model_name).order_by(
+                'turns_taken')
+
+        result_page = paginator.paginate_queryset(records, request)
+        serializer = ScoreRecordSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        player_name = request.data.get('player_name')
+        turns_taken = request.data.get('turns_taken')
+        model_name = request.data.get('model_name')
+        is_fog_mode = request.data.get('is_fog_mode')
+
+        if player_name == "":
+            player_name = "Anonymous"
+
+        new_record = ScoreRecord.objects.create(
+            player_name=player_name,
+            turns_taken=turns_taken,
+            model_name=model_name,
+            is_fog_mode=is_fog_mode,
+        )
+
+        record_data = {
+            'player_name': new_record.player_name,
+            'turns_taken': new_record.turns_taken,
+            'model_name': new_record.model_name,
+            'is_fog_mode': new_record.is_fog_mode,
+        }
+
+        serializer = ScoreRecordSerializer(data=record_data)
+        if serializer.is_valid():
+            # serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class VersusAIMatchHistoryView(APIView):
     def get(self, request, *args, **kwargs):
         paginator = PageNumberPagination()
         paginator.page_size = 10  # Adjust page size as needed
         # Filter games where has_ended is True and order them in descending order
-        games = VersusAIGame.objects.filter(has_ended=True).order_by('-id')  # Replace 'id' with your desired field
+        games = VersusAIGame.objects.filter(has_ended=True).order_by(
+            '-id')  # Replace 'id' with your desired field
         result_page = paginator.paginate_queryset(games, request)
         serializer = VersusAIGameSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
@@ -198,8 +253,9 @@ class VersusAISessionView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 def get_actions_filter(arbiter_board: Board, previous_action: str, previous_result: str,
-                            attack_location: tuple[int, int]):
+                       attack_location: tuple[int, int]):
     reduced_branching, radius = 0, 1
     while reduced_branching <= 0:
         radius += 1
@@ -216,6 +272,26 @@ def get_actions_filter(arbiter_board: Board, previous_action: str, previous_resu
             state=arbiter_board, directions=DirectionFilter(), square_whitelist=whitelist)
         reduced_branching = len(actions_filter.filter())
     return actions_filter
+
+
+def get_match_result(arbiter_board: Board):
+    win_value = 1000000
+    result = None  # Initialize return value
+    if ((arbiter_board.reward() == win_value
+            and arbiter_board.player_to_move == Player.BLUE)
+            or (arbiter_board.reward() == -win_value
+                and arbiter_board.player_to_move == Player.RED)):
+        result = Player.BLUE
+    elif ((arbiter_board.reward() == win_value
+            and arbiter_board.player_to_move == Player.RED)
+            or (arbiter_board.reward() == -win_value
+                and arbiter_board.player_to_move == Player.BLUE)):
+        result = Player.RED
+    elif arbiter_board.reward() == 0:
+        result = Player.ARBITER
+
+    return result
+
 
 class GameDataView(VersusAISessionView):
     """
@@ -501,6 +577,12 @@ class GameDataView(VersusAISessionView):
 
             if next_board.is_terminal():
                 game.has_ended = True
+                # Determine the winner
+                result = get_match_result(next_board)
+                if result == Player.BLUE:
+                    game.winner = 'B'
+                elif result == Player.RED:
+                    game.winner = 'R'
 
             if not next_board.is_terminal():
                 # The AI will now make a move
@@ -597,6 +679,12 @@ class GameDataView(VersusAISessionView):
 
                 if next_board.is_terminal():
                     game.has_ended = True
+                    # Determine the winner
+                    result = get_match_result(next_board)
+                    if result == Player.BLUE:
+                        game.winner = 'B'
+                    elif result == Player.RED:
+                        game.winner = 'R'
 
             game.save()
             game_data = {
@@ -610,6 +698,7 @@ class GameDataView(VersusAISessionView):
                 'turn_number': game.turn_number,
                 'player_to_move': game.player_to_move,
                 'id': game.id,
+                'winner': game.winner,
             }
             return Response(game_data, status=status.HTTP_200_OK)
         else:
@@ -624,6 +713,7 @@ class GameDataView(VersusAISessionView):
                 'turn_number': game.turn_number,
                 'player_to_move': game.player_to_move,
                 'id': game.id,
+                'winner': game.winner,
             }
             return Response(game_data, status=status.HTTP_400_BAD_REQUEST)
 

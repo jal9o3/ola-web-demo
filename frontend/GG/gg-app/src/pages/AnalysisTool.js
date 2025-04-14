@@ -1001,21 +1001,21 @@ const AnalysisTool = () => {
         ⬅ Back
       </button>
 
-      <button
-        onClick={handlePlayClick}
-        className="play-button"
-        disabled={gameStarted}
-      >
-        Begin Analysis
-      </button>
+      {!gameStarted && (
+    <>
+    <button
+      onClick={handlePlayClick}
+      className="play-button"
+    >
+      Begin Analysis
+    </button>
 
-      <button
-        onClick={handleGetAIFormation}
-        className="ai-formation-button"
-        disabled={gameStarted}
-      >
-        Get AI Formation
-      </button>
+    <button
+      onClick={handleGetAIFormation}
+      className="ai-formation-button"
+    >
+      Get AI Formation
+    </button>
 
       <div className="model-selector">
         <label htmlFor="model-select">Choose Model:</label>
@@ -1054,6 +1054,8 @@ const AnalysisTool = () => {
           <option value="R">Red</option>
         </select>
       </div>
+      </>
+    )}
 
       {gameStarted &&
         infostateMatrixList.length > 1 &&

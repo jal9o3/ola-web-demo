@@ -9,32 +9,27 @@ const Leaderboard = () => {
     navigate(-1); // Go back to the previous page
   };
 
-  const [scores, setScores] = useState([
-    {name: 'Carlos Magsen', score: 4},
-    {name: 'Hikaru Nagasaki', score: 12},
-    {name: 'Anonymous', score: 20},
-    {name: 'Park Bo Gum', score: 29},
-    {name: 'Anonymous', score: 31},
-    {name: 'Zhong Xi Na', score: 35},
-  ]);
-  const [difficulty, setDifficulty] = useState('Easy'); // Default difficulty
-
+  const [scores, setScores] = useState([]);
+  const [modelName, setModelName] = useState('csd10k');
   useEffect(() => {
     const fetchScores = async () => {
       try {
-        const response = await fetch('http://localhost:3000/leaderboard');
+        const response = await fetch('http://localhost:8000/api/leaderboard/' + modelName + '/');
         const text = await response.text();  // Get raw response as text
         console.log(text);  // Log the raw response to see what is returned
     
         // If the response is JSON, parse it
         const data = JSON.parse(text);
-        setScores(data);
+        setScores(data.results.map(item => ({
+          name: item.player_name,
+          score: item.turns_taken
+        })));
       } catch (error) {
         console.error('Error fetching leaderboard:', error);
       }
     };    
     fetchScores();
-  }, [difficulty]); // Re-fetch when difficulty changes
+  }, [modelName]);
   
 
   return (
@@ -46,11 +41,11 @@ const Leaderboard = () => {
       
       <div className="difficulty-select">
         <label htmlFor="difficulty">Difficulty: </label>
-        <select id="difficulty" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
-          <option value="Easy">Easy</option>
-          <option value="Medium">Medium</option>
-          <option value="Hard">Hard</option>
-          <option value="Fog">Fog</option>
+        <select id="difficulty" value={modelName} onChange={(e) => setModelName(e.target.value)}>
+          <option value="fivelayer">Easy</option>
+          <option value="fivelayer10k">Medium</option>
+          <option value="csd10k">Hard</option>
+          <option value="fog-mode">Fog</option>
         </select>
       </div>
 
@@ -64,7 +59,7 @@ const Leaderboard = () => {
             </div>
           ))
         ) : (
-          <p className="no-scores">No scores available for {difficulty}.</p>
+          <p className="no-scores">No scores available for {modelName}.</p>
         )}
       </div>
     </div>

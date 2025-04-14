@@ -5,6 +5,11 @@ import "./MatchHistory.css";
 const MatchHistory = () => {
   const navigate = useNavigate();
   const [matches, setMatches] = useState([]);
+  const longColor = (color) => {
+    if (color === "R") return "Red";
+    if (color === "B") return "Blue";
+    return color;
+  };
 
   const handleBackButtonClick = () => {
     navigate(`/`);
@@ -25,7 +30,6 @@ const MatchHistory = () => {
         const data = await response.json();
         console.log("Fetched match history:", data);
         setMatches(data.results);
-        // You can update the matches state here if needed
       } catch (error) {
         console.error("Error fetching match history:", error);
       }
@@ -41,19 +45,24 @@ const MatchHistory = () => {
       </button>
       <h2>Match History</h2>
       <div className="match-list">
-        {matches.map((match) => (
-          <div
-            key={match.id}
-            className="match-item"
-            onClick={() => navigate(`/walkthrough?id=${match.id}`)} // Pass match.id as a URL parameter
-          >
-            <p>
-              <strong>Game {match.id}</strong>
-            </p>
-            <p>Turns: {match.turn_number}</p>
-            <p>Winner: {match.player_to_move === "B" ? "Red" : "Blue"}</p>
-          </div>
-        ))}
+        {matches.map((match) => {
+          const playerWon = match.winner === match.human_color;;
+          
+          return (
+            <div
+              key={match.id}
+              className={`match-item ${playerWon ? "win" : "loss"}`}
+              onClick={() => navigate(`/walkthrough?id=${match.id}`)}
+            >
+              <p>
+                <strong>Game {match.id}</strong>
+              </p>
+              <p>Turns: {match.turn_number}</p>
+              <p>Winner: {longColor(match.winner)}</p>
+              <p className="result-tag">{playerWon ? "You Won" : "You Lost"}</p>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -1,14 +1,14 @@
 .match-history-container {
     width: 100%;
-    max-width: 90vw; /* Adjust width to fit the screen */
-    height: 250px; /* Adjust height as needed */
+    max-width: 90vw; 
+    height: 250px; 
     margin: 20px auto;
     padding: 20px;
     background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
-    overflow: hidden; /* Prevents unwanted scrolling */
+    overflow: hidden; 
     display: flex;
     flex-direction: column;
   }
@@ -17,22 +17,20 @@
     display: flex;
     flex-direction: row;
     gap: 15px;
-    overflow-x: auto; /* Enables horizontal scrolling */
+    overflow-x: auto; 
     max-width: 100%;
     padding-bottom: 10px;
-    white-space: nowrap; /* Prevents wrapping */
-    scrollbar-width: none; /* Hides scrollbar in Firefox */
-    -ms-overflow-style: none; /* Hides scrollbar in Internet Explorer/Edge */
+    white-space: nowrap; 
+    -ms-overflow-style: none;
   }
   
-  /* Hide scrollbar in WebKit browsers (Chrome, Safari) */
   .match-list::-webkit-scrollbar {
     display: none;
   }
   
   
   .match-item {
-    min-width: 180px; /* Adjust width to fit items properly */
+    min-width: 180px; 
     padding: 15px;
     background: #ffffff;
     border: 1px solid #ddd;
@@ -45,6 +43,30 @@
   .match-item:hover {
     background-color: #e3f2fd;
     transform: scale(1.05);
+  }
+
+  .match-item.win {
+    border: 4px solid #4CAF50;
+  }
+  
+  .match-item.loss {
+    border: 4px solid #F44336;
+  }
+  
+  .result-tag {
+    font-weight: bold;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  
+  .win .result-tag {
+    background-color: #4CAF50;
+  }
+  
+  .loss .result-tag {
+    background-color: #F44336;
   }
   
   .match-item p {
@@ -65,4 +87,3 @@
   .match-list::-webkit-scrollbar-track {
     background: #f1f1f1;
   }
-  
