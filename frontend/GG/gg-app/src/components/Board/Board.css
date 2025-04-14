@@ -244,3 +244,64 @@
     margin-top: 0.5rem;
     color: #333;
   }
+
+  @media (max-width: 480px) {
+    .turn-indicator {
+      font-size: 1.2em;
+      width: 100%;
+      margin-left: 0;
+      margin-bottom: 2%;
+    }
+  
+    .board-container {
+      flex-direction: column;
+      align-items: center;
+      margin-top: 2%;
+      padding: 5px;
+      gap: 15px;
+    }
+  
+    .game-board {
+      grid-template-columns: repeat(9, 8vw);
+      grid-template-rows: repeat(8, 8vw);
+      padding: 5px;
+      border-width: 3px;
+    }
+  
+    .tile {
+      width: 8vw;
+      height: 8vw;
+    }
+  
+    .play-button {
+      margin-top: 10px;
+      font-size: 16px;
+      padding: 15px 30px;
+    }
+  
+    .randomize-button {
+      font-size: 14px;
+      padding: 8px 10px;
+    }
+  
+    .piece-selection {
+      margin: 20px 0;
+    }
+  
+    .pieces-list {
+      grid-template-columns: repeat(3, 1fr);
+      max-width: 90vw;
+    }
+  
+    .model-selector {
+      text-align: center;
+    }
+  
+    .help-button {
+      width: 25px;
+      height: 25px;
+      font-size: 16px;
+    }
+  }
+  
+  
