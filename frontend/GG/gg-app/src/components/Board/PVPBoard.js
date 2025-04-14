@@ -299,7 +299,7 @@ const Board = () => {
           // Here you would implement the AI's logic to make a move
           // For now, we'll just switch back to the player's turn
           setCurrentTurn("Host Player's turn");
-        }, 1000); // Simulate a delay for the AI's turn
+        },); // Simulate a delay for the AI's turn
 
       } else if (isValidMove && alliedPiece) {
         alert("Allies cannot be challenged! Choose another spot.");
