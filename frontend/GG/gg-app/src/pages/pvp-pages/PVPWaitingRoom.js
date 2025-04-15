@@ -9,7 +9,7 @@ function PVPWaitingRoom() {
     const [joinSessionId, setJoinSessionId] = useState('');
     const [sessionId, setSessionId] = useState(null);
     const [accessKey, setAccessKey] = useState(null);
-    const [opponentJoined, setOpponentJoined] = useState(false);
+    const [opponentJoined, setOpponentJoined] = useState(true); //set to true to view the PVPBoard for development
 
     const handleBackButtonClick = () => {
         navigate(-1); 
