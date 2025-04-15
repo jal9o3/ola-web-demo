@@ -153,6 +153,33 @@ const Board = () => {
     });
   };
 
+  const [hostname, setHostname] = useState(window.location.hostname);
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768); // Adjust breakpoint as needed
+    };
+
+    checkIfMobile(); // Initial check
+    window.addEventListener("resize", checkIfMobile); // Listen for window resize
+
+    return () => {
+      window.removeEventListener("resize", checkIfMobile); // Cleanup listener
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log("Hostname:", hostname)
+
+    if (hostname === 'localhost') {
+        setHostname('127.0.0.1');
+    }
+
+    console.log("Hostname:", hostname)
+  }, [hostname]);
+
   useEffect(() => {
     const fetchData = async () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -160,7 +187,7 @@ const Board = () => {
       const sessionName = urlParams.get("sessionName");
       try {
         const response = await fetch(
-          `http://127.0.0.1:8000/api/sessions/game-data/?session_name=${sessionName}&access_key=${accessKey}`
+          `http://${hostname}:8000/api/sessions/game-data/?session_name=${sessionName}&access_key=${accessKey}`
         );
         const data = await response.json();
         console.log(data);
@@ -270,7 +297,7 @@ const Board = () => {
       if (isValidMove && opponentPiece) {
         const move = `${position.row}${position.col}${row}${col}`;
         // Submit the move to the backend using PATCH
-        fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
+        fetch(`http://${hostname}:8000/api/sessions/game-data/`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -314,7 +341,7 @@ const Board = () => {
       } else if (isValidMove) {
         const move = `${position.row}${position.col}${row}${col}`;
         // Submit the move to the backend using PATCH
-        fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
+        fetch(`http://${hostname}:8000/api/sessions/game-data/`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -414,7 +441,7 @@ const Board = () => {
     console.log(sessionName);
     console.log(accessKey);
     // Send the formation values to the backend using PATCH
-    fetch(`http://127.0.0.1:8000/api/sessions/game-data/`, {
+    fetch(`http://${hostname}:8000/api/sessions/game-data/`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -437,7 +464,7 @@ const Board = () => {
 
   // Submit player name to leaderboard
   const submitToLeaderboard = () => {
-    fetch(`http://127.0.0.1:8000/api/leaderboard/`, {
+    fetch(`http://${hostname}:8000/api/leaderboard/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -668,42 +695,48 @@ const Board = () => {
               ?
             </button>
           </div>
-          <div className="pieces-list">
-            {!allPiecesPlaced ? (
-              pieces
-                .filter(
-                  (piece) =>
-                    piece.position === null && piece.team === humanColor
-                )
-                .map((piece) => (
-                  <div key={piece.id} className="piece-container">
-                    <img
-                      src={piece.src}
-                      alt={piece.name}
-                      className="piece-image"
-                      draggable={!gameStarted}
-                      onDragStart={(e) => handleDragStart(e, piece.id)}
-                      onMouseEnter={(e) => {
-                        setTooltip({
-                          visible: true,
-                          text: piece.name,
-                          position: { x: e.clientX, y: e.clientY },
-                        });
-                      }}
-                      onMouseLeave={() =>
-                        setTooltip({
-                          visible: false,
-                          text: "",
-                          position: { x: 0, y: 0 },
-                        })
-                      }
-                    />
-                  </div>
-                ))
-            ) : (
-              <p></p> // Optional message when all pieces are placed
-            )}
-          </div>
+          {isMobile ? (
+            <div className="mobile-human-color">
+              <p>Your Team: {humanColor}</p>
+            </div>
+          ) : (
+            <div className="pieces-list">
+              {!allPiecesPlaced ? (
+                pieces
+                  .filter(
+                    (piece) =>
+                      piece.position === null && piece.team === humanColor
+                  )
+                  .map((piece) => (
+                    <div key={piece.id} className="piece-container">
+                      <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className="piece-image"
+                        draggable={!gameStarted}
+                        onDragStart={(e) => handleDragStart(e, piece.id)}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: { x: e.clientX, y: e.clientY },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: { x: 0, y: 0 },
+                          })
+                        }
+                      />
+                    </div>
+                  ))
+              ) : (
+                <p></p> // Optional message when all pieces are placed
+              )}
+            </div>
+          )}
         </div>
       </div>
       <GameOverPopup
