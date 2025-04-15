@@ -134,24 +134,6 @@ const Board = () => {
   const [winner, setWinner] = useState("A");
   const [playerName, setPlayerName] = useState("");
   const [turnNumber, setTurnNumber] = useState(0);
-  const [fogMode, setFogMode] = useState(false);
-  const initialFogMatrix = () => {
-    const matrix = Array.from({ length: 8 }, () =>
-      Array.from({ length: 9 }, () => (Math.random() < 0.40 ? 1 : 0))
-    );
-    return matrix;
-  };
-  const [fogMatrix, setFogMatrix] = useState(initialFogMatrix());
-
-  const shiftFogMatrix = (matrix) => {
-    return matrix.map((row) => {
-      // Remove the last column and shift contents to the right
-      const newRow = row.slice(0, -1);
-      // Add a new first column with a 25% chance of being 1
-      newRow.unshift(Math.random() < 0.40 ? 1 : 0);
-      return newRow;
-    });
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -290,7 +272,6 @@ const Board = () => {
             setGameId(data.id);
             setTurnNumber(data.turn_number);
             setWinner(data.winner);
-            setFogMatrix(shiftFogMatrix(fogMatrix)); // Shift the fog
           })  
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -334,7 +315,6 @@ const Board = () => {
             setGameId(data.id);
             setTurnNumber(data.turn_number);
             setWinner(data.winner);
-            setFogMatrix(shiftFogMatrix(fogMatrix)); // Shift the fog
           })
           .catch((error) => console.error("Error updating game data:", error));
         setSelectedPiece(null); // Deselect the piece after the move
@@ -446,7 +426,6 @@ const Board = () => {
         player_name: playerName,
         turns_taken: turnNumber,
         model_name: modelName,
-        is_fog_mode: fogMode,
       }),
     })
       .then((response) => response.json())
@@ -495,16 +474,8 @@ const Board = () => {
   }, [humanColor]);
 
   useEffect(() => {
-    console.log("Fog Mode:", fogMode);
-  }, [fogMode]);
-
-  useEffect(() => {
     console.log("Turn number:", turnNumber);
   }, [turnNumber]);
-
-  useEffect(() => {
-    console.log("Fog Matrix:", fogMatrix);
-  }, [fogMatrix]);
 
   useEffect(() => {
     console.log("Winner:", winner);
@@ -591,7 +562,6 @@ const Board = () => {
               const piece = pieces.find(
                 (p) => p.position?.row === row && p.position?.col === col
               ); // Find the piece at the current position if any
-              const isFogged = fogMode && fogMatrix[row][col] === 1; // Check if fogMode is enabled and the cell is fogged
 
               return (
                 <div
@@ -601,12 +571,10 @@ const Board = () => {
                     selectedPiece?.position?.col === col
                       ? "selected"
                       : ""
-                  } ${isFogged ? "fogged" : ""}`} // Add a 'fogged' class if the tile is fogged
-                  onClick={() => !isFogged && handleTileClick(row, col)} // Disable clicks on fogged tiles
-                  onDrop={(e) => !isFogged && handleDrop(e, row, col)} // Disable drops on fogged tiles
-                  onDragOver={!isFogged ? allowDrop : undefined} // Disable drag-over on fogged tiles
+                  } `}
+                  onClick={() => handleTileClick(row, col)}
                 >
-                  {isFogged ? null : piece ? (
+                  {piece ? (
                     piece.team === humanColor ? (
                       // Set the image of a visible piece
                       <img
