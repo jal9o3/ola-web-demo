@@ -484,7 +484,7 @@ const Board = () => {
   const Tooltip = ({ text, position }) => {
     return (
       <div
-        className="piece-tooltip-pvp"
+        className="piece-tooltip"
         style={{ top: position.y, left: position.x }}
       >
         {text}
@@ -529,18 +529,18 @@ const Board = () => {
     <div className="board-wrapper">
       {" "}
       {/* New wrapper for the board and indicator */}
-      <button className="back-button-pvp" onClick={handleBackButtonClick}>
+      <button className="back-button" onClick={handleBackButtonClick}>
         ⬅ Back
       </button>
       {/* Turn Indicator outside the board container */}
-      {gameStarted && <div className="turn-indicator-pvp">{currentTurn}</div>}
-      <div className="board-container-pvp">
+      {gameStarted && <div className="turn-indicator">{currentTurn}</div>}
+      <div className="board-container">
         
         {!gameStarted && (
           <div className="button-container">
             <button
               onClick={handlePlayClick}
-              className={`play-button-pvp ${
+              className={`play-button ${
                 allHumanPiecesPlaced ? "" : "disabled"
               } ${playClicked ? "clicked" : ""}`}
               disabled={!allHumanPiecesPlaced}
@@ -549,14 +549,14 @@ const Board = () => {
             </button>
             <button
               onClick={randomizePieces}
-              className="randomize-button-pvp"
+              className="randomize-button"
               disabled={gameStarted} // Disable if the game has started
             >
               Randomize
             </button>
           </div>
         )}
-        <div className="game-board-pvp">
+        <div className="game-board">
           {Array.from({ length: 8 }).map((_, row) =>
             Array.from({ length: 9 }).map((_, col) => {
               const piece = pieces.find(
@@ -569,7 +569,7 @@ const Board = () => {
                   className={`tile ${
                     selectedPiece?.position?.row === row &&
                     selectedPiece?.position?.col === col
-                      ? "selected-pvp"
+                      ? "selected"
                       : ""
                   } `}
                   onClick={() => handleTileClick(row, col)}
@@ -580,7 +580,7 @@ const Board = () => {
                       <img
                         src={piece.src}
                         alt={piece.name}
-                        className="piece-image-pvp"
+                        className="piece-image"
                         draggable={!gameStarted}
                         onDragStart={(e) => handleDragStart(e, piece.id)}
                         onMouseEnter={(e) => {
@@ -606,7 +606,7 @@ const Board = () => {
                       />
                     ) : gameStarted ? (
                       // Display the placeholder for a hidden piece only when the game has started
-                      <div className="opponent-placeholder-pvp"></div>
+                      <div className="opponent-placeholder"></div>
                     ) : null
                   ) : null}
                 </div>
@@ -617,14 +617,14 @@ const Board = () => {
             <Tooltip text={tooltip.text} position={tooltip.position} />
           )}
         </div>
-        <div className="piece-selection-pvp">
-          <div className="above-content-pvp">
+        <div className="piece-selection">
+          <div className="above-content">
             {!allPiecesPlaced && <h3>Available Pieces</h3>}
-            <button onClick={handleHelpClick} className="help-button-pvp">
+            <button onClick={handleHelpClick} className="help-button-">
               ?
             </button>
           </div>
-          <div className="pieces-list-pvp">
+          <div className="pieces-list">
             {!allPiecesPlaced ? (
               pieces
                 .filter(
@@ -632,11 +632,11 @@ const Board = () => {
                     piece.position === null && piece.team === humanColor
                 )
                 .map((piece) => (
-                  <div key={piece.id} className="piece-container-pvp">
+                  <div key={piece.id} className="piece-container">
                     <img
                       src={piece.src}
                       alt={piece.name}
-                      className="piece-image-pvp"
+                      className="piece-image"
                       draggable={!gameStarted}
                       onDragStart={(e) => handleDragStart(e, piece.id)}
                       onMouseEnter={(e) => {
@@ -706,25 +706,25 @@ const GameOverPopup = ({
   console.log("Winner:", winner, "Human Color:", humanColor);
 
   return ReactDOM.createPortal(
-    <div className="popup-overlay-pvp">
-      <div className="popup-content-pvp">
-        <button className="popup-close-button-pvp" onClick={onClose}>
+    <div className="popup-overlay">
+      <div className="popup-content">
+        <button className="popup-close-button" onClick={onClose}>
           ✖
         </button>
         <h2>Game Over</h2>
         <h3>{winnerText}</h3>
 
         {isPlayerWinner && (
-          <div className="leaderboard-form-pvp">
+          <div className="leaderboard-form">
             <p>Add your name to the leaderboard:</p>
             <input
               type="text"
               placeholder="Enter your name"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
-              className="name-input-pvp"
+              className="name-input"
             />
-            <button onClick={submitToLeaderboard} className="popup-button-pvp">
+            <button onClick={submitToLeaderboard} className="popup-button">
               Submit
             </button>
           </div>
@@ -732,7 +732,7 @@ const GameOverPopup = ({
 
         <button
           onClick={() => navigate(`/walkthrough?id=${gameId}`)}
-          className="popup-button-pvp"
+          className="popup-button"
         >
           View Walkthrough
         </button>
@@ -745,9 +745,9 @@ const GameOverPopup = ({
 const Popup = ({ visible, onClose, children }) => {
   if (!visible) return null;
   return ReactDOM.createPortal(
-    <div className="popup-overlay-pvp">
-      <div className="popup-content-pvp">
-        <button className="popup-close-button-pvp" onClick={onClose}>
+    <div className="popup-overlay">
+      <div className="popup-content">
+        <button className="popup-close-button" onClick={onClose}>
           ✖
         </button>
         {children}

@@ -5,14 +5,14 @@
     padding: 20px;
 }
 
-.game-board-analysis {
+.game-board {
     display: grid;
     grid-template-columns: repeat(9, 80px);
     grid-template-rows: repeat(8, 80px);
     gap: 2px;
     background-color: black;
     place-content: fixed;
-    margin-left:-10%; 
+    margin-left:20%; 
 }
 
 .tile {
