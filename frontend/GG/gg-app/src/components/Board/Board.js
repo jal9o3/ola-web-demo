@@ -591,20 +591,9 @@ const Board = () => {
       {/* Turn Indicator outside the board container */}
       {gameStarted && <div className="turn-indicator">{currentTurn}</div>}
       <div className="board-container">
+
         <div className="left-content">
-          <div className="model-selector">
-            <label htmlFor="model-select">Choose Model:</label>
-            <select
-              id="model-select"
-              value={modelName}
-              disabled={fogMode || gameStarted}
-              onChange={(e) => setModelName(e.target.value)}
-            >
-              <option value="fivelayer">fivelayer</option>
-              <option value="fivelayer10k">fivelayer10k</option>
-              <option value="csd10k">csd10k</option>
-            </select>
-          </div>
+          
 
           {!gameStarted && (
             <div className="button-container">
@@ -626,6 +615,20 @@ const Board = () => {
               </button>
             </div>
           )}
+
+          <div className="model-selector">
+            <label htmlFor="model-select">Choose Model:</label>
+            <select
+              id="model-select"
+              value={modelName}
+              disabled={fogMode || gameStarted}
+              onChange={(e) => setModelName(e.target.value)}
+            >
+              <option value="fivelayer">fivelayer</option>
+              <option value="fivelayer10k">fivelayer10k</option>
+              <option value="csd10k">csd10k</option>
+            </select>
+          </div>
 
           <div className="fog-mode-toggle">
             <label htmlFor="fog-mode">Fog Mode:</label>

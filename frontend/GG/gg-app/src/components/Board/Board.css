@@ -12,24 +12,23 @@
     margin-left: 45%;
 }
 
-.board-container {
+.left-content {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 10px;
-    margin-top: 5%;
+    flex-direction: column;
+    gap: 10px; /* Add spacing between buttons */
+    margin-top: 10px; /* Reduce space above buttons */
+    margin-right: 20px; /* Space between left and right content */
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    padding: 15px; /* Add padding inside the container */
+    border-radius: 10px; /* Rounded corners for a smoother look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    color: #fff; /* Ensure text is visible on the dark background */
+
 }
 
-.game-board {
-    display: grid;
-    grid-template-columns: repeat(9, 80px);
-    grid-template-rows: repeat(8, 80px);
-    gap: 2px;
-    background-color: black;
-    border: 5px solid #06a2a0; /* White outline around the board */
-    border-radius: 5px; /* Optional: rounded corners */
-    padding: 10px; /* Optional: space between the border and the tiles */
+.button-container {
+  display: block; /* Change to block to stack elements vertically */
+  margin-bottom: 10px; /* Space below the button container */
 }
 
 .play-button {
@@ -74,24 +73,40 @@
     cursor: not-allowed;
 }
 
-.button-container {
-    display: block; /* Change to block to stack elements vertically */
-    margin-bottom: 10px; /* Space below the button container */
+.board-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  margin-top: 5%;
+}
+
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(9, 80px);
+  grid-template-rows: repeat(8, 80px);
+  gap: 2px;
+  background-color: black;
+  border: 5px solid #06a2a0; /* White outline around the board */
+  border-radius: 5px; /* Optional: rounded corners */
+  padding: 10px; /* Optional: space between the border and the tiles */
+  margin: 0 auto; /* Center the board horizontally */
 }
 
 .tile {
-    width: 80px;
-    height: 80px;
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid black;
+width: 10%;
+height: 10%;
+background-color: white;
+display: flex;
+justify-content: center;
+align-items: center;
+border: 1px solid black;
 }
 
 .tile.fogged {
-  background-color: grey; /* Grey out the tile */
-  pointer-events: none; /* Disable interactions */
+background-color: grey; /* Grey out the tile */
+pointer-events: none; /* Disable interactions */
 }
 
 .piece-selection {
@@ -101,6 +116,11 @@
     flex-direction: column;
     align-items: center;
     gap: 5px;
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    padding: 15px; /* Add padding inside the container */
+    border-radius: 10px; /* Rounded corners for a smoother look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    color: #fff; /* Ensure text is visible on the dark background */
 }
 
 .above-content {
@@ -109,6 +129,7 @@
     justify-content: center;
     width: 100%;
     align-items: center;
+    color: white;
 }
 
 .help-button {
@@ -132,10 +153,19 @@
 
 .pieces-list {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); 
+    grid-template-columns: repeat(2, 1fr); 
     gap: 6px; 
-    max-width: 350px;
+    max-width: 200px;
     justify-items: center;
+}
+
+.piece-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    position: relative; /* Position relative for tooltip */
 }
 
 .piece-image {
@@ -163,6 +193,76 @@
     height: 40px; 
     background-color: rgb(12, 112, 116); 
     border-radius: 5px; 
+}
+
+
+.model-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #fff;
+}
+
+.model-selector label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.model-selector select {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.model-selector select:hover {
+  background-color: #45a049;
+}
+
+.model-selector select:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.fog-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 16px;
+  color: #fff;
+}
+
+.fog-mode-toggle label {
+  font-weight: bold;
+}
+
+.fog-mode-toggle input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background-color: #28a745;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.fog-mode-toggle input[type="checkbox"]:checked {
+  background-color: #45a049;
+}
+
+.fog-mode-toggle input[type="checkbox"]:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
 }
 
 .popup-overlay {
@@ -245,63 +345,64 @@
     color: #333;
   }
 
-  @media (max-width: 480px) {
-    .turn-indicator {
-      font-size: 1.2em;
-      width: 100%;
-      margin-left: 0;
-      margin-bottom: 2%;
-    }
-  
-    .board-container {
-      flex-direction: column;
-      align-items: center;
-      margin-top: 2%;
-      padding: 5px;
-      gap: 15px;
-    }
-  
-    .game-board {
-      grid-template-columns: repeat(9, 8vw);
-      grid-template-rows: repeat(8, 8vw);
-      padding: 5px;
-      border-width: 3px;
-    }
-  
-    .tile {
-      width: 8vw;
-      height: 8vw;
-    }
-  
-    .play-button {
-      margin-top: 10px;
-      font-size: 16px;
-      padding: 15px 30px;
-    }
-  
-    .randomize-button {
-      font-size: 14px;
-      padding: 8px 10px;
-    }
-  
-    .piece-selection {
-      margin: 20px 0;
-    }
-  
-    .pieces-list {
-      grid-template-columns: repeat(3, 1fr);
-      max-width: 90vw;
-    }
-  
-    .model-selector {
-      text-align: center;
-    }
-  
-    .help-button {
-      width: 25px;
-      height: 25px;
-      font-size: 16px;
-    }
+@media (max-width: 480px) {
+  .turn-indicator {
+    font-size: 1.2em;
+    width: 100%;
+    margin-left: 0;
+    margin-bottom: 2%;
   }
+
+  .board-container {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2%;
+    padding: 5px;
+    gap: 15px;
+  }
+
+  .game-board {
+    grid-template-columns: repeat(9, 8vw);
+    grid-template-rows: repeat(8, 8vw);
+    padding: 5px;
+    border-width: 3px;
+  }
+
+  .tile {
+    width: 8vw;
+    height: 8vw;
+  }
+
+  .play-button {
+    margin-top: 10px;
+    font-size: 16px;
+    padding: 15px 30px;
+  }
+
+  .randomize-button {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+
+  .piece-selection {
+    margin: 20px 0;
+  }
+
+  .pieces-list {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 90vw;
+  }
+
+  .model-selector {
+    text-align: center;
+    
+  }
+
+  .help-button {
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+  }
+}
   
   
