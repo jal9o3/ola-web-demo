@@ -9,7 +9,7 @@
     justify-content: center; /* Center text horizontally */
     align-items: center; /* Center text vertically */
     margin-bottom:-5%; 
-    margin-left: 45%;
+    margin-left: 0%;
 }
 
 .board-container {
@@ -30,6 +30,7 @@
     border: 5px solid #06a2a0; /* White outline around the board */
     border-radius: 5px; /* Optional: rounded corners */
     padding: 10px; /* Optional: space between the border and the tiles */
+    margin-left: 0%;
 }
 
 .play-button {
