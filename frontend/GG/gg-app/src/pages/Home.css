@@ -78,13 +78,13 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow:auto;
     font-family: Inter, sans-serif;
     font-weight: 500;
     text-align: center;
-    height: 100%;
-    width: 100%;
-    position:fixed;
+    position:auto;
+    height: 100vh;
+    width: 100vw;
 }
 
 .backgroundImage {
@@ -181,16 +181,17 @@ html, body {
 .centerMenu {
     margin-bottom: 10%;
     top: 95%;
-    left: 50%;
-    transform: translateX(-50%);
+    /*left: 50%;*/
+    /*transform: translateX(-50%);*/
     flex-direction: column;
     gap: 20px;
 }
 
 .TopMenu {
     bottom: 160%;
-    left: 113%;
-    transform: translateX(-50%);
+    left: auto;
+    right: 5%;
+    /*transform: translateX(-50%);*/
     display: flex;
     gap: 1200px;
     border-radius: 100%;

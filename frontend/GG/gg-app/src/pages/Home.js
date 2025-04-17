@@ -75,6 +75,7 @@ function Home() {
     };
     return (
         <main className="container">
+
             <img
                 loading="lazy"
                 src={background} //"https://cdn.builder.io/api/v1/image/assets/TEMP/22f1b63660476b3583838e2006560d0eb1c4da0fa34c43f42de47994a2ea3c4a?placeholderIfAbsent=true&apiKey=495cfffe0c9a47b6b0144a560efce18c"
@@ -82,6 +83,7 @@ function Home() {
                 alt=""
                 role="presentation"
             />
+
             <div className="content">
                 <header className="titleContainer">
                     <h1 className="gameTitle">
@@ -98,51 +100,51 @@ function Home() {
 
                 <nav className="rightMenu1">
                 {menuItems
-    .filter(item => item.position === 'right1')
-    .map(item => (
-      <CircleButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
-    ))}
-</nav>
+                .filter(item => item.position === 'right1')
+                .map(item => (
+                <CircleButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
+                ))}
+                </nav>
 
-<nav className="rightMenu2">
-  {menuItems
-    .filter(item => item.position === 'right2')
-    .map(item => (
-      <CircleButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
-    ))}
-</nav>
+                <nav className="rightMenu2">
+                {menuItems
+                    .filter(item => item.position === 'right2')
+                    .map(item => (
+                    <CircleButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
+                    ))}
+                </nav>
 
-<nav className="leftMenu1">
-  {menuItems
-    .filter(item => item.position === 'left1')
-    .map(item => (
-      <CircleButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
-    ))}
-</nav>
+                <nav className="leftMenu1">
+                {menuItems
+                    .filter(item => item.position === 'left1')
+                    .map(item => (
+                    <CircleButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
+                    ))}
+                </nav>
 
-<nav className="leftMenu2">
-  {menuItems
-    .filter(item => item.position === 'left2')
-    .map(item => (
-      <CircleButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
-    ))}
-</nav>
+                <nav className="leftMenu2">
+                {menuItems
+                    .filter(item => item.position === 'left2')
+                    .map(item => (
+                    <CircleButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
+                    ))}
+                </nav>
 
-<nav className="centerMenu">
-  {menuItems
-    .filter(item => item.position === 'center')
-    .map(item => (
-      <CircleButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
-    ))}
-</nav>
+                <nav className="centerMenu">
+                {menuItems
+                    .filter(item => item.position === 'center')
+                    .map(item => (
+                    <CircleButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
+                    ))}
+                </nav>
 
-<nav className="TopMenu">
-  {menuItems
-    .filter(item => item.position === 'top')
-    .map(item => (
-      <TopButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
-    ))}
-</nav>
+                <nav className="TopMenu">
+                {menuItems
+                    .filter(item => item.position === 'top')
+                    .map(item => (
+                    <TopButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
+                    ))}
+                </nav>
 
             </div>
         </main>

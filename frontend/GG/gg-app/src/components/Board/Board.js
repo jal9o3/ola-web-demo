@@ -591,39 +591,60 @@ const Board = () => {
       {/* Turn Indicator outside the board container */}
       {gameStarted && <div className="turn-indicator">{currentTurn}</div>}
       <div className="board-container">
-        <div className="model-selector">
-          <label htmlFor="model-select">Choose Model:</label>
-          <select
-            id="model-select"
-            value={modelName}
-            disabled={fogMode || gameStarted}
-            onChange={(e) => setModelName(e.target.value)}
-          >
-            <option value="fivelayer">fivelayer</option>
-            <option value="fivelayer10k">fivelayer10k</option>
-            <option value="csd10k">csd10k</option>
-          </select>
-        </div>
-        {!gameStarted && (
-          <div className="button-container">
-            <button
-              onClick={handlePlayClick}
-              className={`play-button ${
-                allHumanPiecesPlaced ? "" : "disabled"
-              } ${playClicked ? "clicked" : ""}`}
-              disabled={!allHumanPiecesPlaced}
+        <div className="left-content">
+          <div className="model-selector">
+            <label htmlFor="model-select">Choose Model:</label>
+            <select
+              id="model-select"
+              value={modelName}
+              disabled={fogMode || gameStarted}
+              onChange={(e) => setModelName(e.target.value)}
             >
-              Play
-            </button>
-            <button
-              onClick={randomizePieces}
-              className="randomize-button"
-              disabled={gameStarted} // Disable if the game has started
-            >
-              Randomize
-            </button>
+              <option value="fivelayer">fivelayer</option>
+              <option value="fivelayer10k">fivelayer10k</option>
+              <option value="csd10k">csd10k</option>
+            </select>
           </div>
-        )}
+
+          {!gameStarted && (
+            <div className="button-container">
+              <button
+                onClick={handlePlayClick}
+                className={`play-button ${
+                  allHumanPiecesPlaced ? "" : "disabled"
+                } ${playClicked ? "clicked" : ""}`}
+                disabled={!allHumanPiecesPlaced}
+              >
+                Play
+              </button>
+              <button
+                onClick={randomizePieces}
+                className="randomize-button"
+                disabled={gameStarted} // Disable if the game has started
+              >
+                Randomize
+              </button>
+            </div>
+          )}
+
+          <div className="fog-mode-toggle">
+            <label htmlFor="fog-mode">Fog Mode:</label>
+            <input
+              type="checkbox"
+              id="fog-mode"
+              checked={fogMode}
+              disabled={gameStarted}
+              onChange={(e) => {
+                setFogMode(e.target.checked);
+                if (e.target.checked) {
+                  setModelName("csd10k");
+                }
+              }}
+            />
+          </div>
+
+        </div>
+
         <div className="game-board">
           {Array.from({ length: 8 }).map((_, row) =>
             Array.from({ length: 9 }).map((_, col) => {
@@ -688,6 +709,7 @@ const Board = () => {
             <Tooltip text={tooltip.text} position={tooltip.position} />
           )}
         </div>
+
         <div className="piece-selection">
           <div className="above-content">
             {!allPiecesPlaced && <h3>Available Pieces</h3>}
@@ -738,33 +760,21 @@ const Board = () => {
             </div>
           )}
         </div>
+
       </div>
-      <GameOverPopup
-        visible={showPopUp}
-        onClose={() => setShowPopUp(false)}
-        winner={winner}
-        humanColor={humanColor}
-        gameId={gameId}
-        navigate={navigate}
-        playerName={playerName}
-        setPlayerName={setPlayerName}
-        submitToLeaderboard={submitToLeaderboard}
-      />
-      <div className="fog-mode-toggle">
-        <label htmlFor="fog-mode">Fog Mode:</label>
-        <input
-          type="checkbox"
-          id="fog-mode"
-          checked={fogMode}
-          disabled={gameStarted}
-          onChange={(e) => {
-            setFogMode(e.target.checked);
-            if (e.target.checked) {
-              setModelName("csd10k");
-            }
-          }}
+        <GameOverPopup
+          visible={showPopUp}
+          onClose={() => setShowPopUp(false)}
+          winner={winner}
+          humanColor={humanColor}
+          gameId={gameId}
+          navigate={navigate}
+          playerName={playerName}
+          setPlayerName={setPlayerName}
+          submitToLeaderboard={submitToLeaderboard}
         />
-      </div>
+
+      
     </div>
   );
 };
