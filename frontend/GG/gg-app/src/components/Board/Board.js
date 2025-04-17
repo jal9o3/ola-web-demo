@@ -603,9 +603,9 @@ const Board = () => {
               disabled={fogMode || gameStarted}
               onChange={(e) => setModelName(e.target.value)}
             >
-              <option value="fivelayer">fivelayer</option>
-              <option value="fivelayer10k">fivelayer10k</option>
-              <option value="csd10k">csd10k</option>
+              <option value="fivelayer">EASY</option>
+              <option value="fivelayer10k">AVERAGE</option>
+              <option value="csd10k">HARD</option>
             </select>
           </div>
           
