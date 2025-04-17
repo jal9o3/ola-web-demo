@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import MatchHistory from './pages/MatchHistory';
 import Walkthrough from "./pages/Walkthrough";
 import RulesTutorial from './pages/RulesTutorial';
-import GameModes from './pages/GameModes';
+import StartGame from './pages/StartGame';
 import AnalysisTool from './pages/AnalysisTool';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
@@ -26,7 +26,7 @@ function App() {
         <Route path="/match-history" element={<MatchHistory />} />
         <Route path="/walkthrough/" element={<Walkthrough />} />
         <Route path="/rules-tutorial" element={<RulesTutorial />} />
-        <Route path="/game-modes" element={<GameModes />} />
+        <Route path="/start-game" element={<StartGame />} />
         <Route path="/analysis-tool" element={<AnalysisTool />} />
         <Route path="/leader-board" element={<Leaderboard />} />
         <Route path="/settings" element={<Settings audioRef={audioRef} />} /> {/* Pass the audio ref */}
