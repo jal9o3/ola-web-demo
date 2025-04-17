@@ -1078,7 +1078,7 @@ const AnalysisTool = () => {
               </div>
             ))}
           </div>
-          <div className="game-board">
+          <div className="game-board-analysis">
             {Array.from({ length: 8 }).map((_, row) =>
               Array.from({ length: 9 }).map((_, col) => {
                 const piece = pieces.find(

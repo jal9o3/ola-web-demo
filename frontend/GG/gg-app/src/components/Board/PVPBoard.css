@@ -1,4 +1,4 @@
-.turn-indicator {
+.turn-indicator-pvp {
     font-size: 1.5em; 
     font-weight: bold; 
     color: #04202a; 
@@ -12,7 +12,7 @@
     margin-left: 35%;
 }
 
-.board-container {
+.board-container-pvp {
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -21,7 +21,7 @@
     margin-top: 5%;
 }
 
-.game-board {
+.game-board-pvp {
     display: grid;
     grid-template-columns: repeat(9, 80px);
     grid-template-rows: repeat(8, 80px);
@@ -32,7 +32,7 @@
     padding: 10px; /* Optional: space between the border and the tiles */
 }
 
-.play-button {
+.play-button-pvp {
     background-color: #28a745;
     color: white;
     margin-top: 25%;
@@ -44,12 +44,12 @@
     margin-bottom: 10px;
 }
 
-.play-button.disabled {
+.play-button.disabled-pvp {
     background-color: #6c757d;
     cursor: not-allowed;
 }
 
-.randomize-button {
+.randomize-button-pvp {
     background-color: #4CAF50; 
     color: white;
     border: none;
@@ -65,21 +65,21 @@
     transition: background-color 0.3s;
 }
 
-.randomize-button:hover {
+.randomize-button-pvp:hover {
     background-color: #45a049;
 }
 
-.randomize-button:disabled {
+.randomize-button-pvp:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
 
-.button-container {
+.button-container-pvp {
     display: block; /* Change to block to stack elements vertically */
     margin-bottom: 10px; /* Space below the button container */
 }
 
-.tile {
+.tile-pvp {
     width: 80px;
     height: 80px;
     background-color: white;
@@ -89,12 +89,12 @@
     border: 1px solid black;
 }
 
-.tile.fogged {
+.tile-pvp.fogged {
   background-color: grey; /* Grey out the tile */
   pointer-events: none; /* Disable interactions */
 }
 
-.piece-selection {
+.piece-selection-pvp {
     position: relative;
     display: flex;
     margin: 50px;
@@ -103,7 +103,7 @@
     gap: 5px;
 }
 
-.above-content {
+.above-content-pvp {
     position: relative;
     display: flex;
     justify-content: center;
@@ -111,7 +111,7 @@
     align-items: center;
 }
 
-.help-button {
+.help-button-pvp {
     position: relative;
     background-color: #28a745;
     color: white;
@@ -126,11 +126,11 @@
     align-items: center;
 }
 
-.selected {
+.selected-pvp {
     background-color: rgba(255, 255, 0, 0.5);
 }
 
-.pieces-list {
+.pieces-list-pvp {
     display: grid;
     grid-template-columns: repeat(4, 1fr); 
     gap: 6px; 
@@ -138,13 +138,13 @@
     justify-items: center;
 }
 
-.piece-image {
+.piece-image-pvp {
     width: 95%;
     height: auto;
     cursor: grab;
 }
 
-.piece-tooltip {
+.piece-tooltip-pvp {
     position: absolute;
     top: 10px;
     left: 50%;
@@ -158,14 +158,14 @@
     z-index: 1000;
 }
 
-.opponent-placeholder {
+.opponent-placeholder-pvp {
     width: 40px; 
     height: 40px; 
     background-color: rgb(12, 112, 116); 
     border-radius: 5px; 
 }
 
-.popup-overlay {
+.popup-overlay-pvp {
     position: fixed;
     top: 0;
     left: 0;
@@ -178,7 +178,7 @@
     z-index: 1000;
   }
   
-  .popup-content {
+  .popup-content-pvp {
     background-color: #fff;
     padding: 2rem;
     border-radius: 8px;
@@ -189,7 +189,7 @@
     text-align: center;
   }
   
-  .popup-close-button {
+  .popup-close-button-pvp {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -200,11 +200,11 @@
     color: #666;
   }
   
-  .popup-close-button:hover {
+  .popup-close-button-pvp:hover {
     color: #333;
   }
   
-  .popup-button {
+  .popup-button-pvp {
     background-color: #3498db;
     color: white;
     border: none;
@@ -216,15 +216,15 @@
     transition: background-color 0.2s;
   }
   
-  .popup-button:hover {
+  .popup-button-pvp:hover {
     background-color: #2980b9;
   }
   
-  .leaderboard-form {
+  .leaderboard-form-pvp {
     margin: 1.5rem 0;
   }
   
-  .name-input {
+  .name-input-pvp {
     padding: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -234,7 +234,7 @@
     font-size: 1rem;
   }
   
-  .name-input:focus {
+  .name-input-pvp:focus {
     border-color: #3498db;
     outline: none;
     box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
