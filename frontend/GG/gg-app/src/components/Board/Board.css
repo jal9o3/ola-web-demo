@@ -9,7 +9,7 @@
     justify-content: center; /* Center text horizontally */
     align-items: center; /* Center text vertically */
     margin-bottom:-5%; 
-    margin-left: 45%;
+    margin-left: 0%;
 }
 
 .left-content {
@@ -29,6 +29,7 @@
 .button-container {
   display: block; /* Change to block to stack elements vertically */
   margin-bottom: 10px; /* Space below the button container */
+    margin-left: 0%;
 }
 
 .play-button {

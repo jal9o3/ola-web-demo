@@ -620,7 +620,7 @@ const Board = () => {
         <div className="piece-selection">
           <div className="above-content">
             {!allPiecesPlaced && <h3>Available Pieces</h3>}
-            <button onClick={handleHelpClick} className="help-button">
+            <button onClick={handleHelpClick} className="help-button-">
               ?
             </button>
           </div>

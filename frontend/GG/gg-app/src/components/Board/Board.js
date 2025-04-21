@@ -593,10 +593,39 @@ const Board = () => {
       <div className="board-container">
 
         <div className="left-content">
-          
 
           {!gameStarted && (
             <div className="button-container">
+            <div className="model-selector">
+            <label htmlFor="model-select">Choose Model:</label>
+            <select
+              id="model-select"
+              value={modelName}
+              disabled={fogMode || gameStarted}
+              onChange={(e) => setModelName(e.target.value)}
+            >
+              <option value="fivelayer">EASY</option>
+              <option value="fivelayer10k">AVERAGE</option>
+              <option value="csd10k">HARD</option>
+            </select>
+          </div>
+          
+          <div className="fog-mode-toggle">
+            <label htmlFor="fog-mode">Fog Mode:</label>
+            <input
+              type="checkbox"
+              id="fog-mode"
+              checked={fogMode}
+              disabled={gameStarted}
+              onChange={(e) => {
+                setFogMode(e.target.checked);
+                if (e.target.checked) {
+                  setModelName("csd10k");
+                }
+              }}
+            />
+          </div>
+
               <button
                 onClick={handlePlayClick}
                 className={`play-button ${
