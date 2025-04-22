@@ -26,6 +26,7 @@ Classes:
 """
 from django.db import models
 
+
 class ScoreRecord(models.Model):
     player_name = models.CharField(max_length=20, default='Anonymous')
     turns_taken = models.IntegerField(default=999)
@@ -34,6 +35,7 @@ class ScoreRecord(models.Model):
 
     def __str__(self):
         return f"ScoreRecord {self.id}"
+
 
 class VersusAIGame(models.Model):
     """
@@ -93,3 +95,37 @@ class VersusAISession(models.Model):
 
     def __str__(self):
         return f"Versus AI Session {self.name} for Game {self.game.id}"
+
+
+class PVPGame(models.Model):
+    has_started = models.BooleanField(default=False)
+    has_ended = models.BooleanField(default=False)
+    blue_initial_formation = models.JSONField()
+    red_initial_formation = models.JSONField()
+    move_list = models.JSONField()
+    current_state = models.JSONField(default=list)
+    current_infostate = models.JSONField(default=list)
+    turn_number = models.IntegerField(default=1)
+    player_to_move = models.CharField(max_length=1, default='B')
+    blue_anticipating = models.BooleanField(default=False)
+    red_anticipating = models.BooleanField(default=False)
+    winner = models.CharField(max_length=1, default='A')
+
+    def __str__(self):
+        return f"PVP Game {self.id}"
+
+
+class PVPSession(models.Model):
+    name = models.CharField(max_length=255)
+    game = models.ForeignKey(PVPGame, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    public_access_key = models.CharField(max_length=64)
+    blue_access_key = models.CharField(max_length=64)
+    red_access_key = models.CharField(max_length=64)
+    blue_key_claimed = models.BooleanField(default=False)
+    red_key_claimed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"PVP Session {self.name} for Game {self.game.id}"

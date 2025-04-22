@@ -9,12 +9,15 @@ Classes:
 
 from rest_framework import serializers
 
-from .models import VersusAIGame, VersusAISession, ScoreRecord
+from .models import (VersusAIGame, VersusAISession, ScoreRecord, PVPSession,
+                     PVPGame)
+
 
 class ScoreRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScoreRecord
         fields = '__all__'
+
 
 class VersusAIGameSerializer(serializers.ModelSerializer):
     """
@@ -86,3 +89,19 @@ class VersusAISessionListSerializer(serializers.ModelSerializer):
 
         model = VersusAISession
         exclude = ['access_key']
+
+
+class PVPSessionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PVPSession
+        fields = "__all__"
+
+class PVPGameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PVPGame
+        fields = "__all__"
+
+class PVPSessionListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PVPSession
+        exclude = ['blue_access_key', 'red_access_key']
