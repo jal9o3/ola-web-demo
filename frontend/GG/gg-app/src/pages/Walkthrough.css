@@ -165,3 +165,27 @@
     background-color: #4a80f5;
     color: white;
   }
+
+  /* Add to your existing Walkthrough.css file */
+
+.walkthrough-top-controls {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.analyze-button {
+  background-color: #4a89dc;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.analyze-button:hover {
+  background-color: #3672c5;
+}

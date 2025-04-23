@@ -88,8 +88,8 @@ const Walkthrough = () => {
 
   // Sample formations (to be replaced with actual data)
   const [blueFormation, setBlueFormation] = useState([]);
-
   const [redFormation, setRedFormation] = useState([]);
+  const [gameData, setGameData] = useState(null);
 
   // Sample move list - format: "fromRow fromCol toRow toCol"
   const [moveList, setMoveList] = useState([]);
@@ -114,6 +114,7 @@ const Walkthrough = () => {
         })
         .then((data) => {
           console.log("Match ID sent successfully:", data);
+          setGameData(data.game_data);
 
           if (data.game_data.human_color === "B") {
             setBlueFormation(data.game_data.human_initial_formation);
@@ -175,6 +176,18 @@ const Walkthrough = () => {
 
   const handleBackButtonClick = () => {
     navigate(`/match-history`);
+  };
+
+  const handleAnalyzeGame = () => {
+    if (gameData) {
+      navigate(`/analysis-tool`, {
+        state: {
+          initialBlueFormation: blueFormation,
+          initialRedFormation: redFormation,
+          humanColor: gameData.human_color,
+        },
+      });
+    }
   };
 
   const initializeBoard = () => {
@@ -314,9 +327,14 @@ const Walkthrough = () => {
 
   return (
     <div className="walkthrough-container">
-      <button className="back-button" onClick={handleBackButtonClick}>
-        ⬅ Back
-      </button>
+      <div className="walkthrough-top-controls">
+        <button className="back-button" onClick={handleBackButtonClick}>
+          ⬅ Back
+        </button>
+        <button className="analyze-button" onClick={handleAnalyzeGame}>
+          Analyze Game
+        </button>
+      </div>
 
       <div className="walkthrough-header">
         <h1>GAME WALKTHROUGH</h1>
