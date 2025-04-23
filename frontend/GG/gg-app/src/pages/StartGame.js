@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './GameModes.css';
+import './StartGame.css';
 
 const GameModes = () => {
     const navigate = useNavigate();
@@ -10,58 +10,42 @@ const GameModes = () => {
     const [hostname, setHostname] = useState(window.location.hostname);
 
     useEffect(() => {
-        console.log("Hostname:", hostname)
-
         if (hostname === 'localhost') {
             setHostname('127.0.0.1');
         }
-
-        console.log("Hostname:", hostname)
     }, [hostname]);
 
-
     const modes = [
-        { label: 'Easy Mode', key: 'easy' },
-        { label: 'Average Mode', key: 'average' },
-        { label: 'Hard Mode', key: 'hard' },
-        { label: 'Fog Mode', key: 'fog' },
+        { label: 'Versus AI', key: 'ai' },
         { label: 'PVP Mode', key: 'pvp' }
     ];
 
     const handleModeClick = (mode) => {
         if (mode === 'pvp') {
-            // Directly navigate to the waiting room
             navigate('/pvp-waiting-room');
             return;
         }
 
+        // For AI mode, you can still use a fetch if session needs to be initialized
         fetch(`http://${hostname}:8000/api/sessions/`, {
-            method: 'POST', // Specify the HTTP method
+            method: 'POST',
             headers: {
-                'Content-Type': 'application/json', // Set the content type to JSON
-                // Include other headers as needed
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                mode
-                // Add more key-value pairs as needed
-            }), // Convert the data to a JSON string
+            body: JSON.stringify({ mode }),
         })
             .then(response => {
                 if (!response.ok) {
-                    // Handle HTTP errors
                     throw new Error('Network response was not ok');
                 }
-                return response.json(); // Parse the JSON response
+                return response.json();
             })
             .then(data => {
-                // Handle the parsed data
-                console.log(data);
-                setSessionName(data.name); // Save session name
-                setAccessKey(data.access_key); // Save access key
-                navigate(`/board/${mode}?sessionName=${data.name}&accessKey=${data.access_key}`); // Redirect with query parameters
+                setSessionName(data.name);
+                setAccessKey(data.access_key);
+                navigate(`/board/${mode}?sessionName=${data.name}&accessKey=${data.access_key}`);
             })
             .catch(error => {
-                // Handle errors
                 console.error('There was a problem with the fetch operation:', error);
             });
     };
@@ -76,13 +60,13 @@ const GameModes = () => {
 
     const handleBackButtonClick = () => {
         navigate(-1); 
-      };
+    };
 
     return (
         <div className="game-mode-container">
-        <button className="back-button" onClick={handleBackButtonClick}>
-        ⬅ Back
-        </button>
+            <button className="back-button" onClick={handleBackButtonClick}>
+                ⬅ Back
+            </button>
             <h1 className="game-mode-title">GAME MODES</h1>
             <div className="carousel-container">
                 <div className="carousel">

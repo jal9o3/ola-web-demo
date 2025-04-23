@@ -7,7 +7,7 @@ import background from '../assets/background.png';
 const menuItems = [
     { label: 'MATCH HISTORY', position: 'right1' },
     { label: 'RULES & TUTORIAL', position: 'left1' },
-    { label: 'GAME MODES', position: 'left2' },
+    { label: 'START GAME', position: 'left2' },
     { label: 'ANALYSIS TOOL', position: 'right2' },
     { label: 'LEADER BOARD', position: 'center' },
     { label: 'SETTINGS', position: 'top' }
@@ -54,8 +54,8 @@ function Home() {
             case 'RULES & TUTORIAL':
                 navigate('/rules-tutorial');
                 break;
-            case 'GAME MODES':
-                navigate('/game-modes');
+            case 'START GAME':
+                navigate('/start-game');
                 break;
             case 'ANALYSIS TOOL':
                 navigate('/analysis-tool');
