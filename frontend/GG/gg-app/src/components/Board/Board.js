@@ -288,7 +288,7 @@ const Board = () => {
         });
         return updatedPieces;
       });
-    }, 10); 
+    }, 10); // Small timeout to ensure the previous state update has been processed
   };
 
   const handleTileClick = (row, col) => {
@@ -610,7 +610,6 @@ const Board = () => {
       {/* Turn Indicator outside the board container */}
       {gameStarted && <div className="turn-indicator">{currentTurn}</div>}
       <div className="board-container">
-
         <div className="left-content">
 
           {!gameStarted && (
@@ -663,36 +662,6 @@ const Board = () => {
               </button>
             </div>
           )}
-
-          <div className="model-selector">
-            <label htmlFor="model-select">Choose Model:</label>
-            <select
-              id="model-select"
-              value={modelName}
-              disabled={fogMode || gameStarted}
-              onChange={(e) => setModelName(e.target.value)}
-            >
-              <option value="fivelayer">fivelayer</option>
-              <option value="fivelayer10k">fivelayer10k</option>
-              <option value="csd10k">csd10k</option>
-            </select>
-          </div>
-
-          <div className="fog-mode-toggle">
-            <label htmlFor="fog-mode">Fog Mode:</label>
-            <input
-              type="checkbox"
-              id="fog-mode"
-              checked={fogMode}
-              disabled={gameStarted}
-              onChange={(e) => {
-                setFogMode(e.target.checked);
-                if (e.target.checked) {
-                  setModelName("csd10k");
-                }
-              }}
-            />
-          </div>
 
         </div>
 
