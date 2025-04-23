@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Leaderboard.css';
+import clickSound from "../sounds/click.mp3";
 
 const Leaderboard = () => {
   const navigate = useNavigate();
   
   const handleBackButtonClick = () => {
     navigate(-1); // Go back to the previous page
+    new Audio(clickSound).play();
   };
 
   const [scores, setScores] = useState([]);
@@ -41,7 +43,13 @@ const Leaderboard = () => {
       
       <div className="difficulty-select">
         <label htmlFor="difficulty">Difficulty: </label>
-        <select id="difficulty" value={modelName} onChange={(e) => setModelName(e.target.value)}>
+        <select id="difficulty" 
+          value={modelName} 
+          onChange={(e) => {
+            new Audio(clickSound).play();
+            setModelName(e.target.value)
+          }}
+          >
           <option value="fivelayer">Easy</option>
           <option value="fivelayer10k">Medium</option>
           <option value="csd10k">Hard</option>

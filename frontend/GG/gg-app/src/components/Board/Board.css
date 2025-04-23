@@ -120,7 +120,7 @@ pointer-events: none; /* Disable interactions */
     background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
     padding: 15px; /* Add padding inside the container */
     border-radius: 10px; /* Rounded corners for a smoother look */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    box-shadow: 0 4px 8px rgba(233, 224, 224, 0.2); /* Subtle shadow for depth */
     color: #fff; /* Ensure text is visible on the dark background */
 }
 

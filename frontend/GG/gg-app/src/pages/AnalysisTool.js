@@ -997,65 +997,70 @@ const AnalysisTool = () => {
 
   return (
     <div className="analysis-tool-container">
-    <button className="back-button" onClick={handleBackButtonClick}>
+      <button className="back-button" onClick={handleBackButtonClick}>
         ⬅ Back
       </button>
+      
+      <div className="left-functions">
+        {!gameStarted && (
+          <>
+          <button
+            onClick={handlePlayClick}
+            className="play-button"
+          >
+            Begin Analysis
+          </button>
 
-      {!gameStarted && (
-    <>
-    <button
-      onClick={handlePlayClick}
-      className="play-button"
-    >
-      Begin Analysis
-    </button>
+          <button
+            onClick={handleGetAIFormation}
+            className="ai-formation-button"
+          >
+            Get AI Formation
+          </button>
 
-    <button
-      onClick={handleGetAIFormation}
-      className="ai-formation-button"
-    >
-      Get AI Formation
-    </button>
+            <div className="model-selector">
+              <label htmlFor="model-select">Choose Model:</label>
+              <select
+                id="model-select"
+                value={modelName}
+                onChange={(e) => setModelName(e.target.value)}
+              >
+                <option value="fivelayer">fivelayer</option>
+                <option value="fivelayer10k">fivelayer10k</option>
+                <option value="csd10k">csd10k</option>
+              </select>
+            </div>
 
-      <div className="model-selector">
-        <label htmlFor="model-select">Choose Model:</label>
-        <select
-          id="model-select"
-          value={modelName}
-          onChange={(e) => setModelName(e.target.value)}
-        >
-          <option value="fivelayer">fivelayer</option>
-          <option value="fivelayer10k">fivelayer10k</option>
-          <option value="csd10k">csd10k</option>
-        </select>
+            <div className="color-selector">
+              <label htmlFor="color-select">Choose Team:</label>
+              <select
+                id="color-select"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                disabled={gameStarted}
+              >
+                <option value="B">Blue</option>
+                <option value="R">Red</option>
+              </select>
+            </div>
+
+            <div className="to-move-selector">
+              <label htmlFor="to-move-select">Player to move:</label>
+              <select
+                id="to-move-select"
+                value={toMove}
+                onChange={(e) => setToMove(e.target.value)}
+              >
+                <option value="B">Blue</option>
+                <option value="R">Red</option>
+              </select>
+            </div>
+            </>
+        )}
       </div>
+    
 
-      <div className="color-selector">
-        <label htmlFor="color-select">Choose Team:</label>
-        <select
-          id="color-select"
-          value={color}
-          onChange={(e) => setColor(e.target.value)}
-          disabled={gameStarted}
-        >
-          <option value="B">Blue</option>
-          <option value="R">Red</option>
-        </select>
-      </div>
-
-      <div className="to-move-selector">
-        <label htmlFor="to-move-select">Player to move:</label>
-        <select
-          id="to-move-select"
-          value={toMove}
-          onChange={(e) => setToMove(e.target.value)}
-        >
-          <option value="B">Blue</option>
-          <option value="R">Red</option>
-        </select>
-      </div>
-      </>
-    )}
+      
 
       {gameStarted &&
         infostateMatrixList.length > 1 &&

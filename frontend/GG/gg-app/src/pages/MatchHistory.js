@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./MatchHistory.css";
+import scrollSound from "../sounds/scroll.mp3";
+import clickSound from "../sounds/click.mp3";
+
 
 const MatchHistory = () => {
   const navigate = useNavigate();
@@ -38,21 +41,55 @@ const MatchHistory = () => {
     fetchMatchHistory();
   }, []);
 
+  const lastScrollLeftRef = useRef(0);
+  const lastScrollTimeRef = useRef(Date.now());
+  const audioRef = useRef(new Audio(scrollSound));
+  const lastSoundTimeRef = useRef(0);
+
+  const handleScroll = (e) => {
+    const now = Date.now();
+    if (now - lastSoundTimeRef.current < 100) return; // prevents the sound from playig too frequently
+  
+    const currentScrollLeft = e.target.scrollLeft;
+    const deltaX = Math.abs(currentScrollLeft - lastScrollLeftRef.current); // Distance scrolled since last event
+    const deltaTime = now - lastScrollTimeRef.current; // Time since last scrolled
+  
+    if (deltaTime > 0) {
+      const speed = (deltaX / deltaTime) * 1000; // Calculate scroll speed in pixels per second
+  
+      const audio = audioRef.current;
+      audio.volume = Math.min(1, speed / 1000); // Adjust volume based on scroll speed
+      audio.currentTime = 0;
+      audio.play();
+  
+      lastSoundTimeRef.current = now;
+    }
+  
+    lastScrollLeftRef.current = currentScrollLeft;
+    lastScrollTimeRef.current = now;
+  };
+
   return (
     <div className="match-history-container">
-      <button className="back-button" onClick={handleBackButtonClick}>
+      <button className="back-button" 
+        onClick={() => {new Audio(clickSound).play();
+          handleBackButtonClick()}}>
         ⬅ Back
       </button>
       <h2>Match History</h2>
-      <div className="match-list">
+      <div className="match-list" onScroll={handleScroll}>
+        
         {matches.map((match) => {
           const playerWon = match.winner === match.human_color;;
+          
           
           return (
             <div
               key={match.id}
               className={`match-item ${playerWon ? "win" : "loss"}`}
-              onClick={() => navigate(`/walkthrough?id=${match.id}`)}
+              onClick={() => {
+                new Audio(clickSound).play()
+                navigate(`/walkthrough?id=${match.id}`)}}
             >
               <p>
                 <strong>Game {match.id}</strong>

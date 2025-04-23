@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Walkthrough.css";
+
+import scrollSound from "../sounds/scroll.mp3";
+import clickSound from "../sounds/click.mp3";
+import moveSound from "../sounds/move.mp3";
 
 import Gen5 from "../assets/Gen5.png";
 import Gen5b from "../assets/Gen5b.png";
@@ -175,6 +179,7 @@ const Walkthrough = () => {
 
   const handleBackButtonClick = () => {
     navigate(`/match-history`);
+    playSound("click");
   };
 
   const initializeBoard = () => {
@@ -312,6 +317,57 @@ const Walkthrough = () => {
     );
   };
 
+  const lastScrollLeftRef = useRef(0);
+    const lastScrollTimeRef = useRef(Date.now());
+    const audioRef = useRef(new Audio(scrollSound));
+    const lastSoundTimeRef = useRef(0);
+  
+    const handleScroll = (e) => {
+      const now = Date.now();
+      if (now - lastSoundTimeRef.current < 100) return; // prevents the sound from playig too frequently
+    
+      const currentScrollLeft = e.target.scrollLeft;
+      const deltaX = Math.abs(currentScrollLeft - lastScrollLeftRef.current); // Distance scrolled since last event
+      const deltaTime = now - lastScrollTimeRef.current; // Time since last scrolled
+    
+      if (deltaTime > 0) {
+        const speed = (deltaX / deltaTime) * 1000; // Calculate scroll speed in pixels per second
+    
+        const audio = audioRef.current;
+        audio.volume = Math.min(1, speed / 1000); // Adjust volume based on scroll speed
+        audio.currentTime = 0;
+        audio.play();
+    
+        lastSoundTimeRef.current = now;
+      }
+    
+      lastScrollLeftRef.current = currentScrollLeft;
+      lastScrollTimeRef.current = now;
+    };
+
+    const sounds = useRef({});
+    
+    useEffect(() => {
+      // Preload sounds
+      sounds.current = {
+        click: new Audio(clickSound),
+        move: new Audio(moveSound),
+      };
+    }, []);
+  
+    const playSound = (type) => {
+      const sound = sounds.current[type];
+      if (sound) {
+        sound.currentTime = 0; // rewind
+        sound.play();
+      }
+    };
+
+    useEffect(() => {
+      // Play the move sound whenever the board state changes
+      playSound("move");
+    }, [boardState]);
+
   return (
     <div className="walkthrough-container">
       <button className="back-button" onClick={handleBackButtonClick}>
@@ -390,7 +446,8 @@ const Walkthrough = () => {
         )}
       </div>
 
-      <div className="move-history">
+      <div className="move-history"
+        onScroll={handleScroll}>
         <h3>Move History</h3>
         <div className="move-list">
           {moveList.map((move, index) => (

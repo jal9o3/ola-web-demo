@@ -3,6 +3,7 @@ import './Home.css';  // Correct CSS import
 import { useNavigate } from 'react-router-dom';
 
 import background from '../assets/background.png';
+import clickSound from "../sounds/click.mp3";
 
 const menuItems = [
     { label: 'MATCH HISTORY', position: 'right1' },
@@ -18,7 +19,8 @@ export const CircleButton = ({ label, onClick, className }) => {
         <div className={className}>
             <button 
                 className="circleButton circleButton1"
-                onClick={onClick}
+                onClick={() => {new Audio(clickSound).play();
+                    onClick()}}
                 aria-label={label}
                 tabIndex={0}
             >
@@ -33,7 +35,8 @@ export const TopButton = ({ label, onClick, className }) => {
         <div className={className}>
             <button 
                 className="TopButton"
-                onClick={onClick}
+                onClick={() => {new Audio(clickSound).play();
+                    onClick()}}
                 aria-label={label}
                 tabIndex={0}
             >
@@ -44,6 +47,7 @@ export const TopButton = ({ label, onClick, className }) => {
 };
 
 function Home() {
+
     const navigate = useNavigate();
 
     const handleNavigation = (label) => {

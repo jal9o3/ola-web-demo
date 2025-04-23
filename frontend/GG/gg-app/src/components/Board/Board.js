@@ -1,8 +1,17 @@
 import ReactDOM from "react-dom";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import "./Board.css";
+
+// Import sounds
+import clickSound from "../../sounds/click.mp3";
+import setPieceSound from"../../sounds/setPiece.mp3";
+import moveSound from"../../sounds/move.mp3";
+import defeatSound from"../../sounds/defeat.mp3";
+import eliminateSound from"../../sounds/eliminate.mp3";
+import victorySound from"../../sounds/victory.mp3";
+
 // Import images
 import Gen5 from "../../assets/Gen5.png";
 import Gen5b from "../../assets/Gen5b.png";
@@ -232,12 +241,36 @@ const Board = () => {
     Flag: 1, // Flag can be eliminated by any piece including the opponent's flag
   };
 
+  const sounds = useRef({});
+
+  useEffect(() => {
+    // Preload sounds
+    sounds.current = {
+      click: new Audio(clickSound),
+      defeat: new Audio(defeatSound),
+      eliminate: new Audio(eliminateSound),
+      move: new Audio(moveSound),
+      setPiece: new Audio(setPieceSound),
+      victory: new Audio(victorySound),
+    };
+  }, []);
+
+  const playSound = (type) => {
+    const sound = sounds.current[type];
+    if (sound) {
+      sound.currentTime = 0; // rewind
+      sound.play();
+    }
+  };
+
   const handleBackButtonClick = () => {
+    playSound("click");
     navigate(-1);
   };
 
   const randomizePieces = () => {
     if (!humanColor) return; // Ensure humanColor is set before proceeding
+    playSound("click");
     
     // First, clear positions for all human pieces
     setPieces((prevPieces) => {
@@ -286,6 +319,7 @@ const Board = () => {
             }
           }
         });
+        playSound("setPiece");
         return updatedPieces;
       });
     }, 10); // Small timeout to ensure the previous state update has been processed
@@ -296,6 +330,17 @@ const Board = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const sessionName = urlParams.get("sessionName");
     const accessKey = urlParams.get("accessKey");
+
+    // Find the piece at the clicked tile
+    const clickedPiece = pieces.find(
+      (p) => p.position?.row === row && p.position?.col === col
+    );
+
+    // Play sound only if the clicked piece is an allied piece
+    if (clickedPiece && clickedPiece.team === humanColor) {
+      playSound("setPiece");
+    }
+
     if (selectedPiece) {
       const { position, team, name } = selectedPiece;
       // Allow moves in all directions (one tile)
@@ -313,6 +358,7 @@ const Board = () => {
         (p) =>
           p.position?.row === row && p.position?.col === col && p.team === team
       );
+
       if (isValidMove && opponentPiece) {
         const move = `${position.row}${position.col}${row}${col}`;
         // Submit the move to the backend using PATCH
@@ -359,6 +405,7 @@ const Board = () => {
         setSelectedPiece(null); // Deselect the piece after the move
       } else if (isValidMove) {
         const move = `${position.row}${position.col}${row}${col}`;
+        playSound("move");
         // Submit the move to the backend using PATCH
         fetch(`http://${hostname}:8000/api/sessions/game-data/`, {
           method: "PATCH",
@@ -427,12 +474,14 @@ const Board = () => {
           : piece
       )
     );
+    playSound("setPiece");
   };
 
   const handlePlayClick = () => {
     setGameStarted(true);
     setPlayClicked(true);
     setOpponentVisible(true);
+    playSound("click");
     // Remove highlight after 1 second for better UI feedback
     setTimeout(() => setPlayClicked(false), 10000);
     const lastThreeRows = [];
@@ -483,6 +532,7 @@ const Board = () => {
 
   // Submit player name to leaderboard
   const submitToLeaderboard = () => {
+    playSound("click");
     fetch(`http://${hostname}:8000/api/leaderboard/`, {
       method: "POST",
       headers: {
@@ -586,6 +636,7 @@ const Board = () => {
             Private: 2
             Flag: 1 (Flag can be eliminated by any piece including the opponent's flag)
         `;
+    playSound("click");
     alert(hierarchy);
   };
 
@@ -732,7 +783,7 @@ const Board = () => {
 
         <div className="piece-selection">
           <div className="above-content">
-            {!allPiecesPlaced && <h3>Available Pieces</h3>}
+            {!allPiecesPlaced && <p>Available Pieces</p>}
             <button onClick={handleHelpClick} className="help-button">
               ?
             </button>
@@ -784,7 +835,10 @@ const Board = () => {
       </div>
         <GameOverPopup
           visible={showPopUp}
-          onClose={() => setShowPopUp(false)}
+          onClose={() => {
+            playSound("click")
+            setShowPopUp(false)
+            }}
           winner={winner}
           humanColor={humanColor}
           gameId={gameId}
@@ -810,6 +864,7 @@ const GameOverPopup = ({
   setPlayerName,
   submitToLeaderboard,
 }) => {
+
   if (!visible) return null;
 
   const shortColor = (color) => {
@@ -822,6 +877,7 @@ const GameOverPopup = ({
     if (color === "B") return "Blue";
     return color;
   };
+
   const isPlayerWinner = winner === shortColor(humanColor);
   const winnerText = winner ? `${longColor(winner)} wins!` : "Game Over";
   console.log("Winner:", winner, "Human Color:", humanColor);
@@ -829,7 +885,10 @@ const GameOverPopup = ({
   return ReactDOM.createPortal(
     <div className="popup-overlay">
       <div className="popup-content">
-        <button className="popup-close-button" onClick={onClose}>
+        <button className="popup-close-button" 
+          onClick={() => {
+            new Audio(clickSound).play();
+            onClose();}}>
           ✖
         </button>
         <h2>Game Over</h2>
@@ -845,14 +904,18 @@ const GameOverPopup = ({
               onChange={(e) => setPlayerName(e.target.value)}
               className="name-input"
             />
-            <button onClick={submitToLeaderboard} className="popup-button">
+            <button onClick={() => {
+              new Audio(clickSound).play();
+              submitToLeaderboard();}} className="popup-button">
               Submit
             </button>
           </div>
         )}
 
         <button
-          onClick={() => navigate(`/walkthrough?id=${gameId}`)}
+          onClick={() => {
+            new Audio(clickSound).play();
+            navigate(`/walkthrough?id=${gameId}`)}}
           className="popup-button"
         >
           View Walkthrough
