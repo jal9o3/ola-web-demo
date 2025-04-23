@@ -238,38 +238,57 @@ const Board = () => {
 
   const randomizePieces = () => {
     if (!humanColor) return; // Ensure humanColor is set before proceeding
-    const availablePositions = [];
-    for (let row = 5; row <= 7; row++) {
-      for (let col = 0; col < 9; col++) {
-        availablePositions.push({ row, col });
-      }
-    }
-    // Shuffle the available positions
-    for (let i = availablePositions.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [availablePositions[i], availablePositions[j]] = [
-        availablePositions[j],
-        availablePositions[i],
-      ];
-    }
-    // Get the pieces that belong to the human player
-    const playerPieces = pieces.filter(
-      (piece) => piece.team === humanColor && piece.position === null
-    );
-    // Assign random positions to the player pieces
-    const newPieces = playerPieces.map((piece, index) => {
-      const position = availablePositions[index];
-      return { ...piece, position };
-    });
-    // Update the pieces state
+    
+    // First, clear positions for all human pieces
     setPieces((prevPieces) => {
-      const updatedPieces = prevPieces.map((piece) =>
-        piece.team === humanColor
-          ? newPieces.find((p) => p.id === piece.id) || piece
+      return prevPieces.map((piece) => 
+        piece.team === humanColor 
+          ? { ...piece, position: null } 
           : piece
       );
-      return updatedPieces;
     });
+    
+    // Wait for state update to complete
+    setTimeout(() => {
+      // Create array of available positions
+      const availablePositions = [];
+      for (let row = 5; row <= 7; row++) {
+        for (let col = 0; col < 9; col++) {
+          availablePositions.push({ row, col });
+        }
+      }
+      
+      // Shuffle the available positions
+      for (let i = availablePositions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [availablePositions[i], availablePositions[j]] = [
+          availablePositions[j],
+          availablePositions[i],
+        ];
+      }
+      
+      // Get the pieces that belong to the human player
+      const playerPieces = pieces.filter(
+        (piece) => piece.team === humanColor
+      );
+      
+      // Assign random positions to the player pieces
+      setPieces((prevPieces) => {
+        const updatedPieces = [...prevPieces];
+        playerPieces.forEach((piece, index) => {
+          if (index < availablePositions.length) {
+            const pieceIndex = updatedPieces.findIndex(p => p.id === piece.id);
+            if (pieceIndex !== -1) {
+              updatedPieces[pieceIndex] = {
+                ...updatedPieces[pieceIndex],
+                position: availablePositions[index]
+              };
+            }
+          }
+        });
+        return updatedPieces;
+      });
+    }, 10); 
   };
 
   const handleTileClick = (row, col) => {
