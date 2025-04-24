@@ -1,7 +1,12 @@
 // AnalysisTool.js
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import "./AnalysisTool.css"; // Ensure you create this CSS file
+
+// Import sounds
+import clickSound from "../sounds/click.mp3";
+import setPieceSound from"../sounds/setPiece.mp3";
+import moveSound from"../sounds/move.mp3";
 
 // Import images (same as in Board.js)
 import Gen5 from "../assets/Gen5.png";
@@ -388,6 +393,32 @@ const AnalysisTool = () => {
   const RED_FLAG = 16;
   const RED_SPY = 30; // Red pieces are denoted as ranking + 15
 
+  const sounds = useRef({});
+  
+  useEffect(() => {
+    // Preload sounds
+    sounds.current = {
+      click: new Audio(clickSound),
+      move: new Audio(moveSound),
+      setPiece: new Audio(setPieceSound),
+    };
+  }, []);
+
+  const playSound = (type) => {
+    const sound = sounds.current[type];
+    if (sound) {
+      sound.currentTime = 0; // rewind
+      sound.play();
+    }
+  };
+
+  useEffect(() => {
+        // Play the move sound whenever the board state changes
+        if (gameStarted) {
+          playSound("move");
+        }
+      }, [infostateMatrixList, gameStarted]);
+
   // Calculate valid moves when a piece is selected
   useEffect(() => {
     if (selectedPiece && gameStarted) {
@@ -489,6 +520,7 @@ const AnalysisTool = () => {
   }, [selectedPiece, pieces, gameStarted]);
 
   const handleTileClick = (row, col) => {
+    
     if (!gameStarted) return;
 
     // Remove the outcomeContainer if it exists
@@ -496,6 +528,16 @@ const AnalysisTool = () => {
       document.querySelector(".outcome-container");
     if (existingOutcomeContainer) {
       document.body.removeChild(existingOutcomeContainer);
+    }
+
+    // Find the piece at the clicked tile
+    const clickedPiece = pieces.find(
+      (p) => p.position?.row === row && p.position?.col === col
+    );
+
+    // Play sound only if the clicked piece is an allied piece
+    if (clickedPiece) {
+      playSound("setPiece");
     }
 
     if (selectedPiece) {
@@ -614,6 +656,7 @@ const AnalysisTool = () => {
   };
 
   const handleBackButtonClick = () => {
+    playSound("click");
     navigate(-1); 
   };
 
@@ -745,6 +788,7 @@ const AnalysisTool = () => {
         (p) => p.position?.row === row && p.position?.col === col
       );
       if (isOccupied) return;
+      playSound("move");
 
       // Enforce placement zones based on team
       if (draggedPiece.team === "opponent") {
@@ -772,8 +816,9 @@ const AnalysisTool = () => {
     );
   };
 
-  const handlePlayClick = () => {
+  const handleBeginClick = () => {
     setGameStarted(true);
+    playSound("click");
 
     const boardMatrix = Array.from({ length: 8 }, () =>
       Array.from({ length: 9 }, () => Array(2).fill(0))
@@ -804,6 +849,7 @@ const AnalysisTool = () => {
   };
 
   const handleGetAIFormation = () => {
+    playSound("click");
     const filteredPieces = pieces.filter((piece) => {
       if (color === "B" && piece.team === "blue") {
         return false; // Remove blue pieces if color is B
@@ -995,6 +1041,8 @@ const AnalysisTool = () => {
       .catch((error) => console.error("Error updating game data:", error));
   }, [outcome, action]);
 
+  
+
   return (
     <div className="analysis-tool-container">
       <button className="back-button" onClick={handleBackButtonClick}>
@@ -1005,8 +1053,8 @@ const AnalysisTool = () => {
         {!gameStarted && (
           <>
           <button
-            onClick={handlePlayClick}
-            className="play-button"
+            onClick={handleBeginClick}
+            className="begin-button"
           >
             Begin Analysis
           </button>
@@ -1015,7 +1063,7 @@ const AnalysisTool = () => {
             onClick={handleGetAIFormation}
             className="ai-formation-button"
           >
-            Get AI Formation
+            <p>Get AI Formation</p>
           </button>
 
             <div className="model-selector">
@@ -1023,7 +1071,10 @@ const AnalysisTool = () => {
               <select
                 id="model-select"
                 value={modelName}
-                onChange={(e) => setModelName(e.target.value)}
+                onChange={(e) => {
+                  setModelName(e.target.value)
+                  playSound("click")
+                }}
               >
                 <option value="fivelayer">fivelayer</option>
                 <option value="fivelayer10k">fivelayer10k</option>
@@ -1036,7 +1087,10 @@ const AnalysisTool = () => {
               <select
                 id="color-select"
                 value={color}
-                onChange={(e) => setColor(e.target.value)}
+                onChange={(e) => {
+                  setColor(e.target.value)
+                  playSound("click")
+                }}
                 disabled={gameStarted}
               >
                 <option value="B">Blue</option>
@@ -1049,7 +1103,10 @@ const AnalysisTool = () => {
               <select
                 id="to-move-select"
                 value={toMove}
-                onChange={(e) => setToMove(e.target.value)}
+                onChange={(e) => {
+                  setToMove(e.target.value)
+                  playSound("click")
+                }}
               >
                 <option value="B">Blue</option>
                 <option value="R">Red</option>
@@ -1057,23 +1114,21 @@ const AnalysisTool = () => {
             </div>
             </>
         )}
-      </div>
-    
 
-      
-
-      {gameStarted &&
-        infostateMatrixList.length > 1 &&
-        pieceArrayList.length > 1 && (
+        {gameStarted && infostateMatrixList.length > 0 &&
+              pieceArrayList.length > 0 && (
           <button
             onClick={handleUndo}
-            className="undo-button"
-            disabled={!gameStarted}
+            className={`undo-button ${
+              infostateMatrixList.length > 1 &&
+              pieceArrayList.length > 1 ? "" : "disabled"}`}
+            disabled={infostateMatrixList.length < 2}
           >
             Undo
           </button>
         )}
-
+      </div>
+  
       {color === "R" && (
         <div className="game-board-container">
           <div className="row-numbers">

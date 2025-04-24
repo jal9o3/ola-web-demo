@@ -184,6 +184,7 @@ const Walkthrough = () => {
   };
 
   const handleAnalyzeGame = () => {
+    playSound("click");
     if (gameData) {
       navigate(`/analysis-tool`, {
         state: {
@@ -255,6 +256,7 @@ const Walkthrough = () => {
 
       setMoveIndex((prevIndex) => prevIndex + 1);
       setCurrentTurn(moveIndex % 2 === 0 ? "Red's Turn" : "Blue's Turn");
+      setButtonClicked(true);
     }
   };
 
@@ -276,6 +278,7 @@ const Walkthrough = () => {
       }
 
       setCurrentTurn((moveIndex - 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn");
+      setButtonClicked(true);
     }
   };
 
@@ -372,14 +375,19 @@ const Walkthrough = () => {
       const sound = sounds.current[type];
       if (sound) {
         sound.currentTime = 0; // rewind
-        sound.play();
+        sound.play().catch((error) => {
+          console.error("Audio playback failed:", error);
+        })
       }
     };
+
+    const [buttonClicked, setButtonClicked] = useState(false);
 
     useEffect(() => {
       // Play the move sound whenever the board state changes
       playSound("move");
-    }, [boardState]);
+      setButtonClicked(false);
+    }, [boardState, buttonClicked]);
 
   return (
     <div className="walkthrough-container">

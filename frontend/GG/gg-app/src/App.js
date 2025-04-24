@@ -9,7 +9,6 @@ import AnalysisTool from './pages/AnalysisTool';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
 import QuitGame from './pages/QuitGame';
-import PVPWaitingRoom from './pages/pvp-pages/PVPWaitingRoom';
 import Board from './components/Board/Board';
 import PVPBoard from './components/Board/PVPBoard';
 import AudioPlayer from '../src/AudioPlayer'; 
@@ -33,7 +32,6 @@ function App() {
         <Route path="/quit-game" element={<QuitGame />} />
         <Route path="/board/:mode" element={<Board />} /> 
         <Route path="/pvp-board" element={<PVPBoard />} /> 
-        <Route path="/pvp-waiting-room" element={<PVPWaitingRoom />} /> 
       </Routes>
     </Router>
   );

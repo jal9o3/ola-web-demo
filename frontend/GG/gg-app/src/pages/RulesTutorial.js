@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RulesTutorial.css';
+
+import clickSound from "../sounds/click.mp3";
+
 import Step1 from '../assets/Step1.png';
 import Step2 from '../assets/Step2.png';
 import Step3 from '../assets/Step3.png';
@@ -24,10 +27,12 @@ const RulesTutorial = () => {
     ];
 
     const handleBackButtonClick = () => {
+        new Audio(clickSound).play(); // Play the audio file
         navigate(-1); // Go back to the previous page
       };
 
     const handleNext = () => {
+        new Audio(clickSound).play(); // Play the audio file
         if (currentIndex < steps.length - 1) {
             setCurrentIndex(currentIndex + 1);
         } else {
@@ -36,29 +41,35 @@ const RulesTutorial = () => {
     };
 
     const handleBack = () => {
+        new Audio(clickSound).play(); // Play the audio file
         if (currentIndex > 0) {
             setCurrentIndex(currentIndex - 1);
         }
     };
 
     return (
-        <div className="rules-tutorial-container">
+        <div className="navigation-container">
             <button className="back-button" onClick={handleBackButtonClick}>
-                ⬅ Back
-            </button>
-            <h1 className="rules-tutorial-title">RULES AND TUTORIAL</h1>
-            <div className="illustration-box">
-                <img src={steps[currentIndex].illustration} alt={`Step ${currentIndex + 1}`} className="tutorial-image" />
-            </div>
-            <div className="instruction-box">
-                <p>{steps[currentIndex].instruction}</p>
-            </div>
-            <div className="nav-buttons">
-                <button className="back-button" onClick={handleBack} disabled={currentIndex === 0}>BACK</button>
-                <button className="next-button" onClick={handleNext}>
-                    {currentIndex < steps.length - 1 ? 'NEXT' : 'FINISH'}
+                    ⬅ Back
                 </button>
+            <button className={`previous-button ${currentIndex === 0 ? "": "disabled"}}`}
+                onClick={handleBack} 
+                disabled={currentIndex === 0}>BACK</button>
+            
+            <div className="rules-tutorial-container">
+                
+                <h1 className="rules-tutorial-title">RULES AND TUTORIAL</h1>
+                <div className="illustration-box">
+                    <img src={steps[currentIndex].illustration} alt={`Step ${currentIndex + 1}`} className="tutorial-image" />
+                </div>
+                <div className="instruction-box">
+                    <p>{steps[currentIndex].instruction}</p>
+                </div>
+                
             </div>
+            <button className="next-button" onClick={handleNext}>
+                {currentIndex < steps.length - 1 ? 'NEXT' : 'FINISH'}
+            </button>
         </div>
     );
 };

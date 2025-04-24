@@ -51,7 +51,7 @@
 
 .analysis-container {
     text-align: center;
-    margin-left:10%; 
+    margin-left:2%; 
     width: 400px;
     background-color: #f8f9fa;
     border: 1px solid #ced4da;
@@ -67,22 +67,146 @@
     font-size: 14px;
 }
 
-.play-button {
+.left-functions {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    gap: 10px; /* Add spacing between buttons */
+    margin-top: 10px; /* Reduce space above buttons */
+    margin-right: 70px; /* Space between left and right content */
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    padding: 30px; /* Add padding inside the container */
+    border-radius: 10px; /* Rounded corners for a smoother look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    color: #fff; /* Ensure text is visible on the dark background */
+}
+
+.undo-button{
     background-color: #28a745;
     color: white;
-    margin-bottom: 20px;
     font-size: 18px;
-    padding: 10px 20px;
     border: none;
     border-radius: 5px; 
     cursor: pointer;
-    margin-left:0%; 
+    padding: 20px 50px;
 }
 
-.play-button:disabled {
+.undo-button.disabled{
+    background-color: #6c757d; /* Grey out the button */
+    cursor: not-allowed; /* Change cursor to indicate disabled state */
+}
+
+.begin-button {
+    background-color: #28a745;
+    color: white;
+    font-size: 18px;
+    padding: 25px 50px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.ai-formation-button{
+    background-color: #fff;
+    color: rgb(18, 1, 1);
+    font-size: 100%;
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer;
+    margin-top: 5%;
+    padding: 10px 20px;
+}
+
+.model-selector {
+    margin-top: 5%;
+    font-size: 100%;
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer;
+}
+
+.color-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #fff;
+  }
+  
+  .color-selector label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .color-selector select {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .color-selector select:hover {
+    background-color: #45a049;
+  }
+  
+  .color-selector select:disabled {
     background-color: #6c757d;
     cursor: not-allowed;
-}
+  }
+
+.to-move-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #fff;
+  }
+  
+  .to-move-selector label {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .to-move-selector select {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .to-move-selector select:hover {
+    background-color: #45a049;
+  }
+  
+  .to-move-selector select:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+
+
+  .to-move-selector {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #fff;
+  }
+
 
 .tile.suggested-win {
     border: 2px solid #2ecc71;
@@ -97,84 +221,55 @@
 }
 
 .game-board-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
 }
 
 .row-numbers {
-  position: absolute;
-  left: -30px;
-  top: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  margin-left:0%; 
-}
+    position: absolute;
+    left: -7%;
+    top:5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 88%;
+    }
 
 .row-number {
-  height: calc(100% / 8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: white; 
+    height: calc(50%/ 8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white; 
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    padding: 0px 20px; /* Add padding inside the container */
+    border-radius: 10px; /* Rounded corners for a smoother look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+
 }
 
 .column-numbers {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 5px;
-  margin-left:0%; 
+    display: flex;
+    justify-content: space-between;
+    width: 93%;
+    margin-top: 5px;
+    margin-left:0%; 
+    margin-bottom:-30px;
 }
 
 .column-number {
-  width: calc(100% / 9);
-  text-align: center;
-  font-weight: bold;
-  color: white; /* Change text color to white */
+    width: calc(40% / 9);
+    text-align: center;
+    font-weight: bold;
+    color: white; /* Change text color to white */
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+    padding: 10px; /* Add padding inside the container */
+    border-radius: 10px; /* Rounded corners for a smoother look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+
 }
 
-.ai-formation-button{
-    background-color: #fff;
-    margin-right: -5%;
-    color: rgb(18, 1, 1);
-    margin-top: 5%;
-    font-size: 100%;
-    border: none;
-    border-radius: 5px; 
-    cursor: pointer;
-    margin-left:0%; 
-    padding: 10px 20px;
-    margin-left:-10%; 
-}
-
-.model-selector {
-    margin-top: 5%;
-    font-size: 100%;
-    border: none;
-    border-radius: 5px; 
-    cursor: pointer;
-    margin-left:6%; 
-}
-
-.color-selector {
-    margin-top: 5%;
-    font-size: 100%;
-    border: none;
-    border-radius: 5px; 
-    cursor: pointer;
-    margin-right: 0%; 
-}
-
-.to-move-selector {
-    margin-top: 5%;
-    font-size: 100%;
-    border: none;
-    border-radius: 5px; 
-    cursor: pointer;
-    margin-right: 0%; 
-}

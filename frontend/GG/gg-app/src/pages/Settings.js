@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Settings.css';
 
+import clickSound from '../sounds/click.mp3'; // Import your audio file
+
 const Settings = ({ audioRef }) => {
   const navigate = useNavigate();
   
   const handleBackButtonClick = () => {
     navigate(-1); // Go back to the previous page
+    new Audio(clickSound).play(); // Play the audio file
   };
 
   const [volume, setVolume] = useState(100); // Default volume level

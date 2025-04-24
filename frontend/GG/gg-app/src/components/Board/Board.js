@@ -259,7 +259,9 @@ const Board = () => {
     const sound = sounds.current[type];
     if (sound) {
       sound.currentTime = 0; // rewind
-      sound.play();
+      sound.play().catch((error) => {
+        console.error("Audio playback failed:", error);
+      })
     }
   };
 
@@ -270,7 +272,6 @@ const Board = () => {
 
   const randomizePieces = () => {
     if (!humanColor) return; // Ensure humanColor is set before proceeding
-    playSound("click");
     
     // First, clear positions for all human pieces
     setPieces((prevPieces) => {
@@ -326,10 +327,6 @@ const Board = () => {
   };
 
   const handleTileClick = (row, col) => {
-    if (!gameStarted) return;
-    const urlParams = new URLSearchParams(window.location.search);
-    const sessionName = urlParams.get("sessionName");
-    const accessKey = urlParams.get("accessKey");
 
     // Find the piece at the clicked tile
     const clickedPiece = pieces.find(
@@ -341,6 +338,12 @@ const Board = () => {
       playSound("setPiece");
     }
 
+    if (!gameStarted) return;
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionName = urlParams.get("sessionName");
+    const accessKey = urlParams.get("accessKey");
+
+    
     if (selectedPiece) {
       const { position, team, name } = selectedPiece;
       // Allow moves in all directions (one tile)
@@ -360,6 +363,7 @@ const Board = () => {
       );
 
       if (isValidMove && opponentPiece) {
+        playSound("eliminate");
         const move = `${position.row}${position.col}${row}${col}`;
         // Submit the move to the backend using PATCH
         fetch(`http://${hostname}:8000/api/sessions/game-data/`, {
@@ -576,9 +580,31 @@ const Board = () => {
   useEffect(() => {
     if (hasEnded) {
       console.log("Game has ended");
+      
       setShowPopUp(true);
     }
   }, [hasEnded]);
+
+  const shortColor = (color) => {
+    if (color === "red") return "R";
+    if (color === "blue") return "B";
+    return color;
+  };
+
+  useEffect(() => {
+    if (hasEnded) {
+      console.log("Game has ended");
+  
+      // Play victory or defeat sound based on the winner
+      if (winner === shortColor(humanColor)) {
+        playSound("victory"); // Play victory sound if the player wins
+      } else {
+        playSound("defeat"); // Play defeat sound if the player loses
+      }
+  
+      setShowPopUp(true); // Show the game-over popup
+    }
+  }, [hasEnded, winner, humanColor]);
 
   useEffect(() => {
     if (gameId) {
@@ -655,66 +681,73 @@ const Board = () => {
     <div className="board-wrapper">
       {" "}
       {/* New wrapper for the board and indicator */}
-      <button className="back-button" onClick={handleBackButtonClick}>
-        ⬅ Back
-      </button>
+      
       {/* Turn Indicator outside the board container */}
       {gameStarted && <div className="turn-indicator">{currentTurn}</div>}
       <div className="board-container">
-        <div className="left-content">
+        <button className="back-button" onClick={handleBackButtonClick}>
+          ⬅ Back
+        </button>
+        {!gameStarted && (
+          <div className="left-content">
+            
 
-          {!gameStarted && (
-            <div className="button-container">
-            <div className="model-selector">
-            <label htmlFor="model-select">Choose Model:</label>
-            <select
-              id="model-select"
-              value={modelName}
-              disabled={fogMode || gameStarted}
-              onChange={(e) => setModelName(e.target.value)}
-            >
-              <option value="fivelayer">EASY</option>
-              <option value="fivelayer10k">AVERAGE</option>
-              <option value="csd10k">HARD</option>
-            </select>
-          </div>
-          
-          <div className="fog-mode-toggle">
-            <label htmlFor="fog-mode">Fog Mode:</label>
-            <input
-              type="checkbox"
-              id="fog-mode"
-              checked={fogMode}
-              disabled={gameStarted}
-              onChange={(e) => {
-                setFogMode(e.target.checked);
-                if (e.target.checked) {
-                  setModelName("csd10k");
-                }
-              }}
-            />
-          </div>
-
-              <button
-                onClick={handlePlayClick}
-                className={`play-button ${
-                  allHumanPiecesPlaced ? "" : "disabled"
-                } ${playClicked ? "clicked" : ""}`}
-                disabled={!allHumanPiecesPlaced}
+            {!gameStarted && (
+              <div className="button-container">
+              <div className="model-selector">
+              <label htmlFor="model-select">Choose Model:</label>
+              <select
+                id="model-select"
+                value={modelName}
+                disabled={fogMode || gameStarted}
+                onChange={(e) => {
+                  setModelName(e.target.value)
+                  playSound("click");}}
               >
-                Play
-              </button>
-              <button
-                onClick={randomizePieces}
-                className="randomize-button"
-                disabled={gameStarted} // Disable if the game has started
-              >
-                Randomize
-              </button>
+                <option value="fivelayer">EASY</option>
+                <option value="fivelayer10k">AVERAGE</option>
+                <option value="csd10k">HARD</option>
+              </select>
             </div>
-          )}
+            
+            <div className="fog-mode-toggle">
+              <label htmlFor="fog-mode">Fog Mode:</label>
+              <input
+                type="checkbox"
+                id="fog-mode"
+                checked={fogMode}
+                disabled={gameStarted}
+                onChange={(e) => {
+                  setFogMode(e.target.checked);
+                  playSound("click");
+                  if (e.target.checked) {
+                    setModelName("csd10k");
+                  }
+                }}
+              />
+            </div>
 
-        </div>
+                <button
+                  onClick={handlePlayClick}
+                  className={`play-button ${
+                    allHumanPiecesPlaced ? "" : "disabled"
+                  } ${playClicked ? "clicked" : ""}`}
+                  disabled={!allHumanPiecesPlaced}
+                >
+                  Play
+                </button>
+                <button
+                  onClick={randomizePieces}
+                  className="randomize-button"
+                  disabled={gameStarted} // Disable if the game has started
+                >
+                  Randomize
+                </button>
+              </div>
+            )}
+
+          </div>
+        )}
 
         <div className="game-board">
           {Array.from({ length: 8 }).map((_, row) =>
@@ -825,10 +858,9 @@ const Board = () => {
                       />
                     </div>
                   ))
-              ) : (
-                <p></p> // Optional message when all pieces are placed
-              )}
+              ) : ("")}
             </div>
+
           )}
         </div>
 
@@ -866,6 +898,8 @@ const GameOverPopup = ({
 }) => {
 
   if (!visible) return null;
+
+  
 
   const shortColor = (color) => {
     if (color === "red") return "R";

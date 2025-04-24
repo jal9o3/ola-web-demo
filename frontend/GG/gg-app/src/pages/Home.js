@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useState, useEffect} from 'react';
 import './Home.css';  // Correct CSS import
 import { useNavigate } from 'react-router-dom';
 
@@ -13,6 +13,8 @@ const menuItems = [
     { label: 'LEADER BOARD', position: 'center' },
     { label: 'SETTINGS', position: 'top' }
 ];
+
+
 
 export const CircleButton = ({ label, onClick, className }) => {
     return (
@@ -47,8 +49,43 @@ export const TopButton = ({ label, onClick, className }) => {
 };
 
 function Home() {
-
     const navigate = useNavigate();
+    const [sessionName, setSessionName] = useState('');
+    const [accessKey, setAccessKey] = useState('');
+    const [hostname, setHostname] = useState(window.location.hostname);
+
+    useEffect(() => {
+        if (hostname === 'localhost') {
+            setHostname('127.0.0.1');
+        }
+    }, [hostname]);
+
+    const handleStartGameClick = () => {
+        
+
+        // For AI mode, you can still use a fetch if session needs to be initialized
+        fetch(`http://${hostname}:8000/api/sessions/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setSessionName(data.name);
+                setAccessKey(data.access_key);
+                navigate(`/board/ai?sessionName=${data.name}&accessKey=${data.access_key}`);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+    };
+    
 
     const handleNavigation = (label) => {
         switch (label) {
@@ -59,7 +96,7 @@ function Home() {
                 navigate('/rules-tutorial');
                 break;
             case 'START GAME':
-                navigate('/start-game');
+                handleStartGameClick();
                 break;
             case 'ANALYSIS TOOL':
                 navigate('/analysis-tool');
