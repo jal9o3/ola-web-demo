@@ -44,8 +44,9 @@ html, body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+
 .illustration-box {
-    width: 100%;
+    width: 90%;
     height: 100%;
     background-color: #d1e3e9;
     display: flex;
@@ -57,13 +58,21 @@ html, body {
     color: #333;
 }
 
+.tutorial-image {
+    width: 90%;
+    height: 90%;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .instruction-box {
     width: 100%;
-    background-color: #468494;
-    color: #fff;
+    background-color: #d1e3e9;
+    color: #000000;
     padding: 10px;
     border-radius: 0 0 5px 5px;
-    font-size: 18px;
+    font-size: 120%;
+    font-style:oblique;
     text-align: center;
 }
 
@@ -93,11 +102,6 @@ html, body {
 .back-button:disabled {
     background-color: #a0b8c2;
     cursor: not-allowed;
-}
-
-/* Remove unnecessary transform */
-.rules-tutorial-container {
-    transform: none;
 }
 
 @media (max-width: 768px) {
