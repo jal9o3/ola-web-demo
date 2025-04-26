@@ -19,7 +19,7 @@ const RulesTutorial = () => {
     const steps = [
         { illustration: Step1, instruction: 'Step 1: Click "Start Game" to begin playing.' },
         { illustration: Step2, instruction: 'Step 2: Choose a model based on your preference – Milestone 1, 2, 3, or R.' },
-        { illustration: Step3, instruction: 'Step 3: You can place your pieces manually or click "Randomize" to automatically place your pieces. Optionally, enable "Fog Mode" if you want to play in fog mode, here if the tile is occupied by a fog, you can`t move to that tile.' },
+        { illustration: Step3, instruction: 'Step 3: You can place your pieces manually or click "Randomize" to automatically place your pieces. Optionally, enable "Storm Mode" if you want to play in storm mode, here if the tile is occupied by a cloud, you can`t move to that tile.' },
         { illustration: Step4, instruction: 'Step 4: Click the "Play" button when you’re ready to begin.' },
         { illustration: Step5, instruction: 'Step 5: Use the "Help" button to view piece rankings if you’re unsure. Click "OK" to close the help dialog.' },
         { illustration: Step6, instruction: 'Step 6: On your turn, select a piece and click a destination tile. You can move one tile at a time to any adjacent space—up, down, left, or right. To battle, click your piece, then click an opponent’s piece. The lower-ranked piece loses, so if your piece disappears, you lose. If it stays, you win. If both disappear, it`s a tie in rank.'},
