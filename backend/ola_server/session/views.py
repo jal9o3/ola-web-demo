@@ -420,7 +420,7 @@ class GameDataView(VersusAISessionView):
                 game.has_started = True
                 # Let the model choose
                 model = None
-                if model_name in ["fivelayer", "fivelayer10k", "csd10k"]:
+                if model_name in ["fivelayer", "fivelayer10k", "csd10k", "requested20k"]:
                     model = FiveLayer()
                 model.load_state_dict(torch.load(f"./{model_name}.pth"))
                 model.eval()
@@ -587,7 +587,7 @@ class GameDataView(VersusAISessionView):
             if not next_board.is_terminal():
                 # The AI will now make a move
                 model = None
-                if model_name in ["fivelayer", "fivelayer10k", "csd10k"]:
+                if model_name in ["fivelayer", "fivelayer10k", "csd10k", "requested20k"]:
                     model = FiveLayer()
                 model.load_state_dict(torch.load(f"./{model_name}.pth"))
                 model.eval()
@@ -792,7 +792,7 @@ class AnalysisView(APIView):
 
         # Obtain inference from the model
         model = None
-        if model_name in ["fivelayer", "fivelayer10k", "csd10k"]:
+        if model_name in ["fivelayer", "fivelayer10k", "csd10k", "requested20k"]:
             model = FiveLayer()
         model.load_state_dict(torch.load(f"./{model_name}.pth"))
         model.eval()

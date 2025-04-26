@@ -704,9 +704,10 @@ const Board = () => {
                   setModelName(e.target.value)
                   playSound("click");}}
               >
-                <option value="fivelayer">EASY</option>
-                <option value="fivelayer10k">AVERAGE</option>
-                <option value="csd10k">HARD</option>
+                <option value="fivelayer">Milestone 1</option>
+                <option value="fivelayer10k">Milestone 2</option>
+                <option value="csd10k">Milestone 3</option>
+                <option value="requested20k">Milestone R</option>
               </select>
             </div>
             
