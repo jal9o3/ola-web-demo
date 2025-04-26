@@ -12,7 +12,7 @@ html, body {
     position: relative;
     width: 7vw;
     height: 12vw;
-    background-color: rgb(23, 101, 119);
+    background-color: #013220;
     display: grid;
     justify-content: center;
     align-items: center;
@@ -32,20 +32,20 @@ html, body {
     transform: translateX(-50%);
     width: 7vw; /* Thickness of the pole */
     height: 2.5vw; /* Length of the pole */
-    background-color: #092a2f; /* Color of the pole */
+    background-color: #014d26; /* Color of the pole */
     border-radius: 100px; /* Slight rounding for a smoother look */
 }
 
 .circleButton:hover {
     transform: scale(1.1);
-    background-color: rgba(80, 80, 80, 1);
+    background-color: #014d26;
 }
 
 
 .TopButton {
     border-radius: 100%;
     padding: 10px 30px;
-    background-color: #19635f;
+    background-color: #013220;
     color: #fff;
     border: none;
     cursor: pointer;
@@ -53,12 +53,12 @@ html, body {
 }
 
 .TopButton:hover {
-    background-color: #222;
+    background-color: #014d26;
     transform: scale(1.1);
 }
 
 .circleButton:focus {
-    outline: 10px solid #82cbed;
+    outline: 10px solid #015f2a;
     outline-offset: 2px;
 }
 
@@ -107,7 +107,7 @@ html, body {
 }
 
 .titleContainer {
-    background-color: rgba(9, 10, 25, 0.84);
+    background-color: rgba(1, 50, 32, 0.9);
     border-radius: 50%;
     display: flex;
     flex-direction: column;
@@ -115,7 +115,7 @@ html, body {
     color: #fff;
     font-family: Inter, sans-serif;
     padding: 5%;
-    border: 5px solid #78D4FF;
+    border: 5px solid #013220;
     height: 100%;
     width: 50%;
     max-width: 350%;

@@ -11,6 +11,17 @@ html, body {
     justify-content: center; /* Center content horizontally */
 }
 
+.rules-tutorial-page{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
 .rules-tutorial-container {
     display: flex;
     flex-direction: column;
@@ -91,7 +102,7 @@ html, body {
 
 .previous-button, .next-button {
     margin:10px;
-    background-color: #4a7a8c;
+    background-color: #013220;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -103,8 +114,9 @@ html, body {
 
 
 
+
 .previous-button:hover, .next-button:hover {
-    background-color: #365d6b;
+    background-color: #014d26;
 }
 
 .previous-button:disabled {

@@ -86,11 +86,11 @@
   max-width: fit-content;
   height: fit-content;
   display: grid;
-  grid-template-columns: repeat(9, autofill);
-  grid-template-rows: repeat(8, autofill);
+  grid-template-columns: repeat(9, 80px);
+  grid-template-rows: repeat(8, 80px);
   gap: 2px;
   background-color: black;
-  border: 5px solid #06a2a0; /* White outline around the board */
+  border: 5px solid #28a745; /* White outline around the board */
   border-radius: 5px; /* Optional: rounded corners */
   padding: 10px; /* Optional: space between the border and the tiles */
   margin: 0 auto; /* Center the board horizontally */
@@ -147,6 +147,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-left:5px;
 }
 
 .selected {
@@ -193,7 +194,7 @@
 .opponent-placeholder {
     width: 40px; 
     height: 40px; 
-    background-color: rgb(12, 112, 116); 
+    background-color: #28a745; 
     border-radius: 5px; 
 }
 

@@ -48,10 +48,13 @@ const RulesTutorial = () => {
     };
 
     return (
+        
+            
         <div className="navigation-container">
             <button className="back-button" onClick={handleBackButtonClick}>
-                    ⬅ Back
-                </button>
+                ⬅ Back
+            </button>
+            
             <button className={`previous-button ${currentIndex === 0 ? "": "disabled"}}`}
                 onClick={handleBack} 
                 disabled={currentIndex === 0}>BACK</button>
@@ -71,6 +74,7 @@ const RulesTutorial = () => {
                 {currentIndex < steps.length - 1 ? 'NEXT' : 'FINISH'}
             </button>
         </div>
+        
     );
 };
 

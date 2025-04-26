@@ -1041,6 +1041,16 @@ const AnalysisTool = () => {
       .catch((error) => console.error("Error updating game data:", error));
   }, [outcome, action]);
 
+  const handleHelpClick = () => {
+    const hierarchy = `
+                  Current Position:   Moving Position:   Likely Outcome:
+                    row#   column#      row#   column#    Probability%
+      Example:   2          2                 3             2               24.21%
+        `;
+    playSound("click");
+    alert(hierarchy);
+  };
+
   
 
   return (
@@ -1048,7 +1058,7 @@ const AnalysisTool = () => {
       <button className="back-button" onClick={handleBackButtonClick}>
         ⬅ Back
       </button>
-      
+
       <div className="left-functions">
         {!gameStarted && (
           <>
@@ -1139,7 +1149,7 @@ const AnalysisTool = () => {
               </div>
             ))}
           </div>
-          <div className="game-board">
+          <div className="game-board-analysis">
             {Array.from({ length: 8 }).map((_, row) =>
               Array.from({ length: 9 }).map((_, col) => {
                 const piece = pieces.find(
@@ -1148,7 +1158,7 @@ const AnalysisTool = () => {
                 return (
                   <div
                     key={`${row}-${col}`}
-                    className={`tile ${
+                    className={`tile-analysis ${
                       selectedPiece?.position?.row === row &&
                       selectedPiece?.position?.col === col
                         ? "selected"
@@ -1232,7 +1242,7 @@ const AnalysisTool = () => {
               </div>
             ))}
           </div>
-          <div className={`game-board flipped`}>
+          <div className={`game-board-analysis flipped`}>
             {Array.from({ length: 8 }).map((_, row) =>
               Array.from({ length: 9 }).map((_, col) => {
                 const flippedRow = 7 - row;
@@ -1245,7 +1255,7 @@ const AnalysisTool = () => {
                 return (
                   <div
                     key={`${flippedRow}-${flippedCol}`}
-                    className={`tile ${
+                    className={`tile-analysis ${
                       selectedPiece?.position?.row === flippedRow &&
                       selectedPiece?.position?.col === flippedCol
                         ? "selected"
@@ -1322,19 +1332,26 @@ const AnalysisTool = () => {
       )}
 
       <div className="analysis-container">
-        <h3>Suggested Strategy:</h3>
+        <div className="above-content">
+          <h3>Suggested Strategy:</h3>
+          <button onClick={handleHelpClick} className="help-button">
+            ?
+          </button>
+        </div>
         <div className="suggested-moves">
           {Object.entries(strategy)
             .sort(([, valueA], [, valueB]) => valueB - valueA) // Sort by descending values
             .map(([key, value]) => (
               <div key={key}>
-                {key}: {value}
+                {key}: {(value * 100).toFixed(2)}%
               </div>
             ))}
         </div>
-        <div className="sampled-action"></div>
         <h3>Sampled Action:</h3>
-        <p>{sampledChoice ? sampledChoice : "No action sampled yet"}</p>
+        <div className="sampled-action">
+          <p>{sampledChoice ? sampledChoice : "No action sampled yet"}</p>
+        </div>
+        
       </div>
     </div>
   );

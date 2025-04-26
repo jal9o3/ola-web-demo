@@ -43,13 +43,7 @@ pointer-events: none; /* Disable interactions */
 }
 
 
-.above-content {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  align-items: center;
-}
+
 
 .help-button {
   position: relative;
@@ -92,12 +86,7 @@ pointer-events: none; /* Disable interactions */
   z-index: 1000;
 }
 
-.opponent-placeholder {
-  width: 40px; 
-  height: 40px; 
-  background-color: rgb(12, 112, 116); 
-  border-radius: 5px; 
-}
+
 
 .popup-overlay {
   position: fixed;
