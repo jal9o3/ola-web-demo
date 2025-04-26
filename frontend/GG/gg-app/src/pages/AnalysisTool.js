@@ -1,5 +1,6 @@
 // AnalysisTool.js
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import "./AnalysisTool.css"; // Ensure you create this CSS file
 
@@ -356,6 +357,8 @@ const rankHierarchy = {
 
 const AnalysisTool = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+const { initialBlueFormation, initialRedFormation, humanColor, moveProbabilities } = location.state || {};
   const [pieces, setPieces] = useState(initialPieces);
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedPiece, setSelectedPiece] = useState(null);
@@ -387,6 +390,139 @@ const AnalysisTool = () => {
   const BLUE_SPY = 15; // Rankings are 1 to 15
   const RED_FLAG = 16;
   const RED_SPY = 30; // Red pieces are denoted as ranking + 15
+
+  useEffect(() => {
+    if (initialBlueFormation && initialRedFormation) {
+      // Set the player color based on humanColor from walkthrough
+      const playerColor = humanColor || "B";
+      setColor(playerColor);
+      
+      // Convert formations to pieces
+      const initialPiecesFromWalkthrough = convertFormationsToPieces(
+        initialBlueFormation, 
+        initialRedFormation, 
+        playerColor
+      );
+      
+      // Set pieces with their positions
+      setPieces(initialPiecesFromWalkthrough);
+      
+      // Create the initial infostate matrix for the AI
+      const boardMatrix = createInfostateMatrixFromFormations(
+        initialBlueFormation,
+        initialRedFormation,
+        playerColor
+      );
+      
+      setInfoStateMatrix(boardMatrix);
+      setInfoStateMatrixList([boardMatrix]);
+      
+      // Game is already in progress
+      setGameStarted(true);
+      
+      // Set who moves first
+      setToMove("B"); // Blue always starts in a new analysis
+    }
+  }, [initialBlueFormation, initialRedFormation, humanColor]);
+
+  const convertFormationsToPieces = (blueFormation, redFormation, playerColor) => {
+    const pieces = [];
+    
+    // Convert blue formation to pieces
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 9; col++) {
+        const index = row * 9 + col;
+        const pieceRank = blueFormation[index];
+        
+        if (pieceRank > 0) {
+          // Find the corresponding piece from initialPieces
+          const pieceTemplate = initialPieces.find(
+            p => p.team === "blue" && p.rank === pieceRank
+          );
+          
+          if (pieceTemplate) {
+            pieces.push({
+              ...pieceTemplate,
+              position: { row, col },
+              id: `blue-${index}-${pieceRank}`
+            });
+          }
+        }
+      }
+    }
+    
+    // Convert red formation to pieces
+    for (let row = 5; row < 8; row++) {
+      for (let col = 0; col < 9; col++) {
+        const index = (row - 5) * 9 + col;
+        const pieceRank = redFormation[index];
+        
+        if (pieceRank > 0) {
+          // Find the corresponding piece from initialPieces
+          const pieceTemplate = initialPieces.find(
+            p => p.team === "red" && p.rank === pieceRank
+          );
+          
+          if (pieceTemplate) {
+            pieces.push({
+              ...pieceTemplate,
+              position: { row, col },
+              id: `red-${index}-${pieceRank}`
+            });
+          }
+        }
+      }
+    }
+    
+    return pieces;
+  };
+
+  const createInfostateMatrixFromFormations = (blueFormation, redFormation, playerColor) => {
+    // Create an 8x9 matrix with arrays of [0, 0] at each position
+    const boardMatrix = Array.from({ length: 8 }, () =>
+      Array.from({ length: 9 }, () => Array(2).fill(0))
+    );
+    
+    // Fill in blue pieces
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 9; col++) {
+        const index = row * 9 + col;
+        const pieceRank = blueFormation[index];
+        
+        if (pieceRank > 0) {
+          if (playerColor === "B") {
+            // Player is blue, so we know the exact rank
+            boardMatrix[row][col][0] = pieceRank;
+            boardMatrix[row][col][1] = pieceRank;
+          } else {
+            // Player is red, so we only know it's a blue piece
+            boardMatrix[row][col] = [BLUE_FLAG, BLUE_SPY];
+          }
+        }
+      }
+    }
+    
+    // Fill in red pieces
+    for (let row = 5; row < 8; row++) {
+      for (let col = 0; col < 9; col++) {
+        const index = (row - 5) * 9 + col;
+        const pieceRank = redFormation[index];
+        
+        if (pieceRank > 0) {
+          if (playerColor === "R") {
+            // Player is red, so we know the exact rank
+            boardMatrix[row][col][0] = pieceRank + BLUE_SPY; // Adding offset for red pieces
+            boardMatrix[row][col][1] = pieceRank + BLUE_SPY;
+          } else {
+            // Player is blue, so we only know it's a red piece
+            boardMatrix[row][col] = [RED_FLAG, RED_SPY];
+          }
+        }
+      }
+    }
+    
+    return boardMatrix;
+  };
 
   // Calculate valid moves when a piece is selected
   useEffect(() => {
@@ -488,6 +624,13 @@ const AnalysisTool = () => {
     }
   }, [selectedPiece, pieces, gameStarted]);
 
+  const getCurrentTurnText = () => {
+    if (!gameStarted) return "Game not started";
+    
+    const currentTeam = toMove === "B" ? "Blue" : "Red";
+    return `${currentTeam}'s Turn`;
+  };
+  
   const handleTileClick = (row, col) => {
     if (!gameStarted) return;
 
