@@ -18,7 +18,7 @@ const RulesTutorial = () => {
 
     const steps = [
         { illustration: Step1, instruction: 'Step 1: Click "Start Game" to begin playing.' },
-        { illustration: Step2, instruction: 'Step 2: Choose a model based on your preference – Easy, Average, or Hard.' },
+        { illustration: Step2, instruction: 'Step 2: Choose a model based on your preference – Milestone 1, 2, 3, or R.' },
         { illustration: Step3, instruction: 'Step 3: You can place your pieces manually or click "Randomize" to automatically place your pieces. Optionally, enable "Fog Mode" if you want to play in fog mode, here if the tile is occupied by a fog, you can`t move to that tile.' },
         { illustration: Step4, instruction: 'Step 4: Click the "Play" button when you’re ready to begin.' },
         { illustration: Step5, instruction: 'Step 5: Use the "Help" button to view piece rankings if you’re unsure. Click "OK" to close the help dialog.' },
