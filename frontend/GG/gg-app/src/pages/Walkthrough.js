@@ -616,7 +616,7 @@ const Walkthrough = () => {
         </button>
       <div className="walkthrough-top-controls">
         <button className="analyze-button" onClick={handleAnalyzeGame}>
-          Analyze Game
+          Open Analysis Tool
         </button>
         </div>
 
