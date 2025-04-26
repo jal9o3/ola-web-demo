@@ -179,13 +179,13 @@ function Home() {
                     ))}
                 </nav>
 
-                <nav className="TopMenu">
+                {/*<nav className="TopMenu">
                 {menuItems
                     .filter(item => item.position === 'top')
                     .map(item => (
                     <TopButton key={item.label} label={item.label} onClick={() => handleNavigation(item.label)} />
                     ))}
-                </nav>
+                </nav>*/}
 
             </div>
         </main>
