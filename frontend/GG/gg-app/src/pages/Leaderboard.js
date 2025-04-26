@@ -42,7 +42,7 @@ const Leaderboard = () => {
       <h1 className="leaderboard-title">Leaderboard</h1>
       
       <div className="difficulty-select">
-        <label htmlFor="difficulty">Difficulty: </label>
+        <label htmlFor="difficulty">Category: </label>
         <select id="difficulty" 
           value={modelName} 
           onChange={(e) => {
@@ -50,9 +50,10 @@ const Leaderboard = () => {
             setModelName(e.target.value)
           }}
           >
-          <option value="fivelayer">Easy</option>
-          <option value="fivelayer10k">Medium</option>
-          <option value="csd10k">Hard</option>
+          <option value="fivelayer">Milestone 1</option>
+          <option value="fivelayer10k">Milestone 2</option>
+          <option value="csd10k">Milestone 3</option>
+          <option value="requested20k"> Milestone R</option>
           <option value="fog-mode">Fog</option>
         </select>
       </div>
