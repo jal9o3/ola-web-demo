@@ -32,7 +32,7 @@ html, body {
     transform: translateX(-50%);
     width: 7vw; /* Thickness of the pole */
     height: 2.5vw; /* Length of the pole */
-    background-color: #014d26; /* Color of the pole */
+    background-color: #016632; /* Color of the pole */
     border-radius: 100px; /* Slight rounding for a smoother look */
 }
 
