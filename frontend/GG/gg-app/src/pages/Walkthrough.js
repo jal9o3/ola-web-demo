@@ -554,198 +554,208 @@ const Walkthrough = () => {
   };
 
   const lastScrollLeftRef = useRef(0);
-    const lastScrollTimeRef = useRef(Date.now());
-    const audioRef = useRef(new Audio(scrollSound));
-    const lastSoundTimeRef = useRef(0);
+  const lastScrollTimeRef = useRef(Date.now());
+  const audioRef = useRef(new Audio(scrollSound));
+  const lastSoundTimeRef = useRef(0);
+
+  const handleScroll = (e) => {
+    const now = Date.now();
+    if (now - lastSoundTimeRef.current < 100) return; // prevents the sound from playig too frequently
   
-    const handleScroll = (e) => {
-      const now = Date.now();
-      if (now - lastSoundTimeRef.current < 100) return; // prevents the sound from playig too frequently
-    
-      const currentScrollLeft = e.target.scrollLeft;
-      const deltaX = Math.abs(currentScrollLeft - lastScrollLeftRef.current); // Distance scrolled since last event
-      const deltaTime = now - lastScrollTimeRef.current; // Time since last scrolled
-    
-      if (deltaTime > 0) {
-        const speed = (deltaX / deltaTime) * 1000; // Calculate scroll speed in pixels per second
-    
-        const audio = audioRef.current;
-        audio.volume = Math.min(1, speed / 1000); // Adjust volume based on scroll speed
-        audio.currentTime = 0;
-        audio.play();
-    
-        lastSoundTimeRef.current = now;
-      }
-    
-      lastScrollLeftRef.current = currentScrollLeft;
-      lastScrollTimeRef.current = now;
-    };
-
-    const sounds = useRef({});
-    
-    useEffect(() => {
-      // Preload sounds
-      sounds.current = {
-        click: new Audio(clickSound),
-        move: new Audio(moveSound),
-      };
-    }, []);
+    const currentScrollTop = e.target.scrollTop;
+    const deltaY = Math.abs(currentScrollTop - lastScrollLeftRef.current); // Distance scrolled since last event
+    const deltaTime = now - lastScrollTimeRef.current; // Time since last scrolled
   
-    const playSound = (type) => {
-      const sound = sounds.current[type];
-      if (sound) {
-        sound.currentTime = 0; // rewind
-        sound.play().catch((error) => {
-          console.error("Audio playback failed:", error);
-        })
-      }
+    if (deltaTime > 0) {
+      const speed = (deltaY / deltaTime) * 1000; // Calculate scroll speed in pixels per second
+  
+      const audio = audioRef.current;
+      audio.volume = Math.min(1, speed / 1000); // Adjust volume based on scroll speed
+      audio.currentTime = 0;
+      audio.play().catch((error) => {
+        console.error("Audio playback failed:", error);
+      });
+  
+      lastSoundTimeRef.current = now;
+    }
+  
+    lastScrollLeftRef.current = currentScrollTop;
+    lastScrollTimeRef.current = now;
+  };
+
+  const sounds = useRef({});
+  
+  useEffect(() => {
+    // Preload sounds
+    sounds.current = {
+      click: new Audio(clickSound),
+      move: new Audio(moveSound),
     };
+  }, []);
 
-    const [buttonClicked, setButtonClicked] = useState(false);
+  const playSound = (type) => {
+    const sound = sounds.current[type];
+    if (sound) {
+      sound.currentTime = 0; // rewind
+      sound.play().catch((error) => {
+        console.error("Audio playback failed:", error);
+      })
+    }
+  };
 
-    useEffect(() => {
-      // Play the move sound whenever the board state changes
-      playSound("move");
-      setButtonClicked(false);
-    }, [boardState, buttonClicked]);
+  const [buttonClicked, setButtonClicked] = useState(false);
+
+  useEffect(() => {
+    // Play the move sound whenever the board state changes
+    playSound("move");
+    setButtonClicked(false);
+  }, [boardState, buttonClicked]);
 
   return (
     <div className="walkthrough-container">
       <button className="back-button" onClick={handleBackButtonClick}>
           ⬅ Back
         </button>
-      <div className="walkthrough-top-controls">
-        <button className="analyze-button" onClick={handleAnalyzeGame}>
-          Open Analysis Tool
-        </button>
+      <div className="walkthrough-top-and-board">
+      
+        <div className="walkthrough-top">
+            <h1>GAME WALKTHROUGH</h1>
+
+          <div className="walkthrough-top-buttons">
+            <button className="analyze-button" onClick={handleAnalyzeGame}>
+              Open Analysis Tool
+            </button>
+
+            <div className="walkthrough-turn-indicator">
+              <h5>Turn: {currentTurn}</h5>
+            </div>
+
+            
+          </div>
         </div>
 
-      <div className="walkthrough-header">
-        <h1>GAME WALKTHROUGH</h1>
+        <div className="game-board-walkthrough">
+          {Array.from({ length: 8 }).map((_, row) =>
+            Array.from({ length: 9 }).map((_, col) => {
+              const piece = boardState[row] && boardState[row][col];
+              return (
+                <div
+                  key={`${row}-${col}`}
+                  className={`tile-walkthrough ${piece ? piece.team : ""}`}
+                >
+                  {piece && (
+                    <img
+                      src={piece.src}
+                      alt={piece.name}
+                      className="piece-image"
+                      onMouseEnter={(e) => {
+                        setTooltip({
+                          visible: true,
+                          text: piece.name,
+                          position: {
+                            x: e.clientX,
+                            y: e.clientY,
+                          },
+                        });
+                      }}
+                      onMouseLeave={() =>
+                        setTooltip({
+                          visible: false,
+                          text: "",
+                          position: {
+                            x: 0,
+                            y: 0,
+                          },
+                        })
+                      }
+                    />
+                  )}
+                </div>
+              );
+            })
+          )}
+          {tooltip.visible && (
+            <Tooltip text={tooltip.text} position={tooltip.position} />
+          )}
+        </div>
       </div>
 
-      <div className="walkthrough-controls">
-      <button
+      <div className="move-history-container">
+        Move History
+        <div className="move-history-controls">
+        <button
           onClick={handleBackward}
           disabled={moveIndex === 0 || moveList.length === 0}
           className="control-button"
         >
-          ← Previous
+          ←
         </button>
-      <div className="turn-indicator">
-          <h5>Turn: {currentTurn}</h5>
-        </div>
+      
         <span className="move-counter">
-          Move {moveIndex} of {moveList.length}
+          {moveIndex} / {moveList.length}
         </span>
         <button
           onClick={handleForward}
           disabled={moveIndex >= moveList.length || moveList.length === 0}
           className="control-button"
         >
-          Next →
+          →
         </button>
-      </div>
+        </div>
+        <div className="move-history"
+          onScroll={handleScroll}>
+          <div className="move-list">
+            {moveList.map((move, index) => {
+              const probability = moveProbabilities[index]?.probability || 0.5;
+              const evaluation = moveProbabilities[index]?.evaluation || 
+                getProbabilityDescription(probability);
+              
+              return (
+                <div
+                  key={index}
+                  className={`move-item ${index === moveIndex - 1 ? "active" : ""}`}
+                  onClick={() => {
+                    const initialBoard = initializeBoard();
+                    setBoardState(initialBoard);
 
-      <div className="game-board-walkthrough">
-        {Array.from({ length: 8 }).map((_, row) =>
-          Array.from({ length: 9 }).map((_, col) => {
-            const piece = boardState[row] && boardState[row][col];
-            return (
-              <div
-                key={`${row}-${col}`}
-                className={`tile-walkthrough ${piece ? piece.team : ""}`}
-              >
-                {piece && (
-                  <img
-                    src={piece.src}
-                    alt={piece.name}
-                    className="piece-image"
-                    onMouseEnter={(e) => {
-                      setTooltip({
-                        visible: true,
-                        text: piece.name,
-                        position: {
-                          x: e.clientX,
-                          y: e.clientY,
-                        },
-                      });
-                    }}
-                    onMouseLeave={() =>
-                      setTooltip({
-                        visible: false,
-                        text: "",
-                        position: {
-                          x: 0,
-                          y: 0,
-                        },
-                      })
+                    for (let i = 0; i <= index; i++) {
+                      const currentMove = moveList[i];
+                      const fromRow = parseInt(currentMove[0]);
+                      const fromCol = parseInt(currentMove[1]);
+                      const toRow = parseInt(currentMove[2]);
+                      const toCol = parseInt(currentMove[3]);
+
+                      applyMove(fromRow, fromCol, toRow, toCol);
                     }
-                  />
-                )}
-              </div>
-            );
-          })
-        )}
-        {tooltip.visible && (
-          <Tooltip text={tooltip.text} position={tooltip.position} />
-        )}
-      </div>
 
-      <div className="move-history"
-        onScroll={handleScroll}>
-        <h3>Move History</h3>
-        <div className="move-list">
-          {moveList.map((move, index) => {
-            const probability = moveProbabilities[index]?.probability || 0.5;
-            const evaluation = moveProbabilities[index]?.evaluation || 
-              getProbabilityDescription(probability);
-            
-            return (
-              <div
-                key={index}
-                className={`move-item ${index === moveIndex - 1 ? "active" : ""}`}
-                onClick={() => {
-                  const initialBoard = initializeBoard();
-                  setBoardState(initialBoard);
-
-                  for (let i = 0; i <= index; i++) {
-                    const currentMove = moveList[i];
-                    const fromRow = parseInt(currentMove[0]);
-                    const fromCol = parseInt(currentMove[1]);
-                    const toRow = parseInt(currentMove[2]);
-                    const toCol = parseInt(currentMove[3]);
-
-                    applyMove(fromRow, fromCol, toRow, toCol);
-                  }
-
-                  setMoveIndex(index + 1);
-                  setCurrentTurn(
-                    (index + 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn"
-                  );
-                }}
-              >
-                <div className="move-content">
-                  <div className="move-text">
-                    {index % 2 === 0 ? "Blue" : "Red"}:{" "}
-                    {`(${move[0]},${move[1]}) → (${move[2]},${move[3]})`}
-                  </div>
-                  <div className="move-evaluation-container">
-                    <div className="move-probability">
-                      <div 
-                        className="probability-bar"
-                        style={{
-                          width: `${probability * 100}%`,
-                          backgroundColor: getProbabilityColor(probability)
-                        }}
-                      ></div>
+                    setMoveIndex(index + 1);
+                    setCurrentTurn(
+                      (index + 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn"
+                    );
+                  }}
+                >
+                  <div className="move-content">
+                    <div className="move-text">
+                      {index % 2 === 0 ? "Blue" : "Red"}:{" "}
+                      {`(${move[0]},${move[1]}) → (${move[2]},${move[3]})`}
                     </div>
-                    <div className="move-evaluation">{evaluation}</div>
+                    <div className="move-evaluation-container">
+                      <div className="move-probability">
+                        <div 
+                          className="probability-bar"
+                          style={{
+                            width: `${probability * 100}%`,
+                            backgroundColor: getProbabilityColor(probability)
+                          }}
+                        ></div>
+                      </div>
+                      <div className="move-evaluation">{evaluation}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

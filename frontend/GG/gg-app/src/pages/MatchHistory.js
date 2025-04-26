@@ -60,7 +60,9 @@ const MatchHistory = () => {
       const audio = audioRef.current;
       audio.volume = Math.min(1, speed / 1000); // Adjust volume based on scroll speed
       audio.currentTime = 0;
-      audio.play();
+      audio.play().catch((error) => {
+        console.error("Audio playback failed:", error);
+      });
   
       lastSoundTimeRef.current = now;
     }

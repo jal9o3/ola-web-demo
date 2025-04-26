@@ -8,9 +8,11 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
-    overflow: auto; 
     display: flex;
     flex-direction: column;
+    overflow-x: scroll; 
+    scrollbar-width:thin;
+    scrollbar-color: #4CAF50 #f9f9f9;
   }
   
   .match-list {
@@ -23,12 +25,7 @@
     white-space: nowrap; 
     -ms-overflow-style: none;
   }
-  
-  .match-list::-webkit-scrollbar {
-    display: scrollbar;
-  }
-  
-  
+
   .match-item {
     min-width: 180px; 
     padding: 15px;

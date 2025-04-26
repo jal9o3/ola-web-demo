@@ -94,7 +94,23 @@
     flex-direction: column; /* Stack items vertically */
     gap: 5px;
     overflow-y:scroll;
-    scrollbar-width:none;
+    scrollbar-width:thin;
+    scrollbar-color: #4CAF50 white;
+}
+
+.control-button {
+  padding: 8px 15px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.control-button:hover {
+  background-color: #45a049;
 }
 
 .suggested-moves div {
