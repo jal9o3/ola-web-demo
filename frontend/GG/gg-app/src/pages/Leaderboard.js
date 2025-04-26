@@ -54,7 +54,7 @@ const Leaderboard = () => {
           <option value="fivelayer10k">Milestone 2</option>
           <option value="csd10k">Milestone 3</option>
           <option value="requested20k"> Milestone R</option>
-          <option value="fog-mode">Fog</option>
+          <option value="fog-mode">Storm</option>
         </select>
       </div>
 

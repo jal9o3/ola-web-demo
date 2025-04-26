@@ -712,7 +712,7 @@ const Board = () => {
             </div>
             
             <div className="fog-mode-toggle">
-              <label htmlFor="fog-mode">Fog Mode:</label>
+              <label htmlFor="fog-mode">Storm Mode:</label>
               <input
                 type="checkbox"
                 id="fog-mode"
