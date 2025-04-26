@@ -1079,6 +1079,7 @@ const AnalysisTool = () => {
                 <option value="fivelayer">fivelayer</option>
                 <option value="fivelayer10k">fivelayer10k</option>
                 <option value="csd10k">csd10k</option>
+                <option value="requested20k">requested20k</option>
               </select>
             </div>
 
