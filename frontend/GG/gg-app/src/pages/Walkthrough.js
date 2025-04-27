@@ -1,10 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Walkthrough.css";
-
-import scrollSound from "../sounds/scroll.mp3";
-import clickSound from "../sounds/click.mp3";
-import moveSound from "../sounds/move.mp3";
 
 import Gen5 from "../assets/Gen5.png";
 import Gen5b from "../assets/Gen5b.png";
@@ -94,7 +90,6 @@ const Walkthrough = () => {
   const [redFormation, setRedFormation] = useState([]);
   const [gameData, setGameData] = useState(null);
   const [moveList, setMoveList] = useState([]);
-  const [moveProbabilities, setMoveProbabilities] = useState([]);
   const [moveIndex, setMoveIndex] = useState(0);
   const [boardState, setBoardState] = useState([]);
   const [currentTurn, setCurrentTurn] = useState("Blue's Turn");
@@ -109,7 +104,7 @@ const Walkthrough = () => {
 
   useEffect(() => {
     if (matchId) {
-      // Fetch game data with move probabilities
+      // Fetch game data
       fetch("http://localhost:8000/api/history/ai/", {
         method: "POST",
         headers: {
@@ -142,28 +137,7 @@ const Walkthrough = () => {
             setBlueFormation(data.game_data.ai_initial_formation);
             setRedFormation(adjustedRedFormation);
           }
-          
           setMoveList(data.game_data.move_list);
-          
-          // Set up initial board to analyze moves
-          const initialBoardState = initializeBoard(
-            data.game_data.human_color === "B" ? 
-              data.game_data.human_initial_formation : 
-              data.game_data.ai_initial_formation,
-            data.game_data.human_color === "B" ? 
-              data.game_data.ai_initial_formation : 
-              data.game_data.human_initial_formation
-          );
-          
-          // Generate move probabilities based on analysis
-          if (data.game_data.move_list.length > 0) {
-            const analyzedMoves = analyzeAllMoves(
-              data.game_data.move_list,
-              initialBoardState,
-              data.game_data.human_color
-            );
-            setMoveProbabilities(analyzedMoves);
-          }
         })
         .catch((error) => {
           console.error("Error sending match ID:", error);
@@ -177,44 +151,36 @@ const Walkthrough = () => {
   }, [blueFormation, redFormation]);
 
   useEffect(() => {
-    if (gameData && blueFormation.length > 0 && redFormation.length > 0) {
-      // Initialize board with the formations
-      const initialBoard = initializeBoard(blueFormation, redFormation);
+    if (
+      blueFormation.length > 0 &&
+      redFormation.length > 0 &&
+      moveList.length >= 0
+    ) {
+      const initialBoard = initializeBoard();
       setBoardState(initialBoard);
-      
-      // Analyze moves after board is properly initialized
-      if (moveList.length > 0) {
-        const analyzedMoves = analyzeAllMoves(
-          moveList,
-          initialBoard,
-          gameData.human_color
-        );
-        setMoveProbabilities(analyzedMoves);
-      }
     }
-  }, [gameData, blueFormation, redFormation, moveList]);
+  }, [blueFormation, redFormation, moveList]);
 
   const handleBackButtonClick = () => {
     navigate(`/match-history`);
-    playSound("click");
   };
 
   const handleAnalyzeGame = () => {
-    playSound("click");
     if (gameData) {
       navigate(`/analysis-tool`, {
         state: {
           initialBlueFormation: blueFormation,
           initialRedFormation: redFormation,
           humanColor: gameData.human_color,
-          moveProbabilities: moveProbabilities
         },
       });
     }
   };
 
-  const initializeBoard = (blueFormation = [], redFormation = []) => {
-    const board = Array(8).fill().map(() => Array(9).fill(null));
+  const initializeBoard = () => {
+    const board = Array(8)
+      .fill()
+      .map(() => Array(9).fill(null));
 
     for (let row = 2; row >= 0; row--) {
       for (let col = 8; col >= 0; col--) {
@@ -259,193 +225,6 @@ const Walkthrough = () => {
     return board;
   };
 
-  // Function to analyze moves and assign probabilities
-  const analyzeAllMoves = (moves, initialBoard, humanColor) => {
-    // Make deep copy of the board to avoid mutating the original
-    let currentBoard = JSON.parse(JSON.stringify(initialBoard));
-    const analyzedMoves = [];
-    let currentTeam = "blue"; // Blue goes first
-    
-    for (let i = 0; i < moves.length; i++) {
-      const move = moves[i];
-      const fromRow = parseInt(move[0]);
-      const fromCol = parseInt(move[1]);
-      const toRow = parseInt(move[2]);
-      const toCol = parseInt(move[3]);
-      
-      // Log board state for debugging
-      console.log(`Analyzing move ${i}:`, fromRow, fromCol, toRow, toCol);
-      console.log("Board state:", currentBoard[fromRow][fromCol]);
-      
-      // Verify piece exists at source location
-      if (!currentBoard[fromRow][fromCol]) {
-        console.warn("No piece at source location for move", i);
-        analyzedMoves.push({ probability: 0.1, evaluation: "Invalid move" });
-        continue;
-      }
-      
-      const analysis = analyzeMoveQuality(
-        currentBoard, 
-        fromRow, 
-        fromCol, 
-        toRow, 
-        toCol,
-        currentTeam
-      );
-      
-      analyzedMoves.push(analysis);
-      
-      // Apply move to update the board state
-      currentBoard = applyMoveToBoard(
-        currentBoard, 
-        fromRow, 
-        fromCol, 
-        toRow, 
-        toCol
-      );
-      
-      // Switch teams for next move
-      currentTeam = currentTeam === "blue" ? "red" : "blue";
-    }
-    
-    return analyzedMoves;
-  };
-  
-  // Function to analyze the quality of a move
-  const analyzeMoveQuality = (board, fromRow, fromCol, toRow, toCol, team) => {
-    const movingPiece = board[fromRow][fromCol];
-    const targetCell = board[toRow][toCol];
-    
-    if (!movingPiece) return { probability: 0.5, evaluation: "Invalid move" };
-    
-    // Check if target cell is empty
-    if (!targetCell) {
-      // Check if move puts piece at risk (near higher rank enemies)
-      const riskFactor = checkRiskFactor(board, toRow, toCol, movingPiece.rank, team);
-      if (riskFactor > 0) {
-        return { 
-          probability: 0.3, 
-          evaluation: "Bad move - moving toward stronger opponent"
-        };
-      }
-      return { probability: 0.5, evaluation: "Neutral move" };
-    }
-    
-    // Check if target is an opponent piece
-    if (targetCell.team !== team) {
-      // Private capturing Spy
-      if (movingPiece.rank === 2 && targetCell.rank === 15) {
-        return { probability: 0.9, evaluation: "Excellent move - Private captures Spy" };
-      }
-      
-      // Higher rank capturing lower rank
-      if (movingPiece.rank > targetCell.rank && !(movingPiece.rank === 15 && targetCell.rank === 2)) {
-        return { probability: 0.9, evaluation: "Excellent move - capturing lower rank" };
-      }
-      
-      // Equal rank (both pieces eliminated)
-      if (movingPiece.rank === targetCell.rank) {
-        return { probability: 0.65, evaluation: "Good move - trading equal pieces" };
-      }
-      
-      // Spy trying to capture Private
-      if (movingPiece.rank === 15 && targetCell.rank === 2) {
-        return { probability: 0.2, evaluation: "Bad move - Spy can't capture Private" };
-      }
-      
-      // Lower rank moving to higher rank
-      return { 
-        probability: 0.2, 
-        evaluation: "Bad move - moving toward stronger opponent" 
-      };
-    }
-    
-    // Should not move onto friendly piece
-    return { probability: 0.1, evaluation: "Invalid move - friendly piece" };
-  };
-  
-  // Function to check if a position puts a piece at risk
-  const checkRiskFactor = (board, row, col, pieceRank, team) => {
-    const directions = [
-      [-1, 0], [1, 0], [0, -1], [0, 1] // Up, Down, Left, Right
-    ];
-    
-    let riskFactor = 0;
-    
-    // Check adjacent cells
-    for (const [drow, dcol] of directions) {
-      const newRow = row + drow;
-      const newCol = col + dcol;
-      
-      if (
-        newRow >= 0 && newRow < 8 && 
-        newCol >= 0 && newCol < 9 && 
-        board[newRow][newCol]
-      ) {
-        const adjacentPiece = board[newRow][newCol];
-        
-        if (adjacentPiece.team !== team) {
-          // Special case: Private is not at risk from Spy
-          if (pieceRank === 2 && adjacentPiece.rank === 15) {
-            continue;
-          }
-          
-          // Special case: Spy is at risk from Private
-          if (pieceRank === 15 && adjacentPiece.rank === 2) {
-            riskFactor += 1;
-            continue;
-          }
-          
-          // Normal case: At risk from higher ranks
-          if (adjacentPiece.rank > pieceRank) {
-            riskFactor += 1;
-          }
-        }
-      }
-    }
-    
-    return riskFactor;
-  };
-  
-  // Function to apply a move to the board without modifying state
-  const applyMoveToBoard = (board, fromRow, fromCol, toRow, toCol) => {
-    const newBoard = JSON.parse(JSON.stringify(board));
-    const movingPiece = newBoard[fromRow][fromCol];
-    
-    if (!movingPiece) return newBoard;
-    
-    const targetPiece = newBoard[toRow][toCol];
-    
-    if (targetPiece) {
-      if (targetPiece.team !== movingPiece.team) {
-        if (
-          (movingPiece.rank === 2 && targetPiece.rank === 15) ||
-          (movingPiece.rank > targetPiece.rank &&
-           !(movingPiece.rank === 15 && targetPiece.rank === 2))
-        ) {
-          newBoard[toRow][toCol] = {
-            ...movingPiece,
-            position: { row: toRow, col: toCol },
-          };
-          newBoard[fromRow][fromCol] = null;
-        } else if (movingPiece.rank === targetPiece.rank) {
-          newBoard[toRow][toCol] = null;
-          newBoard[fromRow][fromCol] = null;
-        } else {
-          newBoard[fromRow][fromCol] = null;
-        }
-      }
-    } else {
-      newBoard[toRow][toCol] = {
-        ...movingPiece,
-        position: { row: toRow, col: toCol },
-      };
-      newBoard[fromRow][fromCol] = null;
-    }
-    
-    return newBoard;
-  };
-
   const handleForward = () => {
     if (moveIndex < moveList.length) {
       const move = moveList[moveIndex];
@@ -458,7 +237,6 @@ const Walkthrough = () => {
 
       setMoveIndex((prevIndex) => prevIndex + 1);
       setCurrentTurn(moveIndex % 2 === 0 ? "Red's Turn" : "Blue's Turn");
-      setButtonClicked(true);
     }
   };
 
@@ -480,7 +258,6 @@ const Walkthrough = () => {
       }
 
       setCurrentTurn((moveIndex - 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn");
-      setButtonClicked(true);
     }
   };
 
@@ -613,7 +390,8 @@ const Walkthrough = () => {
 
   return (
     <div className="walkthrough-container">
-      <button className="back-button" onClick={handleBackButtonClick}>
+      <div className="walkthrough-top-controls">
+        <button className="back-button" onClick={handleBackButtonClick}>
           ⬅ Back
         </button>
       <div className="walkthrough-top-and-board">
@@ -755,6 +533,7 @@ const Walkthrough = () => {
                 </div>
               );
             })}
+            </div>
           </div>
         </div>
       </div>

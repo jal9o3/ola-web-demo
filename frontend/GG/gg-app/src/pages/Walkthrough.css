@@ -80,14 +80,25 @@
 
 .walkthrough-turn-indicator {
   align-items: center;
-  padding: 8px 15px;
+  margin-bottom: -10px;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.walkthrough-header h1 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+}
+
+.turn-indicator {
+  padding: 5px 10px;
   background-color: #eee;
   border-radius: 4px;
   font-weight: bold;
-  width:140px;
 }
 
-.walkthrough-turn-indicator h5 {
+.turn-indicator h5 {
   margin: 0;
   font-size: 14px;
   color: #333;
@@ -97,42 +108,40 @@
 
 .game-board-walkthrough {
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(9, 50px);
+  grid-template-rows: repeat(8, 50px);
   gap: 2px;
   max-width: 540px;
   margin: 0 auto 20px;
   background-color: #ddd;
   border: 2px solid #888;
+  border-radius: 4px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .tile-walkthrough {
-  aspect-ratio: 1/1;
+  width: 50px;
+  height: 50px;
+  background-color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fff;
   position: relative;
+  cursor: pointer;
 }
 
-.tile-walkthrough.blue {
-  background-color: #e6f2ff;
+.tile.blue {
+  background-color: rgba(70, 130, 255, 0.1);
 }
 
-.tile-walkthrough.red {
-  background-color: #ffe6e6;
+.tile.red {
+  background-color: rgba(255, 70, 70, 0.1);
 }
 
 .piece-image {
-  width: 85%;
-  height: 85%;
-  object-fit: contain;
-  transition: transform 0.2s ease;
-}
-
-.piece-image:hover {
-  transform: scale(1.1);
-  cursor: pointer;
+  max-width: 90%;
+  max-height: 90%;
+  transition: transform 0.2s;
 }
 
 .piece-tooltip {
@@ -141,12 +150,9 @@
   color: white;
   padding: 5px 10px;
   border-radius: 4px;
-  font-size: 12px;
   z-index: 100;
-  transform: translate(10px, -50%);
-  max-width: 200px;
-  white-space: nowrap;
   pointer-events: none;
+  transform: translate(10px, -50%);
 }
 
 .move-history-container {
@@ -215,37 +221,25 @@
 
 .move-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 5px;
   
 }
 
 .move-item {
-  padding: 8px 12px;
+  padding: 5px;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  background-color: #f9f9f9;
+  transition: background-color 0.2s;
 }
 
 .move-item:hover {
-  background-color: #f0f0f0;
+  background-color: #e0e0e0;
 }
 
 .move-item.active {
-  background-color: #e3f2fd;
-  border-left: 3px solid #2196f3;
-}
-
-.move-content {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.move-text {
-  font-size: 14px;
-  color: #333;
+  background-color: #4a80f5;
+  color: white;
 }
 
 .move-evaluation-container {
@@ -298,28 +292,6 @@
   100% { background-color: transparent; }
 }
 
-.highlight-move {
-  animation: highlightMove 1s ease;
-}
-
-/* Styles for the analysis indicators */
-.excellent-move {
-  color: #4caf50;
-  font-weight: bold;
-}
-
-.good-move {
-  color: #8bc34a;
-}
-
-.neutral-move {
-  color: #ffc107;
-}
-
-.questionable-move {
-  color: #ff9800;
-}
-
-.poor-move {
-  color: #f44336;
+.analyze-button:hover {
+background-color: #3672c5;
 }
