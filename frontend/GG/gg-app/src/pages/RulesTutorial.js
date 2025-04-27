@@ -4,6 +4,11 @@ import './RulesTutorial.css';
 
 import clickSound from "../sounds/click.mp3";
 
+//import Rules
+import Rule1 from '../assets/rules/Rule1.png';
+import Rule2 from '../assets/rules/Rule2.png';
+import Rule3 from '../assets/rules/Rule3.png';
+
 
 import Step1 from '../assets/Step1.png';
 import Step2 from '../assets/Step2.png';
@@ -16,10 +21,9 @@ import Step7 from '../assets/Step7.png';
 const RulesTutorial = () => {
 
     const set1 = [
-        { illustration: Step1, instruction: 'Step 1: Click "Start Game" to begin playing.' },
-        { illustration: Step2, instruction: 'Step 2: Choose a model based on your preference – Milestone 1, 2, 3, or R.' },
-        { illustration: Step3, instruction: 'Step 3: You can place your pieces manually or click "Randomize" to automatically place your pieces. Optionally, enable "Storm Mode" if you want to play in storm mode, here if the tile is occupied by a cloud, you can`t move to that tile.' },
-        { illustration: Step4, instruction: 'Step 4: Click the "Play" button when you’re ready to begin.' }
+        { illustration: Rule1, instruction: "Preparing for Battle:Arrange your set of pieces on the first three (3) rows on your end of the board.You are free to arrange the pieces according to your strategy of style of play." },
+        { illustration: Rule2, instruction: 'Rules of Elimination' },
+        { illustration: Rule3, instruction: 'Movement, Challenging, and End of Game' }
     ];
 
     const set2 = [
