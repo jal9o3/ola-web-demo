@@ -8,6 +8,7 @@ import "./AnalysisTool.css"; // Ensure you create this CSS file
 import clickSound from "../sounds/click.mp3";
 import setPieceSound from "../sounds/setPiece.mp3";
 import moveSound from "../sounds/move.mp3";
+import scrollSound from "../sounds/scroll.mp3";
 
 // Import images (same as in Board.js)
 import Gen5 from "../assets/Gen5.png";
@@ -396,7 +397,52 @@ const { initialBlueFormation, initialRedFormation, humanColor, moveProbabilities
   const RED_FLAG = 16;
   const RED_SPY = 30; // Red pieces are denoted as ranking + 15
 
+  const lastScrollLeftRef = useRef(0);
+  const lastScrollTimeRef = useRef(Date.now());
+  const audioRef = useRef(new Audio(scrollSound));
+  const lastSoundTimeRef = useRef(0);
+
+  const handleScroll = (e) => {
+    const now = Date.now();
+    if (now - lastSoundTimeRef.current < 100) return; // prevents the sound from playig too frequently
+  
+    const currentScrollTop = e.target.scrollTop;
+    const deltaY = Math.abs(currentScrollTop - lastScrollLeftRef.current); // Distance scrolled since last event
+    const deltaTime = now - lastScrollTimeRef.current; // Time since last scrolled
+  
+    if (deltaTime > 0) {
+      const speed = (deltaY / deltaTime) * 1000; // Calculate scroll speed in pixels per second
+  
+      const audio = audioRef.current;
+      audio.volume = Math.min(1, speed / 1000); // Adjust volume based on scroll speed
+      audio.currentTime = 0;
+      audio.play().catch((error) => {
+        console.error("Audio playback failed:", error);
+      });
+  
+      lastSoundTimeRef.current = now;
+    }
+  
+    lastScrollLeftRef.current = currentScrollTop;
+    lastScrollTimeRef.current = now;
+  };
+
   const sounds = useRef({});
+
+  const playSound = (type) => {
+    const sound = sounds.current[type];
+    if (sound) {
+      sound.currentTime = 0; // rewind
+      sound.play();
+    }
+  };
+
+  useEffect(() => {
+    // Play the move sound whenever the board state changes
+    if (gameStarted) {
+      playSound("move");
+    }
+  }, [infostateMatrixList, gameStarted]);
 
   useEffect(() => {
     // Preload sounds
@@ -540,20 +586,7 @@ const { initialBlueFormation, initialRedFormation, humanColor, moveProbabilities
     return boardMatrix;
   };
 
-  const playSound = (type) => {
-    const sound = sounds.current[type];
-    if (sound) {
-      sound.currentTime = 0; // rewind
-      sound.play();
-    }
-  };
-
-  useEffect(() => {
-        // Play the move sound whenever the board state changes
-        if (gameStarted) {
-          playSound("move");
-        }
-      }, [infostateMatrixList, gameStarted]);
+  
 
   // Calculate valid moves when a piece is selected
   useEffect(() => {
@@ -1010,6 +1043,8 @@ const { initialBlueFormation, initialRedFormation, humanColor, moveProbabilities
   };
 
   const handleGetAIFormation = () => {
+    playSound("click");
+
     const filteredPieces = pieces.filter((piece) => {
       if (color === "B" && piece.team === "blue") {
         return false; // Remove blue pieces if color is B
@@ -1498,7 +1533,9 @@ const { initialBlueFormation, initialRedFormation, humanColor, moveProbabilities
             ?
           </button>
         </div>
-        <div className="suggested-moves">
+        <div className="suggested-moves"
+          onScroll={handleScroll}
+        >
           {Object.entries(strategy)
             .sort(([, valueA], [, valueB]) => valueB - valueA) // Sort by descending values
             .map(([key, value]) => (
