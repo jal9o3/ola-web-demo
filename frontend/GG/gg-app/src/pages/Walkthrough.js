@@ -90,7 +90,6 @@ const Walkthrough = () => {
   const [redFormation, setRedFormation] = useState([]);
   const [gameData, setGameData] = useState(null);
   const [moveList, setMoveList] = useState([]);
-  const [moveProbabilities, setMoveProbabilities] = useState([]);
   const [moveIndex, setMoveIndex] = useState(0);
   const [boardState, setBoardState] = useState([]);
   const [currentTurn, setCurrentTurn] = useState("Blue's Turn");
@@ -105,7 +104,7 @@ const Walkthrough = () => {
 
   useEffect(() => {
     if (matchId) {
-      // Fetch game data with move probabilities
+      // Fetch game data
       fetch("http://localhost:8000/api/history/ai/", {
         method: "POST",
         headers: {
@@ -139,16 +138,6 @@ const Walkthrough = () => {
             setRedFormation(adjustedRedFormation);
           }
           setMoveList(data.game_data.move_list);
-          
-          // Set move probabilities if available
-          if (data.game_data.move_probabilities) {
-            setMoveProbabilities(data.game_data.move_probabilities);
-          } else {
-            // Initialize with default values if not available
-            setMoveProbabilities(
-              data.game_data.move_list.map(() => ({ probability: 0.5, evaluation: "Neutral move" }))
-            );
-          }
         })
         .catch((error) => {
           console.error("Error sending match ID:", error);
@@ -183,7 +172,6 @@ const Walkthrough = () => {
           initialBlueFormation: blueFormation,
           initialRedFormation: redFormation,
           humanColor: gameData.human_color,
-          moveProbabilities: moveProbabilities
         },
       });
     }
@@ -324,24 +312,6 @@ const Walkthrough = () => {
     );
   };
 
-  // Function to get color for probability indicator
-  const getProbabilityColor = (probability) => {
-    if (probability >= 0.8) return "#4caf50"; // Green for excellent moves
-    if (probability >= 0.6) return "#8bc34a"; // Light green for good moves
-    if (probability >= 0.4) return "#ffc107"; // Yellow for neutral moves
-    if (probability >= 0.2) return "#ff9800"; // Orange for questionable moves
-    return "#f44336"; // Red for poor moves
-  };
-
-  // Function to get text description for probability
-  const getProbabilityDescription = (probability) => {
-    if (probability >= 0.8) return "Excellent move";
-    if (probability >= 0.6) return "Good move";
-    if (probability >= 0.4) return "Neutral move";
-    if (probability >= 0.2) return "Questionable move";
-    return "Poor move";
-  };
-
   return (
     <div className="walkthrough-container">
       <div className="walkthrough-top-controls">
@@ -361,23 +331,23 @@ const Walkthrough = () => {
       </div>
 
       <div className="walkthrough-controls">
-      <button
-  onClick={handleBackward}
-  disabled={moveIndex === 0 || moveList.length === 0}
-  className="control-button"
->
-  ← Previous
-</button>
+        <button
+          onClick={handleBackward}
+          disabled={moveIndex === 0 || moveList.length === 0}
+          className="control-button"
+        >
+          ← Previous
+        </button>
         <span className="move-counter">
           Move {moveIndex} of {moveList.length}
         </span>
         <button
-  onClick={handleForward}
-  disabled={moveIndex >= moveList.length || moveList.length === 0}
-  className="control-button"
->
-  Next →
-</button>
+          onClick={handleForward}
+          disabled={moveIndex >= moveList.length || moveList.length === 0}
+          className="control-button"
+        >
+          Next →
+        </button>
       </div>
 
       <div className="game-board-walkthrough">
@@ -428,56 +398,38 @@ const Walkthrough = () => {
       <div className="move-history">
         <h3>Move History</h3>
         <div className="move-list">
-          {moveList.map((move, index) => {
-            const probability = moveProbabilities[index]?.probability || 0.5;
-            const evaluation = moveProbabilities[index]?.evaluation || 
-              getProbabilityDescription(probability);
-            
-            return (
-              <div
-                key={index}
-                className={`move-item ${index === moveIndex - 1 ? "active" : ""}`}
-                onClick={() => {
-                  const initialBoard = initializeBoard();
-                  setBoardState(initialBoard);
+          {moveList.map((move, index) => (
+            <div
+              key={index}
+              className={`move-item ${index === moveIndex - 1 ? "active" : ""}`}
+              onClick={() => {
+                const initialBoard = initializeBoard();
+                setBoardState(initialBoard);
 
-                  for (let i = 0; i <= index; i++) {
-                    const currentMove = moveList[i];
-                    const fromRow = parseInt(currentMove[0]);
-                    const fromCol = parseInt(currentMove[1]);
-                    const toRow = parseInt(currentMove[2]);
-                    const toCol = parseInt(currentMove[3]);
+                for (let i = 0; i <= index; i++) {
+                  const currentMove = moveList[i];
+                  const fromRow = parseInt(currentMove[0]);
+                  const fromCol = parseInt(currentMove[1]);
+                  const toRow = parseInt(currentMove[2]);
+                  const toCol = parseInt(currentMove[3]);
 
-                    applyMove(fromRow, fromCol, toRow, toCol);
-                  }
+                  applyMove(fromRow, fromCol, toRow, toCol);
+                }
 
-                  setMoveIndex(index + 1);
-                  setCurrentTurn(
-                    (index + 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn"
-                  );
-                }}
-              >
-                <div className="move-content">
-                  <div className="move-text">
-                    {index % 2 === 0 ? "Blue" : "Red"}:{" "}
-                    {`(${move[0]},${move[1]}) → (${move[2]},${move[3]})`}
-                  </div>
-                  <div className="move-evaluation-container">
-                    <div className="move-probability">
-                      <div 
-                        className="probability-bar"
-                        style={{
-                          width: `${probability * 100}%`,
-                          backgroundColor: getProbabilityColor(probability)
-                        }}
-                      ></div>
-                    </div>
-                    <div className="move-evaluation">{evaluation}</div>
-                  </div>
+                setMoveIndex(index + 1);
+                setCurrentTurn(
+                  (index + 1) % 2 === 0 ? "Red's Turn" : "Blue's Turn"
+                );
+              }}
+            >
+              <div className="move-content">
+                <div className="move-text">
+                  {index % 2 === 0 ? "Blue" : "Red"}:{" "}
+                  {`(${move[0]},${move[1]}) → (${move[2]},${move[3]})`}
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </div>
     </div>
