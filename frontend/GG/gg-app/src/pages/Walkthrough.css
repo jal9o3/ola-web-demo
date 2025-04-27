@@ -1,103 +1,76 @@
 .back-button {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
+  position: absolute;
+  top: 10px;
+  left: 10px;
   background-color: #007bff;
   color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 5px;
   cursor: pointer;
-  z-index: 1000; /* Ensure it appears above other elements */
-  transition: background-color 0.3s ease;
 }
 
 .back-button:hover {
   background-color: #0056b3;
+}  
+
+.back-button:focus {
+  outline: none;
 }
 
 .walkthrough-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  max-width: 1200px;
-  margin-top: 20%;
+  align-items: center;
   padding: 20px;
-  background-color: #f5f5f5;
-  min-height: 100vh;
-}
-
-.walkthrough-top-controls {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0px;
-}
-
-.analyze-button {
-  padding: 8px 15px;
-  font-size: 14px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background-color: #4285f4;
-  color: white;
-}
-
-.analyze-button:hover {
-  background-color: #3367d6;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .walkthrough-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: -10px;
-  border-bottom: 2px solid #ddd;
-  padding-bottom: 10px;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
-.walkthrough-header h1 {
+.walkthrough-header h2 {
   margin: 0;
-  color: #333;
-  font-size: 24px;
 }
 
 .turn-indicator {
-  padding: 5px 10px;
-  background-color: #eee;
+  background-color: #e0e0e0;
+  padding: 0% 0%;
   border-radius: 4px;
-  font-weight: bold;
-}
-
-.turn-indicator h5 {
-  margin: 0;
-  font-size: 14px;
-  color: #333;
+  border: 1px solid #ccc;
 }
 
 .walkthrough-controls {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 0px;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .control-button {
-  padding: 8px 15px;
-  font-size: 14px;
-  border: none;
-  border-radius: 4px;
-  background-color: #4285f4;
+  background-color: #4a80f5;
   color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 16px;
+  transition: background-color 0.3s;
 }
 
 .control-button:hover {
-  background-color: #3367d6;
+  background-color: #3060d0;
 }
 
 .control-button:disabled {
@@ -106,50 +79,44 @@
 }
 
 .move-counter {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
-  color: #555;
 }
 
 .game-board-walkthrough {
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(9, 50px);
+  grid-template-rows: repeat(8, 50px);
   gap: 2px;
-  max-width: 540px;
-  margin: 0 auto 20px;
-  background-color: #ddd;
-  border: 2px solid #888;
+  background-color: #06a2a0;
+  padding: 5px;
   border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
 .tile-walkthrough {
-  aspect-ratio: 1/1;
+  width: 50px;
+  height: 50px;
+  background-color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fff;
   position: relative;
+  cursor: pointer;
 }
 
-.tile-walkthrough.blue {
-  background-color: #e6f2ff;
+.tile.blue {
+  background-color: rgba(70, 130, 255, 0.1);
 }
 
-.tile-walkthrough.red {
-  background-color: #ffe6e6;
+.tile.red {
+  background-color: rgba(255, 70, 70, 0.1);
 }
 
 .piece-image {
-  width: 85%;
-  height: 85%;
-  object-fit: contain;
-  transition: transform 0.2s ease;
-}
-
-.piece-image:hover {
-  transform: scale(1.1);
-  cursor: pointer;
+  max-width: 90%;
+  max-height: 90%;
+  transition: transform 0.2s;
 }
 
 .piece-tooltip {
@@ -158,138 +125,67 @@
   color: white;
   padding: 5px 10px;
   border-radius: 4px;
-  font-size: 12px;
   z-index: 100;
-  transform: translate(10px, -50%);
-  max-width: 200px;
-  white-space: nowrap;
   pointer-events: none;
+  transform: translate(10px, -50%);
 }
 
 .move-history {
-  background-color: white;
-  border-radius: 6px;
-  padding: 15px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-height: 300px;
+  width: 100%;
+  max-height: 200px;
   overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
 }
 
 .move-history h3 {
   margin-top: 0;
   margin-bottom: 10px;
-  color: #333;
-  font-size: 18px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 8px;
 }
 
 .move-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 5px;
 }
 
 .move-item {
-  padding: 8px 12px;
+  padding: 5px;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  background-color: #f9f9f9;
+  transition: background-color 0.2s;
 }
 
 .move-item:hover {
-  background-color: #f0f0f0;
+  background-color: #e0e0e0;
 }
 
 .move-item.active {
-  background-color: #e3f2fd;
-  border-left: 3px solid #2196f3;
+  background-color: #4a80f5;
+  color: white;
 }
 
-.move-content {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+/* Add to your existing Walkthrough.css file */
+
+.walkthrough-top-controls {
+display: flex;
+justify-content: space-between;
+width: 100%;
+margin-bottom: 16px;
 }
 
-.move-text {
-  font-size: 14px;
-  color: #333;
+.analyze-button {
+background-color: #4a89dc;
+color: white;
+border: none;
+border-radius: 4px;
+padding: 8px 16px;
+font-size: 16px;
+cursor: pointer;
+transition: background-color 0.3s;
 }
 
-.move-evaluation-container {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.move-probability {
-  height: 8px;
-  width: 100%;
-  background-color: #eee;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.probability-bar {
-  height: 100%;
-  transition: width 0.3s ease;
-}
-
-.move-evaluation {
-  font-size: 12px;
-  color: #666;
-  font-style: italic;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .walkthrough-container {
-    padding: 10px;
-  }
-  
-  .game-board-walkthrough {
-    max-width: 100%;
-  }
-  
-  .walkthrough-header h1 {
-    font-size: 20px;
-  }
-  
-  .walkthrough-controls {
-    flex-wrap: wrap;
-  }
-}
-
-/* Animation for move transitions */
-@keyframes highlightMove {
-  0% { background-color: rgba(255, 255, 0, 0.3); }
-  100% { background-color: transparent; }
-}
-
-.highlight-move {
-  animation: highlightMove 1s ease;
-}
-
-/* Styles for the analysis indicators */
-.excellent-move {
-  color: #4caf50;
-  font-weight: bold;
-}
-
-.good-move {
-  color: #8bc34a;
-}
-
-.neutral-move {
-  color: #ffc107;
-}
-
-.questionable-move {
-  color: #ff9800;
-}
-
-.poor-move {
-  color: #f44336;
+.analyze-button:hover {
+background-color: #3672c5;
 }

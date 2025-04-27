@@ -1,275 +1,273 @@
 .analysis-tool-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
 }
 
 .game-board {
-    display: grid;
-    grid-template-columns: repeat(9, 80px);
-    grid-template-rows: repeat(8, 80px);
-    gap: 2px;
-    background-color: black;
-    place-content: fixed;
-    margin-left:20%; 
+  display: grid;
+  grid-template-columns: repeat(9, 80px);
+  grid-template-rows: repeat(8, 80px);
+  gap: 2px;
+  background-color: black;
+  place-content: fixed;
+  margin-left:20%; 
 }
 
 .tile {
-    width: 80px;
-    height: 80px;
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid black;
+  width: 80px;
+  height: 80px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
 }
 
 .selected {
-    background-color: rgba(255, 255, 0, 0.5); /* Highlight selected piece */
+  background-color: rgba(255, 255, 0, 0.5); /* Highlight selected piece */
 }
 
 .piece-image {
-    width: 95%; /* Adjust size if needed */
-    height: auto;
-    cursor: grab;
+  width: 95%; /* Adjust size if needed */
+  height: auto;
+  cursor: grab;
 }
 
 .piece-tooltip {
-    position: absolute;
-    top: 10px; /* Adjust the position based on cursor */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 14px;
-    pointer-events: none; /* Prevents tooltip from interfering with hover */
-    z-index: 1000;
+  position: absolute;
+  top: 10px; /* Adjust the position based on cursor */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  pointer-events: none; /* Prevents tooltip from interfering with hover */
+  z-index: 1000;
 }
 
 .analysis-container {
-    text-align: center;
-    margin-left:2%; 
-    width: 400px;
-    background-color: #f8f9fa;
-    border: 1px solid #ced4da;
-    border-radius: 5px;
-    height: 630px; /* Set a fixed height */
+  text-align: center;
+  margin-left:2%; 
+  width: 400px;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
 }
 
 .suggested-moves {
-    text-align: left;
-    margin-left: 5%;
-    margin-top: 10%;
-    width: 100%;
-    font-size: 14px;
+  text-align: left;
+  margin-left: 5%;
+  margin-top: 10%;
+  width: 100%;
+  font-size: 14px;
 }
 
 .left-functions {
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    gap: 10px; /* Add spacing between buttons */
-    margin-top: 10px; /* Reduce space above buttons */
-    margin-right: 70px; /* Space between left and right content */
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
-    padding: 30px; /* Add padding inside the container */
-    border-radius: 10px; /* Rounded corners for a smoother look */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-    color: #fff; /* Ensure text is visible on the dark background */
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  gap: 10px; /* Add spacing between buttons */
+  margin-top: 10px; /* Reduce space above buttons */
+  margin-right: 70px; /* Space between left and right content */
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  padding: 30px; /* Add padding inside the container */
+  border-radius: 10px; /* Rounded corners for a smoother look */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  color: #fff; /* Ensure text is visible on the dark background */
 }
 
 .undo-button{
-    background-color: #28a745;
-    color: white;
-    font-size: 18px;
-    border: none;
-    border-radius: 5px; 
-    cursor: pointer;
-    padding: 20px 50px;
+  background-color: #28a745;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px; 
+  cursor: pointer;
+  padding: 20px 50px;
 }
 
 .undo-button.disabled{
-    background-color: #6c757d; /* Grey out the button */
-    cursor: not-allowed; /* Change cursor to indicate disabled state */
+  background-color: #6c757d; /* Grey out the button */
+  cursor: not-allowed; /* Change cursor to indicate disabled state */
 }
 
 .begin-button {
-    background-color: #28a745;
-    color: white;
-    font-size: 18px;
-    padding: 25px 50px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 10px;
+  background-color: #28a745;
+  color: white;
+  font-size: 18px;
+  padding: 25px 50px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 
 .ai-formation-button{
-    background-color: #fff;
-    color: rgb(18, 1, 1);
-    font-size: 100%;
-    border: none;
-    border-radius: 5px; 
-    cursor: pointer;
-    margin-top: 5%;
-    padding: 10px 20px;
+  background-color: #fff;
+  color: rgb(18, 1, 1);
+  font-size: 100%;
+  border: none;
+  border-radius: 5px; 
+  cursor: pointer;
+  margin-top: 5%;
+  padding: 10px 20px;
 }
 
 .model-selector {
-    margin-top: 5%;
-    font-size: 100%;
-    border: none;
-    border-radius: 5px; 
-    cursor: pointer;
+  margin-top: 5%;
+  font-size: 100%;
+  border: none;
+  border-radius: 5px; 
+  cursor: pointer;
 }
 
 .color-selector {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-    margin-bottom: 15px;
-    font-size: 16px;
-    color: #fff;
-  }
-  
-  .color-selector label {
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .color-selector select {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .color-selector select:hover {
-    background-color: #45a049;
-  }
-  
-  .color-selector select:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #fff;
+}
+
+.color-selector label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.color-selector select {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.color-selector select:hover {
+  background-color: #45a049;
+}
+
+.color-selector select:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
 
 .to-move-selector {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-    margin-bottom: 15px;
-    font-size: 16px;
-    color: #fff;
-  }
-  
-  .to-move-selector label {
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .to-move-selector select {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 15px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .to-move-selector select:hover {
-    background-color: #45a049;
-  }
-  
-  .to-move-selector select:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #fff;
+}
+
+.to-move-selector label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.to-move-selector select {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.to-move-selector select:hover {
+  background-color: #45a049;
+}
+
+.to-move-selector select:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
 
 
-  .to-move-selector {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-    margin-bottom: 15px;
-    font-size: 16px;
-    color: #fff;
-  }
+.to-move-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #fff;
+}
 
 
 .tile.suggested-win {
-    border: 2px solid #2ecc71;
-    background-color: rgba(0, 0, 0, 0);
+  border: 2px solid #2ecc71;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .opponent-placeholder {
-    width: 40px; 
-    height: 40px; 
-    background-color: rgb(12, 112, 116); 
-    border-radius: 5px; 
+  width: 40px; 
+  height: 40px; 
+  background-color: rgb(12, 112, 116); 
+  border-radius: 5px; 
 }
 
 .game-board-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 }
 
 .row-numbers {
-    position: absolute;
-    left: -7%;
-    top:5%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 88%;
-    }
+  position: absolute;
+  left: -7%;
+  top:5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 88%;
+  }
 
 .row-number {
-    height: calc(50%/ 8);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    color: white; 
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
-    padding: 0px 20px; /* Add padding inside the container */
-    border-radius: 10px; /* Rounded corners for a smoother look */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  height: calc(50%/ 8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white; 
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  padding: 0px 20px; /* Add padding inside the container */
+  border-radius: 10px; /* Rounded corners for a smoother look */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
 
 }
 
 .column-numbers {
-    display: flex;
-    justify-content: space-between;
-    width: 93%;
-    margin-top: 5px;
-    margin-left:0%; 
-    margin-bottom:-30px;
+  display: flex;
+  justify-content: space-between;
+  width: 93%;
+  margin-top: 5px;
+  margin-left:0%; 
+  margin-bottom:-30px;
 }
 
 .column-number {
-    width: calc(40% / 9);
-    text-align: center;
-    font-weight: bold;
-    color: white; /* Change text color to white */
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
-    padding: 10px; /* Add padding inside the container */
-    border-radius: 10px; /* Rounded corners for a smoother look */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  width: calc(40% / 9);
+  text-align: center;
+  font-weight: bold;
+  color: white; /* Change text color to white */
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  padding: 10px; /* Add padding inside the container */
+  border-radius: 10px; /* Rounded corners for a smoother look */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
 
 }
-
