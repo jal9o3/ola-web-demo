@@ -1,12 +1,13 @@
 // AnalysisTool.js
 import React, { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
 import "./AnalysisTool.css"; // Ensure you create this CSS file
 
 // Import sounds
 import clickSound from "../sounds/click.mp3";
-import setPieceSound from"../sounds/setPiece.mp3";
-import moveSound from"../sounds/move.mp3";
+import setPieceSound from "../sounds/setPiece.mp3";
+import moveSound from "../sounds/move.mp3";
 
 // Import images (same as in Board.js)
 import Gen5 from "../assets/Gen5.png";
@@ -361,6 +362,8 @@ const rankHierarchy = {
 
 const AnalysisTool = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+const { initialBlueFormation, initialRedFormation, humanColor, moveProbabilities } = location.state || {};
   const [pieces, setPieces] = useState(initialPieces);
   const [gameStarted, setGameStarted] = useState(false);
   const [selectedPiece, setSelectedPiece] = useState(null);
@@ -394,7 +397,7 @@ const AnalysisTool = () => {
   const RED_SPY = 30; // Red pieces are denoted as ranking + 15
 
   const sounds = useRef({});
-  
+
   useEffect(() => {
     // Preload sounds
     sounds.current = {
@@ -403,6 +406,139 @@ const AnalysisTool = () => {
       setPiece: new Audio(setPieceSound),
     };
   }, []);
+
+  useEffect(() => {
+    if (initialBlueFormation && initialRedFormation) {
+      // Set the player color based on humanColor from walkthrough
+      const playerColor = humanColor || "B";
+      setColor(playerColor);
+      
+      // Convert formations to pieces
+      const initialPiecesFromWalkthrough = convertFormationsToPieces(
+        initialBlueFormation, 
+        initialRedFormation, 
+        playerColor
+      );
+      
+      // Set pieces with their positions
+      setPieces(initialPiecesFromWalkthrough);
+      
+      // Create the initial infostate matrix for the AI
+      const boardMatrix = createInfostateMatrixFromFormations(
+        initialBlueFormation,
+        initialRedFormation,
+        playerColor
+      );
+      
+      setInfoStateMatrix(boardMatrix);
+      setInfoStateMatrixList([boardMatrix]);
+      
+      // Game is already in progress
+      setGameStarted(true);
+      
+      // Set who moves first
+      setToMove("B"); // Blue always starts in a new analysis
+    }
+  }, [initialBlueFormation, initialRedFormation, humanColor]);
+
+  const convertFormationsToPieces = (blueFormation, redFormation, playerColor) => {
+    const pieces = [];
+    
+    // Convert blue formation to pieces
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 9; col++) {
+        const index = row * 9 + col;
+        const pieceRank = blueFormation[index];
+        
+        if (pieceRank > 0) {
+          // Find the corresponding piece from initialPieces
+          const pieceTemplate = initialPieces.find(
+            p => p.team === "blue" && p.rank === pieceRank
+          );
+          
+          if (pieceTemplate) {
+            pieces.push({
+              ...pieceTemplate,
+              position: { row, col },
+              id: `blue-${index}-${pieceRank}`
+            });
+          }
+        }
+      }
+    }
+    
+    // Convert red formation to pieces
+    for (let row = 5; row < 8; row++) {
+      for (let col = 0; col < 9; col++) {
+        const index = (row - 5) * 9 + col;
+        const pieceRank = redFormation[index];
+        
+        if (pieceRank > 0) {
+          // Find the corresponding piece from initialPieces
+          const pieceTemplate = initialPieces.find(
+            p => p.team === "red" && p.rank === pieceRank
+          );
+          
+          if (pieceTemplate) {
+            pieces.push({
+              ...pieceTemplate,
+              position: { row, col },
+              id: `red-${index}-${pieceRank}`
+            });
+          }
+        }
+      }
+    }
+    
+    return pieces;
+  };
+
+  const createInfostateMatrixFromFormations = (blueFormation, redFormation, playerColor) => {
+    // Create an 8x9 matrix with arrays of [0, 0] at each position
+    const boardMatrix = Array.from({ length: 8 }, () =>
+      Array.from({ length: 9 }, () => Array(2).fill(0))
+    );
+    
+    // Fill in blue pieces
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 9; col++) {
+        const index = row * 9 + col;
+        const pieceRank = blueFormation[index];
+        
+        if (pieceRank > 0) {
+          if (playerColor === "B") {
+            // Player is blue, so we know the exact rank
+            boardMatrix[row][col][0] = pieceRank;
+            boardMatrix[row][col][1] = pieceRank;
+          } else {
+            // Player is red, so we only know it's a blue piece
+            boardMatrix[row][col] = [BLUE_FLAG, BLUE_SPY];
+          }
+        }
+      }
+    }
+    
+    // Fill in red pieces
+    for (let row = 5; row < 8; row++) {
+      for (let col = 0; col < 9; col++) {
+        const index = (row - 5) * 9 + col;
+        const pieceRank = redFormation[index];
+        
+        if (pieceRank > 0) {
+          if (playerColor === "R") {
+            // Player is red, so we know the exact rank
+            boardMatrix[row][col][0] = pieceRank + BLUE_SPY; // Adding offset for red pieces
+            boardMatrix[row][col][1] = pieceRank + BLUE_SPY;
+          } else {
+            // Player is blue, so we only know it's a red piece
+            boardMatrix[row][col] = [RED_FLAG, RED_SPY];
+          }
+        }
+      }
+    }
+    
+    return boardMatrix;
+  };
 
   const playSound = (type) => {
     const sound = sounds.current[type];
@@ -519,8 +655,14 @@ const AnalysisTool = () => {
     }
   }, [selectedPiece, pieces, gameStarted]);
 
-  const handleTileClick = (row, col) => {
+  const getCurrentTurnText = () => {
+    if (!gameStarted) return "Game not started";
     
+    const currentTeam = toMove === "B" ? "Blue" : "Red";
+    return `${currentTeam}'s Turn`;
+  };
+  
+  const handleTileClick = (row, col) => {
     if (!gameStarted) return;
 
     // Remove the outcomeContainer if it exists
@@ -528,16 +670,6 @@ const AnalysisTool = () => {
       document.querySelector(".outcome-container");
     if (existingOutcomeContainer) {
       document.body.removeChild(existingOutcomeContainer);
-    }
-
-    // Find the piece at the clicked tile
-    const clickedPiece = pieces.find(
-      (p) => p.position?.row === row && p.position?.col === col
-    );
-
-    // Play sound only if the clicked piece is an allied piece
-    if (clickedPiece) {
-      playSound("setPiece");
     }
 
     if (selectedPiece) {
@@ -656,7 +788,6 @@ const AnalysisTool = () => {
   };
 
   const handleBackButtonClick = () => {
-    playSound("click");
     navigate(-1); 
   };
 
@@ -788,7 +919,6 @@ const AnalysisTool = () => {
         (p) => p.position?.row === row && p.position?.col === col
       );
       if (isOccupied) return;
-      playSound("move");
 
       // Enforce placement zones based on team
       if (draggedPiece.team === "opponent") {
@@ -814,6 +944,37 @@ const AnalysisTool = () => {
           : piece
       )
     );
+  };
+
+  const handlePlayClick = () => {
+    setGameStarted(true);
+
+    const boardMatrix = Array.from({ length: 8 }, () =>
+      Array.from({ length: 9 }, () => Array(2).fill(0))
+    );
+    console.log("Initialized board matrix:", boardMatrix);
+    pieces.forEach((piece) => {
+      if (piece.team === "blue" && color === "B") {
+        const { row, col } = piece.position;
+        const rankValue = rankHierarchy[piece.name];
+        boardMatrix[row][col][0] = rankValue;
+        boardMatrix[row][col][1] = rankValue;
+      } else if (piece.team === "red" && color === "B") {
+        const { row, col } = piece.position;
+        boardMatrix[row][col] = [RED_FLAG, RED_SPY];
+      } else if (piece.team === "red" && color === "R") {
+        const { row, col } = piece.position;
+        const rankValue = rankHierarchy[piece.name];
+        boardMatrix[row][col][0] = rankValue + BLUE_SPY;
+        boardMatrix[row][col][1] = rankValue + BLUE_SPY;
+      } else if (piece.team === "blue" && color === "R") {
+        const { row, col } = piece.position;
+        boardMatrix[row][col] = [BLUE_FLAG, BLUE_SPY];
+      }
+    });
+    console.log(boardMatrix);
+    setInfoStateMatrix(boardMatrix);
+    setInfoStateMatrixList((prevList) => [...prevList, boardMatrix]);
   };
 
   const handleBeginClick = () => {
@@ -849,7 +1010,6 @@ const AnalysisTool = () => {
   };
 
   const handleGetAIFormation = () => {
-    playSound("click");
     const filteredPieces = pieces.filter((piece) => {
       if (color === "B" && piece.team === "blue") {
         return false; // Remove blue pieces if color is B
@@ -1040,8 +1200,6 @@ const AnalysisTool = () => {
       })
       .catch((error) => console.error("Error updating game data:", error));
   }, [outcome, action]);
-
-  
 
   return (
     <div className="analysis-tool-container">
