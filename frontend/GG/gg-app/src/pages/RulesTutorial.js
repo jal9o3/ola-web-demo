@@ -10,30 +10,30 @@ import Rule2 from '../assets/rules/Rule2.png';
 import Rule3 from '../assets/rules/Rule3.png';
 
 
-import Step1 from '../assets/Step1.png';
-import Step2 from '../assets/Step2.png';
-import Step3 from '../assets/Step3.png';
-import Step4 from '../assets/Step4.png';
-import Step5 from '../assets/Step5.png';
-import Step6 from '../assets/Step6.png';
-import Step7 from '../assets/Step7.png';
+import Step1 from '../assets/tutorials/Step1.png';
+import Step2 from '../assets/tutorials/Step2.png';
+import Step3 from '../assets/tutorials/Step3.png';
+import Step4 from '../assets/tutorials/Step4.png';
+import Step5 from '../assets/tutorials/Step5.png';
+import Step6 from '../assets/tutorials/Step6.png';
+import Step7 from '../assets/tutorials/Step7.png';
 
 const RulesTutorial = () => {
 
     const set1 = [
-        { illustration: Rule1, instruction: "Preparing for Battle:Arrange your set of pieces on the first three (3) rows on your end of the board.You are free to arrange the pieces according to your strategy of style of play." },
+        { illustration: Rule1, instruction: "Preparing for Battle: Arrange your set of pieces on the first three (3) rows on your end of the board. You are free to arrange the pieces according to your strategy of style of play." },
         { illustration: Rule2, instruction: 'Rules of Elimination' },
         { illustration: Rule3, instruction: 'Movement, Challenging, and End of Game' }
     ];
 
     const set2 = [
-        { illustration: Step1, instruction: 'Step 1: Click "Start Game" to begin playing.' },
-        { illustration: Step2, instruction: 'Step 2: Choose a model based on your preference – Milestone 1, 2, 3, or R.' },
-        { illustration: Step3, instruction: 'Step 3: You can place your pieces manually or click "Randomize" to automatically place your pieces. Optionally, enable "Storm Mode" if you want to play in storm mode, here if the tile is occupied by a cloud, you can`t move to that tile.' },
-        { illustration: Step4, instruction: 'Step 4: Click the "Play" button when you’re ready to begin.' },
-        { illustration: Step5, instruction: 'Step 5: Use the "Help" button to view piece rankings if you’re unsure. Click "OK" to close the help dialog.' },
-        { illustration: Step6, instruction: 'Step 6: On your turn, select a piece and click a destination tile. You can move one tile at a time to any adjacent space—up, down, left, or right. To battle, click your piece, then click an opponent’s piece. The lower-ranked piece loses, so if your piece disappears, you lose. If it stays, you win. If both disappear, it`s a tie in rank.'},
-        { illustration: Step7, instruction: 'Step 7: If you win, input your name in the popup for the leaderboard and click "Submit". You can also click "View Walkthrough" to replay your match.'}
+        { illustration: Step1, instruction: 'Rules and Tutorial: Navigate this page thrugh the bottons shown above. "RULES" show the rules of the game. "TUTORIALS" show how to use the application.' },
+        { illustration: Step2, instruction: 'Start Game 1: Click "Start Game" to begin playing.' },
+        { illustration: Step3, instruction: 'Start Game 2: Choose a model based on your preference – Milestone 1, 2, 3, or R.' },
+        { illustration: Step4, instruction: 'Start Game 3: You can place your pieces manually or click "Randomize" to automatically place your pieces. Optionally, enable "Storm Mode" if you want to play in storm mode, here if the tile is occupied by a cloud, you can`t move to that tile.' },
+        { illustration: Step5, instruction: 'Start Game 4: Click the "Play" button when you’re ready to begin.' },
+        { illustration: Step6, instruction: 'Start Game 5: Use the "Help" button to view piece rankings if you’re unsure. Click "OK" to close the help dialog.'},
+        { illustration: Step7, instruction: 'Start Game 6: If you win, input your name in the popup for the leaderboard and click "Submit". You can also click "View Walkthrough" to replay your match.'}
     ];
 
     
