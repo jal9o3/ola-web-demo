@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./Walkthrough.css";
+
+import clickSound from "../sounds/click.mp3";
+import moveSound from "../sounds/move.mp3";
+import scrollSound from "../sounds/scroll.mp3";
 
 import Gen5 from "../assets/Gen5.png";
 import Gen5b from "../assets/Gen5b.png";
@@ -85,6 +89,8 @@ const Walkthrough = () => {
   const matchId = queryParams.get("id");
 
   console.log("Match ID:", matchId);
+
+  const [moveProbabilities, setMoveProbabilities] = useState([]);
 
   const [blueFormation, setBlueFormation] = useState([]);
   const [redFormation, setRedFormation] = useState([]);
@@ -384,16 +390,15 @@ const Walkthrough = () => {
 
   useEffect(() => {
     // Play the move sound whenever the board state changes
-    playSound("move");
+      playSound("move");
     setButtonClicked(false);
   }, [boardState, buttonClicked]);
 
   return (
     <div className="walkthrough-container">
-      <div className="walkthrough-top-controls">
-        <button className="back-button" onClick={handleBackButtonClick}>
-          ⬅ Back
-        </button>
+      <button className="back-button" onClick={handleBackButtonClick}>
+        ⬅ Back
+      </button>
       <div className="walkthrough-top-and-board">
       
         <div className="walkthrough-top">
@@ -461,24 +466,24 @@ const Walkthrough = () => {
       <div className="move-history-container">
         Move History
         <div className="move-history-controls">
-        <button
-          onClick={handleBackward}
-          disabled={moveIndex === 0 || moveList.length === 0}
-          className="control-button"
-        >
-          ←
-        </button>
+          <button
+            onClick={handleBackward}
+            disabled={moveIndex === 0 || moveList.length === 0}
+            className="control-button"
+          >
+            ←
+          </button>
       
-        <span className="move-counter">
-          {moveIndex} / {moveList.length}
-        </span>
-        <button
-          onClick={handleForward}
-          disabled={moveIndex >= moveList.length || moveList.length === 0}
-          className="control-button"
-        >
-          →
-        </button>
+          <span className="move-counter">
+            {moveIndex} / {moveList.length}
+          </span>
+          <button
+            onClick={handleForward}
+            disabled={moveIndex >= moveList.length || moveList.length === 0}
+            className="control-button"
+          >
+            →
+          </button>
         </div>
         <div className="move-history"
           onScroll={handleScroll}>
@@ -533,7 +538,6 @@ const Walkthrough = () => {
                 </div>
               );
             })}
-            </div>
           </div>
         </div>
       </div>
