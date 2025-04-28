@@ -695,15 +695,22 @@ const { initialBlueFormation, initialRedFormation, humanColor, moveProbabilities
     return `${currentTeam}'s Turn`;
   };
   
+  // Remove the outcomeContainer if it exists
+  useEffect(() => {
+    return () => {
+      // Remove the outcome container if it exists
+      const existingOutcomeContainer = document.querySelector(".outcome-container");
+      if (existingOutcomeContainer) {
+        document.body.removeChild(existingOutcomeContainer);
+      }
+    };
+  }, []);
+  
   const handleTileClick = (row, col) => {
     if (!gameStarted) return;
 
-    // Remove the outcomeContainer if it exists
-    const existingOutcomeContainer =
-      document.querySelector(".outcome-container");
-    if (existingOutcomeContainer) {
-      document.body.removeChild(existingOutcomeContainer);
-    }
+    
+    
 
     if (selectedPiece) {
       const { position, team, name } = selectedPiece;
