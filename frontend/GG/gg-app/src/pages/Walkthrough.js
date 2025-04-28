@@ -319,22 +319,7 @@ const Walkthrough = () => {
   };
 
   // Function to get color for probability indicator
-  const getProbabilityColor = (probability) => {
-    if (probability >= 0.8) return "#4caf50"; // Green for excellent moves
-    if (probability >= 0.6) return "#8bc34a"; // Light green for good moves
-    if (probability >= 0.4) return "#ffc107"; // Yellow for neutral moves
-    if (probability >= 0.2) return "#ff9800"; // Orange for questionable moves
-    return "#f44336"; // Red for poor moves
-  };
-
-  // Function to get text description for probability
-  const getProbabilityDescription = (probability) => {
-    if (probability >= 0.8) return "Excellent move";
-    if (probability >= 0.6) return "Good move";
-    if (probability >= 0.4) return "Neutral move";
-    if (probability >= 0.2) return "Questionable move";
-    return "Poor move";
-  };
+  
 
   const lastScrollLeftRef = useRef(0);
   const lastScrollTimeRef = useRef(Date.now());
@@ -489,9 +474,7 @@ const Walkthrough = () => {
           onScroll={handleScroll}>
           <div className="move-list">
             {moveList.map((move, index) => {
-              const probability = moveProbabilities[index]?.probability || 0.5;
-              const evaluation = moveProbabilities[index]?.evaluation || 
-                getProbabilityDescription(probability);
+              
               
               return (
                 <div
@@ -522,18 +505,7 @@ const Walkthrough = () => {
                       {index % 2 === 0 ? "Blue" : "Red"}:{" "}
                       {`(${move[0]},${move[1]}) → (${move[2]},${move[3]})`}
                     </div>
-                    <div className="move-evaluation-container">
-                      <div className="move-probability">
-                        <div 
-                          className="probability-bar"
-                          style={{
-                            width: `${probability * 100}%`,
-                            backgroundColor: getProbabilityColor(probability)
-                          }}
-                        ></div>
-                      </div>
-                      <div className="move-evaluation">{evaluation}</div>
-                    </div>
+                    
                   </div>
                 </div>
               );
