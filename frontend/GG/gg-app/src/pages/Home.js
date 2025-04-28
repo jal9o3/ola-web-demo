@@ -8,9 +8,9 @@ import clickSound from "../sounds/click.mp3";
 const menuItems = [
     { label: 'MATCH HISTORY', position: 'right1' },
     { label: 'RULES & TUTORIAL', position: 'left1' },
-    { label: 'START GAME', position: 'left2' },
+    { label: 'START GAME', position: 'center' },
     { label: 'ANALYSIS TOOL', position: 'right2' },
-    { label: 'LEADER BOARD', position: 'center' },
+    { label: 'LEADER BOARD', position: 'left2' },
     { label: 'SETTINGS', position: 'top' }
 ];
 
@@ -104,11 +104,6 @@ function Home() {
             case 'LEADER BOARD':
                 navigate('/leader-board');
                 break;
-            case 'SETTINGS':
-                navigate('/settings');
-                break;
-            case 'QUIT GAME':
-                navigate('/quit-game');
                 break;
             default:
                 navigate('/');
