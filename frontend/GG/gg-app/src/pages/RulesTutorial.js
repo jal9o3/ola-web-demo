@@ -46,7 +46,7 @@ const RulesTutorial = () => {
 
     const set2 = [
         { illustration: Step1, instruction: 'Rules and Tutorial: Navigate this page through the buttons shown above. "RULES" show the rules of the game. "TUTORIALS" show how to use the application.' },
-        { illustration: Tutorial, instruction: '' },
+        { illustration: Tutorial, instruction: 'Tutorial' },
         { illustration: Step2, instruction: 'Step 1: Click "Start Game" to begin playing.' },
         { illustration: Step3, instruction: 'Step 2: Choose a model based on your preference – Milestone 1, 2, 3, or R.' },
         { illustration: Step4, instruction: 'Step 3: You can place your pieces manually or click "Randomize" to automatically place your pieces.' },
