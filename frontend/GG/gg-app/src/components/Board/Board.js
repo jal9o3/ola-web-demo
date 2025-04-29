@@ -162,8 +162,8 @@ const Board = () => {
     });
   };
 
+  const [showWarning, setShowWarning] = useState(false);
   const [hostname, setHostname] = useState(window.location.hostname);
-
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -338,6 +338,12 @@ const Board = () => {
       playSound("setPiece");
     }
 
+    if (clickedPiece && clickedPiece.team !== humanColor) {
+      // Show warning if the player tries to move the opponent's piece
+      setShowWarning(true);
+      return;
+    }
+
     if (!gameStarted) return;
     const urlParams = new URLSearchParams(window.location.search);
     const sessionName = urlParams.get("sessionName");
@@ -447,7 +453,8 @@ const Board = () => {
       const piece = pieces.find(
         (p) => p.position?.row === row && p.position?.col === col
       );
-      if (piece) setSelectedPiece(piece);
+      if (piece) setSelectedPiece(piece)
+        if (clickedPiece) setSelectedPiece(clickedPiece);
     }
   };
 
@@ -666,6 +673,29 @@ const Board = () => {
     alert(hierarchy);
   };
 
+  const WarningDialog = ({ visible, onClose }) => {
+    if (!visible) return null;
+  
+    return ReactDOM.createPortal(
+      <div className="popup-overlay">
+        <div className="popup-content">
+          <h3>Warning</h3>
+          <p>You cannot move your opponent's piece!</p>
+          <button
+            onClick={() => {
+              new Audio(clickSound).play();
+              onClose();
+            }}
+            className="popup-button"
+          >
+            OK
+          </button>
+        </div>
+      </div>,
+      document.body
+    );
+  };
+
   const handleDragStart = (e, pieceId) => {
     e.dataTransfer.setData("pieceId", pieceId);
   };
@@ -880,8 +910,10 @@ const Board = () => {
           setPlayerName={setPlayerName}
           submitToLeaderboard={submitToLeaderboard}
         />
-
-      
+      <WarningDialog
+        visible={showWarning}
+        onClose={() => setShowWarning(false)}
+      />
     </div>
   );
 };
@@ -899,8 +931,6 @@ const GameOverPopup = ({
 }) => {
 
   if (!visible) return null;
-
-  
 
   const shortColor = (color) => {
     if (color === "red") return "R";
