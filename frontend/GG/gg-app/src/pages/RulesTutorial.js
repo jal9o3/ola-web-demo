@@ -53,7 +53,7 @@ const RulesTutorial = () => {
         { illustration: Step9, instruction: 'Step 8: If you win, input your name in the popup for the leaderboard and click "Submit". You can also click "View Walkthrough" to replay your match.' },
         { illustration: Step10, instruction: 'Step 9: Click "Match History" to view your previous matches.' },
         { illustration: Step11, instruction: 'Step 10: You can freely choose any past games to view'},
-        { illustration: Step12, instruction: 'Step 11: After choosing past game, you can view how the game went with the "Next" and "Previous" buttons to watch how the game did. Additionally, click "Analyze Game" if you want to explore more scenarios and/or learn strategies from AI' },
+        { illustration: Step12, instruction: 'Step 11: After choosing a past game, you can view how the game went with the "Next" and "Previous" buttons to watch how the game did. Additionally, click "Analyze Game" if you want to explore more scenarios and/or learn strategies from AI' },
         { illustration: Step13, instruction: 'Step 12: There is a suggested moves from the AI to teach you a better move.' },
         { illustration: Step14, instruction: 'Step 13: You can move the opponent\'s pieces to see how the game would go. Click "Undo" to return to the last move.' },
         { illustration: Step15, instruction: 'Step 14: Click "Analysis Tool" if you want to create your own game, and test different scenarios.' },
