@@ -305,6 +305,15 @@ const Walkthrough = () => {
     
     // Check if target is an opponent piece
     if (targetCell.team !== team) {
+      // Capturing Flag
+      if (targetCell.rank === 1) {
+        if (movingPiece.rank === 1) {
+        return { probability: 0.6, evaluation: "Good move - both Flags eliminated" };
+      } else {
+        return { probability: 0.9, evaluation: "Excellent move - Flag captured" };
+        } 
+      }
+
       // Private capturing Spy
       if (movingPiece.rank === 2 && targetCell.rank === 15) {
         return { probability: 0.9, evaluation: "Excellent move - Private captures Spy" };
@@ -317,17 +326,17 @@ const Walkthrough = () => {
       
       // Equal rank (both pieces eliminated)
       if (movingPiece.rank === targetCell.rank) {
-        return { probability: 0.65, evaluation: "Good move - trading equal pieces" };
+        return { probability: 0.6, evaluation: "Good move" };
       }
       
       // Spy trying to capture Private
       if (movingPiece.rank === 15 && targetCell.rank === 2) {
-        return { probability: 0.2, evaluation: "Bad move - Spy can't capture Private" };
+        return { probability: 0.3, evaluation: "Bad move" };
       }
       
       // Lower rank moving to higher rank
       return { 
-        probability: 0.2, 
+        probability: 0.3, 
         evaluation: "Bad move - moving toward stronger opponent" 
       };
     }
@@ -498,10 +507,10 @@ const Walkthrough = () => {
 
   // Function to get color for probability indicator
   const getProbabilityColor = (probability) => {
-    if (probability >= 0.9) return "#05ff0d"; // Green for excellent moves
-    if (probability >= 0.6) return "#8bc34a"; // Light green for good moves
-    if (probability >= 0.4) return "#ffc107"; // Yellow for neutral moves
-    if (probability >= 0.2) return "#ff0000"; // Orange for questionable moves
+    if (probability >= 0.9) return "#026619"; // Green for excellent moves
+    if (probability >= 0.6) return "#98ce5a"; // Light green for good moves
+    if (probability >= 0.5) return "#ffc107"; // Yellow for neutral moves
+    if (probability >= 0.3) return "#ff7c01"; // Orange for questionable moves
     return "#f44336"; // Red for poor moves
   };
 
@@ -509,7 +518,7 @@ const Walkthrough = () => {
   const getProbabilityDescription = (probability) => {
     if (probability >= 0.9) return "Excellent move";
     if (probability >= 0.6) return "Good move";
-    if (probability >= 0.4) return "Neutral move";
+    if (probability >= 0.5) return "Neutral move";
     if (probability >= 0.2) return "Questionable move";
     return "Poor move";
   };
