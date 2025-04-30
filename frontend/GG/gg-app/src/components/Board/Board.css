@@ -1,16 +1,17 @@
 .turn-indicator {
-    font-size: 1.5em; 
-    font-weight: bold; 
-    color: #04202a; 
-    text-align: center;
-    width: 200px; /* Set a fixed width */
-    white-space: nowrap; /* Prevent text from wrapping */
-    display: flex; 
-    justify-content: center; /* Center text horizontally */
-    align-items: center; /* Center text vertically */
-    margin-bottom:-5%; 
-    margin-left: 0%;
+  font-size: 1.5em; 
+  font-weight: bold; 
+  color: #04202a;
+  background-color: #f8f9fa; 
+  text-align: center;
+  width: 200px; /* Set a fixed width */
+  white-space: nowrap; /* Prevent text from wrapping */
+  display: flex; 
+  justify-content: center; /* Center text horizontally */
+  align-items: center; /* Center text vertically */ 
+  margin-left: 35%;
 }
+
 
 .left-content {
     display: flex;

@@ -9,7 +9,6 @@ import AnalysisTool from './pages/AnalysisTool';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
 import Board from './components/Board/Board';
-import PVPBoard from './components/Board/PVPBoard';
 import AudioPlayer from '../src/AudioPlayer'; 
 
 
@@ -29,7 +28,6 @@ function App() {
         <Route path="/leader-board" element={<Leaderboard />} />
         <Route path="/settings" element={<Settings audioRef={audioRef} />} /> {/* Pass the audio ref */}
         <Route path="/board/:mode" element={<Board />} /> 
-        <Route path="/pvp-board" element={<PVPBoard />} /> 
       </Routes>
     </Router>
   );
