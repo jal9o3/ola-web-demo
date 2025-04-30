@@ -9,8 +9,8 @@ import RuleTitle from '../assets/rules/RuleTitle.png';
 import Rule1 from '../assets/rules/Rule1.png';
 import Rule2 from '../assets/rules/Rule2.png';
 import Rule3 from '../assets/rules/Rule3.png';
-import Rule4 from '../assets/rules/Rule2.png';
-import Rule5 from '../assets/rules/Rule3.png';
+import Rule4 from '../assets/rules/Rule4.png';
+import Rule5 from '../assets/rules/Rule5.png';
 
 import Tutorial from '../assets/tutorials/Tutorial.png';
 import Step1 from '../assets/tutorials/Step1.png';
