@@ -162,8 +162,8 @@ const Board = () => {
     });
   };
 
-  const [showWarning, setShowWarning] = useState(false);
   const [hostname, setHostname] = useState(window.location.hostname);
+
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -239,28 +239,6 @@ const Board = () => {
     Sergeant: 3,
     Private: 2,
     Flag: 1, // Flag can be eliminated by any piece including the opponent's flag
-  };
-
-  const GameOverPopup = ({ visible, onClose, winner, humanColor, playerName, submitToLeaderboard }) => {
-    if (!visible) return null;
-  
-    return ReactDOM.createPortal(
-      <div className="popup-overlay">
-        <div className="popup-content">
-          <h3>Game Over</h3>
-          <p>{winner === humanColor ? "You Win!" : "You Lose!"}</p>
-          <input
-            type="text"
-            placeholder="Enter your name"
-            value={playerName}
-            onChange={(e) => setPlayerName(e.target.value)}
-          />
-          <button onClick={submitToLeaderboard}>Submit to Leaderboard</button>
-          <button onClick={onClose}>Close</button>
-        </div>
-      </div>,
-      document.body
-    );
   };
 
   const sounds = useRef({});
@@ -349,6 +327,7 @@ const Board = () => {
   };
 
   const handleTileClick = (row, col) => {
+
     // Find the piece at the clicked tile
     const clickedPiece = pieces.find(
       (p) => p.position?.row === row && p.position?.col === col
@@ -357,14 +336,6 @@ const Board = () => {
     // Play sound only if the clicked piece is an allied piece
     if (clickedPiece && clickedPiece.team === humanColor) {
       playSound("setPiece");
-    }
-
-    // Only show warning if no piece is currently selected
-    // This allows combat when a piece is selected
-    if (!selectedPiece && clickedPiece && clickedPiece.team !== humanColor) {
-      // Show warning if the player tries to move the opponent's piece directly
-      setShowWarning(true);
-      return;
     }
 
     if (!gameStarted) return;
@@ -476,8 +447,7 @@ const Board = () => {
       const piece = pieces.find(
         (p) => p.position?.row === row && p.position?.col === col
       );
-      if (piece) setSelectedPiece(piece)
-        if (clickedPiece) setSelectedPiece(clickedPiece);
+      if (piece) setSelectedPiece(piece);
     }
   };
 
@@ -696,29 +666,6 @@ const Board = () => {
     alert(hierarchy);
   };
 
-  const WarningDialog = ({ visible, onClose }) => {
-    if (!visible) return null;
-  
-    return ReactDOM.createPortal(
-      <div className="popup-overlay">
-        <div className="popup-content">
-          <h3>Warning</h3>
-          <p>You cannot move your opponent's piece!</p>
-          <button
-            onClick={() => {
-              new Audio(clickSound).play();
-              onClose();
-            }}
-            className="popup-button"
-          >
-            OK
-          </button>
-        </div>
-      </div>,
-      document.body
-    );
-  };
-
   const handleDragStart = (e, pieceId) => {
     e.dataTransfer.setData("pieceId", pieceId);
   };
@@ -730,300 +677,302 @@ const Board = () => {
     .filter((piece) => piece.team === humanColor)
     .every((piece) => piece.position !== null);
 
-    return (
-      <div className="board-wrapper">
-        {/* Turn Indicator outside the board container */}
-        {gameStarted && <div className="turn-indicator">{currentTurn}</div>}
-        <div className="board-container">
-          <button className="back-button" onClick={handleBackButtonClick}>
-            ⬅ Back
-          </button>
-          {!gameStarted && (
-            <div className="left-content">
-              
-  
-              {!gameStarted && (
-                <div className="button-container">
-                <div className="model-selector">
-                <label htmlFor="model-select">Choose Model:</label>
-                <select
-                  id="model-select"
-                  value={modelName}
-                  disabled={fogMode || gameStarted}
-                  onChange={(e) => {
-                    setModelName(e.target.value)
-                    playSound("click");}}
-                >
-                  <option value="fivelayer">Milestone 1</option>
-                  <option value="fivelayer10k">Milestone 2</option>
-                  <option value="csd10k">Milestone 3</option>
-                  <option value="requested20k">Milestone R</option>
-                </select>
-              </div>
-              
-              <div className="fog-mode-toggle">
-                <label htmlFor="fog-mode">Storm Mode:</label>
-                <input
-                  type="checkbox"
-                  id="fog-mode"
-                  checked={fogMode}
-                  disabled={gameStarted}
-                  onChange={(e) => {
-                    setFogMode(e.target.checked);
-                    playSound("click");
-                    if (e.target.checked) {
-                      setModelName("requested20k");
-                    }
-                  }}
-                />
-              </div>
-  
-                  <button
-                    onClick={handlePlayClick}
-                    className={`play-button ${
-                      allHumanPiecesPlaced ? "" : "disabled"
-                    } ${playClicked ? "clicked" : ""}`}
-                    disabled={!allHumanPiecesPlaced}
-                  >
-                    Play
-                  </button>
-                  <button
-                    onClick={randomizePieces}
-                    className="randomize-button"
-                    disabled={gameStarted} // Disable if the game has started
-                  >
-                    Randomize
-                  </button>
-                </div>
-              )}
-  
+  return (
+    <div className="board-wrapper">
+      {" "}
+      {/* New wrapper for the board and indicator */}
+      
+      {/* Turn Indicator outside the board container */}
+      {gameStarted && <div className="turn-indicator">{currentTurn}</div>}
+      <div className="board-container">
+        <button className="back-button" onClick={handleBackButtonClick}>
+          ⬅ Back
+        </button>
+        {!gameStarted && (
+          <div className="left-content">
+            
+
+            {!gameStarted && (
+              <div className="button-container">
+              <div className="model-selector">
+              <label htmlFor="model-select">Choose Model:</label>
+              <select
+                id="model-select"
+                value={modelName}
+                disabled={fogMode || gameStarted}
+                onChange={(e) => {
+                  setModelName(e.target.value)
+                  playSound("click");}}
+              >
+                <option value="fivelayer">Milestone 1</option>
+                <option value="fivelayer10k">Milestone 2</option>
+                <option value="csd10k">Milestone 3</option>
+                <option value="requested20k">Milestone R</option>
+              </select>
             </div>
-          )}
-  
-          <div className="game-board">
-            {Array.from({ length: 8 }).map((_, row) =>
-              Array.from({ length: 9 }).map((_, col) => {
-                const piece = pieces.find(
-                  (p) => p.position?.row === row && p.position?.col === col
-                ); // Find the piece at the current position if any
-                const isFogged = fogMode && fogMatrix[row][col] === 1; // Check if fogMode is enabled and the cell is fogged
-  
-                return (
-                  <div
-                    key={`${row}-${col}`}
-                    className={`tile ${
-                      selectedPiece?.position?.row === row &&
-                      selectedPiece?.position?.col === col
-                        ? "selected"
-                        : ""
-                    } ${isFogged ? "fogged" : ""}`} // Add a 'fogged' class if the tile is fogged
-                    onClick={() => !isFogged && handleTileClick(row, col)} // Disable clicks on fogged tiles
-                    onDrop={(e) => !isFogged && handleDrop(e, row, col)} // Disable drops on fogged tiles
-                    onDragOver={!isFogged ? allowDrop : undefined} // Disable drag-over on fogged tiles
-                  >
-                    {isFogged ? null : piece ? (
-                      piece.team === humanColor ? (
-                        // Set the image of a visible piece
-                        <img
-                          src={piece.src}
-                          alt={piece.name}
-                          className="piece-image"
-                          draggable={!gameStarted}
-                          onDragStart={(e) => handleDragStart(e, piece.id)}
-                          onMouseEnter={(e) => {
-                            setTooltip({
-                              visible: true,
-                              text: piece.name,
-                              position: {
-                                x: e.clientX,
-                                y: e.clientY,
-                              },
-                            });
-                          }}
-                          onMouseLeave={() =>
-                            setTooltip({
-                              visible: false,
-                              text: "",
-                              position: {
-                                x: 0,
-                                y: 0,
-                              },
-                            })
-                          }
-                        />
-                      ) : gameStarted ? (
-                        // Display the placeholder for a hidden piece only when the game has started
-                        <div className="opponent-placeholder"></div>
-                      ) : null
-                    ) : null}
-                  </div>
-                );
-              })
-            )}
-            {tooltip.visible && (
-              <Tooltip text={tooltip.text} position={tooltip.position} />
-            )}
-          </div>
-  
-          <div className="piece-selection">
-            <div className="above-content">
-              {!allPiecesPlaced && <p>Available Pieces</p>}
-              <button onClick={handleHelpClick} className="help-button">
-                ?
-              </button>
-            </div>
-            {isMobile ? (
-              <div className="mobile-human-color">
-                <p>Your Team: {humanColor}</p>
-              </div>
-            ) : (
-              <div className="pieces-list">
-                {!allPiecesPlaced ? (
-                  pieces
-                    .filter(
-                      (piece) =>
-                        piece.position === null && piece.team === humanColor
-                    )
-                    .map((piece) => (
-                      <div key={piece.id} className="piece-container">
-                        <img
-                          src={piece.src}
-                          alt={piece.name}
-                          className="piece-image"
-                          draggable={!gameStarted}
-                          onDragStart={(e) => handleDragStart(e, piece.id)}
-                          onMouseEnter={(e) => {
-                            setTooltip({
-                              visible: true,
-                              text: piece.name,
-                              position: { x: e.clientX, y: e.clientY },
-                            });
-                          }}
-                          onMouseLeave={() =>
-                            setTooltip({
-                              visible: false,
-                              text: "",
-                              position: { x: 0, y: 0 },
-                            })
-                          }
-                        />
-                      </div>
-                    ))
-                ) : ("")}
-              </div>
-  
-            )}
-          </div>
-  
-        </div>
-          <GameOverPopup
-            visible={showPopUp}
-            onClose={() => {
-              playSound("click")
-              setShowPopUp(false)
-              }}
-            winner={winner}
-            humanColor={humanColor}
-            gameId={gameId}
-            navigate={navigate}
-            playerName={playerName}
-            setPlayerName={setPlayerName}
-            submitToLeaderboard={submitToLeaderboard}
-          />
-        <WarningDialog
-          visible={showWarning}
-          onClose={() => setShowWarning(false)}
-        />
-      </div>
-    );
-  };
-  
-  const GameOverPopup = ({
-    visible,
-    onClose,
-    winner,
-    humanColor,
-    gameId,
-    navigate,
-    playerName,
-    setPlayerName,
-    submitToLeaderboard,
-  }) => {
-  
-    if (!visible) return null;
-  
-    const shortColor = (color) => {
-      if (color === "red") return "R";
-      if (color === "blue") return "B";
-      return color;
-    };
-    const longColor = (color) => {
-      if (color === "R") return "Red";
-      if (color === "B") return "Blue";
-      return color;
-    };
-  
-    const isPlayerWinner = winner === shortColor(humanColor);
-    const winnerText = winner ? `${longColor(winner)} wins!` : "Game Over";
-    console.log("Winner:", winner, "Human Color:", humanColor);
-  
-    return ReactDOM.createPortal(
-      <div className="popup-overlay">
-        <div className="popup-content">
-          <button className="popup-close-button" 
-            onClick={() => {
-              new Audio(clickSound).play();
-              onClose();}}>
-            ✖
-          </button>
-          <h2>Game Over</h2>
-          <h3>{winnerText}</h3>
-  
-          {isPlayerWinner && (
-            <div className="leaderboard-form">
-              <p>Add your name to the leaderboard:</p>
+            
+            <div className="fog-mode-toggle">
+              <label htmlFor="fog-mode">Storm Mode:</label>
               <input
-                type="text"
-                placeholder="Enter your name"
-                value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}
-                className="name-input"
+                type="checkbox"
+                id="fog-mode"
+                checked={fogMode}
+                disabled={gameStarted}
+                onChange={(e) => {
+                  setFogMode(e.target.checked);
+                  playSound("click");
+                  if (e.target.checked) {
+                    setModelName("requested20k");
+                  }
+                }}
               />
-              <button onClick={() => {
-                new Audio(clickSound).play();
-                submitToLeaderboard();}} className="popup-button">
-                Submit
-              </button>
             </div>
+
+                <button
+                  onClick={handlePlayClick}
+                  className={`play-button ${
+                    allHumanPiecesPlaced ? "" : "disabled"
+                  } ${playClicked ? "clicked" : ""}`}
+                  disabled={!allHumanPiecesPlaced}
+                >
+                  Play
+                </button>
+                <button
+                  onClick={randomizePieces}
+                  className="randomize-button"
+                  disabled={gameStarted} // Disable if the game has started
+                >
+                  Randomize
+                </button>
+              </div>
+            )}
+
+          </div>
+        )}
+
+        <div className="game-board">
+          {Array.from({ length: 8 }).map((_, row) =>
+            Array.from({ length: 9 }).map((_, col) => {
+              const piece = pieces.find(
+                (p) => p.position?.row === row && p.position?.col === col
+              ); // Find the piece at the current position if any
+              const isFogged = fogMode && fogMatrix[row][col] === 1; // Check if fogMode is enabled and the cell is fogged
+
+              return (
+                <div
+                  key={`${row}-${col}`}
+                  className={`tile ${
+                    selectedPiece?.position?.row === row &&
+                    selectedPiece?.position?.col === col
+                      ? "selected"
+                      : ""
+                  } ${isFogged ? "fogged" : ""}`} // Add a 'fogged' class if the tile is fogged
+                  onClick={() => !isFogged && handleTileClick(row, col)} // Disable clicks on fogged tiles
+                  onDrop={(e) => !isFogged && handleDrop(e, row, col)} // Disable drops on fogged tiles
+                  onDragOver={!isFogged ? allowDrop : undefined} // Disable drag-over on fogged tiles
+                >
+                  {isFogged ? null : piece ? (
+                    piece.team === humanColor ? (
+                      // Set the image of a visible piece
+                      <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className="piece-image"
+                        draggable={!gameStarted}
+                        onDragStart={(e) => handleDragStart(e, piece.id)}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: {
+                              x: e.clientX,
+                              y: e.clientY,
+                            },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: {
+                              x: 0,
+                              y: 0,
+                            },
+                          })
+                        }
+                      />
+                    ) : gameStarted ? (
+                      // Display the placeholder for a hidden piece only when the game has started
+                      <div className="opponent-placeholder"></div>
+                    ) : null
+                  ) : null}
+                </div>
+              );
+            })
           )}
+          {tooltip.visible && (
+            <Tooltip text={tooltip.text} position={tooltip.position} />
+          )}
+        </div>
+
+        <div className="piece-selection">
+          <div className="above-content">
+            {!allPiecesPlaced && <p>Available Pieces</p>}
+            <button onClick={handleHelpClick} className="help-button">
+              ?
+            </button>
+          </div>
+          {isMobile ? (
+            <div className="mobile-human-color">
+              <p>Your Team: {humanColor}</p>
+            </div>
+          ) : (
+            <div className="pieces-list">
+              {!allPiecesPlaced ? (
+                pieces
+                  .filter(
+                    (piece) =>
+                      piece.position === null && piece.team === humanColor
+                  )
+                  .map((piece) => (
+                    <div key={piece.id} className="piece-container">
+                      <img
+                        src={piece.src}
+                        alt={piece.name}
+                        className="piece-image"
+                        draggable={!gameStarted}
+                        onDragStart={(e) => handleDragStart(e, piece.id)}
+                        onMouseEnter={(e) => {
+                          setTooltip({
+                            visible: true,
+                            text: piece.name,
+                            position: { x: e.clientX, y: e.clientY },
+                          });
+                        }}
+                        onMouseLeave={() =>
+                          setTooltip({
+                            visible: false,
+                            text: "",
+                            position: { x: 0, y: 0 },
+                          })
+                        }
+                      />
+                    </div>
+                  ))
+              ) : ("")}
+            </div>
+
+          )}
+        </div>
+
+      </div>
+        <GameOverPopup
+          visible={showPopUp}
+          onClose={() => {
+            playSound("click")
+            setShowPopUp(false)
+            }}
+          winner={winner}
+          humanColor={humanColor}
+          gameId={gameId}
+          navigate={navigate}
+          playerName={playerName}
+          setPlayerName={setPlayerName}
+          submitToLeaderboard={submitToLeaderboard}
+        />
+
+      
+    </div>
+  );
+};
+
+const GameOverPopup = ({
+  visible,
+  onClose,
+  winner,
+  humanColor,
+  gameId,
+  navigate,
+  playerName,
+  setPlayerName,
+  submitToLeaderboard,
+}) => {
+
+  if (!visible) return null;
+
   
-          <button
-            onClick={() => {
+
+  const shortColor = (color) => {
+    if (color === "red") return "R";
+    if (color === "blue") return "B";
+    return color;
+  };
+  const longColor = (color) => {
+    if (color === "R") return "RED";
+    if (color === "B") return "BLUE";
+    return color;
+  };
+
+  const isPlayerWinner = winner === shortColor(humanColor);
+  const winnerText = winner ? `${longColor(winner)} WINS!` : "Game Over";
+  console.log("Winner:", winner, "Human Color:", humanColor);
+
+  return ReactDOM.createPortal(
+    <div className="popup-overlay">
+      <div className="popup-content">
+        <button className="popup-close-button" 
+          onClick={() => {
+            new Audio(clickSound).play();
+            onClose();}}>
+          ✖
+        </button>
+        <h3>{winnerText}</h3>
+
+        {isPlayerWinner && (
+          <div className="leaderboard-form">
+            <p>Add your name to the leaderboard:</p>
+            <input
+              type="text"
+              placeholder="Enter your name"
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              className="name-input"
+            />
+            <button onClick={() => {
               new Audio(clickSound).play();
-              navigate(`/walkthrough?id=${gameId}`)}}
-            className="popup-button"
-          >
-            View Walkthrough
-          </button>
-        </div>
-      </div>,
-      document.body
-    );
-  };
-  
-  const Popup = ({ visible, onClose, children }) => {
-    if (!visible) return null;
-    return ReactDOM.createPortal(
-      <div className="popup-overlay">
-        <div className="popup-content">
-          <button className="popup-close-button" onClick={onClose}>
-            ✖
-          </button>
-          {children}
-        </div>
-      </div>,
-      document.body
-    );
-  };
-  
-  export default Board;
+              submitToLeaderboard();}} className="popup-button">
+              Submit
+            </button>
+          </div>
+        )}
+
+        <button
+          onClick={() => {
+            new Audio(clickSound).play();
+            navigate(`/walkthrough?id=${gameId}`)}}
+          className="popup-button"
+        >
+          View Walkthrough
+        </button>
+      </div>
+    </div>,
+    document.body
+  );
+};
+
+const Popup = ({ visible, onClose, children }) => {
+  if (!visible) return null;
+  return ReactDOM.createPortal(
+    <div className="popup-overlay">
+      <div className="popup-content">
+        <button className="popup-close-button" onClick={onClose}>
+          ✖
+        </button>
+        {children}
+      </div>
+    </div>,
+    document.body
+  );
+};
+
+export default Board;
