@@ -90,3 +90,5 @@ Run the following command (assumes that the working directory is
 ```
 npm start
 ```
+The home page should automatically open in your default browser. For the best
+experience, set the page to full screen. Enjoy!
