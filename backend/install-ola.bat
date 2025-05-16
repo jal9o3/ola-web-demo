@@ -34,4 +34,5 @@ git clone -b "%branch%" --single-branch "%repo_url%"
 
 :: Take the needed directory and remove the cloned repository
 move OLA\OLA ola_server
+move OLA\setup.py ola_server
 rmdir /s /q OLA

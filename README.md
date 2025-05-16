@@ -4,7 +4,7 @@ A demo web interface for the OLA AI engine.
 
 ## Note on Purpose and Setup
 
-This project explores the usage of a neural network for a Game of the Generals (GG) AI, focusing on strategy under imperfect information and training through self-play. It is built primarily for research and development and serves as a foundation for further work in this space. The installation process is geared toward developers, and requires some familiarity with developer tools like `Git`, `Python`, and `Node JS`. While fully functional within its scope, it is not designed for casual or out-of-the-box use.
+This project explores the usage of a neural network for a Game of the Generals (GG) AI agent, focusing on strategy under imperfect information and training through self-play. It is built primarily for research and development and serves as a foundation for further work in this space. The installation process is geared toward developers, and requires some familiarity with developer tools like `git`, `pip`, and `npm`. While fully functional within its scope, it is not designed for casual or out-of-the-box use.
 
 ## Installation
 
@@ -25,7 +25,7 @@ cd backend
 
 chmod +x ./install-ola.sh
 
-./install-ola.sh dev
+./install-ola.sh main
 ```
 
 For Windows:
@@ -33,7 +33,7 @@ For Windows:
 ```
 cd backend
 
-.\install-ola.bat dev
+.\install-ola.bat main
 ```
 
 ### Install the backend's dependencies
@@ -48,6 +48,8 @@ pip install -r requirements.txt
 Run the following commands (assumes `backend` is still the working directory):
 ```
 cd ola_server
+
+python setup.py build_ext --inplace
 
 python manage.py migrate
 ```
@@ -73,14 +75,18 @@ python manage.py runserver
 ```
 
 ### Install the frontend's dependencies
-(Instructions for installing the frontend's dependencies go here.)
-
-### Run the frontend server
-In another terminal, set the working directory to the cloned repository and run 
+_In another terminal_, set the working directory to the cloned repository and run 
 the following commands:
-
 ```
 cd frontend/GG/gg-app
 
+npm install
+```
+
+### Run the frontend server
+Run the following command (assumes that the working directory is 
+`frontend/GG/gg-app`):
+
+```
 npm start
 ```
